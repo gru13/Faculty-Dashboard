@@ -101,3 +101,10 @@ CREATE TABLE course_deadlines (
     deadline_name VARCHAR(255) NOT NULL,
     FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE
 );
+
+CREATE TABLE PasswordReset (
+    email_id VARCHAR(255) NOT NULL,
+    otp VARCHAR(6) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (email_id) REFERENCES Login(email_id) ON DELETE CASCADE
+);

@@ -3,6 +3,12 @@ const session = require("express-session");
 const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv");
 const mysql = require("mysql2");
+const path = require("path");
+const crypto = require("crypto");
+
+require('dotenv').config();
+const nodemailer = require("nodemailer");
+
 
 dotenv.config();
 
@@ -41,6 +47,7 @@ db.connect((err) => {
 app.use(express.static("public"));
 
 
+
 // 📌 Route: Home (`/`)
 app.get("/", (req, res) => {
     if (req.session.user) {
@@ -48,6 +55,28 @@ app.get("/", (req, res) => {
     }
     res.sendFile(__dirname + "/public/html/login.html");
 });
+
+
+
+
+app.get("/register", (req, res) => {
+    res.sendFile(__dirname + "/public/html/register.html");
+});
+
+
+app.get("/forgot-password", (req, res) => {
+    res.sendFile(__dirname + "/public/html/forgot-password.html");
+});
+
+
+app.get("/otp-verification", (req, res) => {
+    res.sendFile(__dirname + "/public/html/otp-verification.html");
+});
+
+app.get("/otp-verification.html", (req, res) => {
+    res.redirect("/html/otp-verification.html");
+});
+
 
 
 app.post("/register", async (req, res) => {
@@ -195,12 +224,171 @@ app.post("/login", (req, res) => {
 
 
 
+// 📌 Setup Email Transporter
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL_USER,  // Your Gmail email
+        pass: process.env.EMAIL_PASS   // Your App Password (not your email password)
+    }
+});
+
+// 📌 Generate OTP
+function generateOTP() {
+    return crypto.randomInt(100000, 999999).toString();
+}
+
+// 📌 Forgot Password - Request OTP
+app.post("/forgot-password", async (req, res) => {
+    const { email_id } = req.body;
+
+    console.log(email_id);
+
+    // ✅ Check if user exists
+    const [users] = await db.promise().query("SELECT * FROM Login WHERE email_id = ?", [email_id]);
+
+    if (users.length === 0) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    // ✅ Generate and store OTP
+    const otp = generateOTP();
+    await db.promise().query("REPLACE INTO PasswordReset (email_id, otp) VALUES (?, ?)", [email_id, otp]);
+
+    // ✅ Send OTP via email
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email_id,
+        subject: "Password Reset OTP",
+        text: `Your OTP for password reset is: ${otp}`
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        res.json({ message: "OTP sent to your email" });
+    } catch (error) {
+        console.error("❌ Email Error:", error);
+        res.status(500).json({ message: "Failed to send OTP" });
+    }
+});
+
+// 📌 Verify OTP & Reset Password
+app.post("/reset-password", async (req, res) => {
+    const { email_id, otp, new_password } = req.body;
+
+    // ✅ Validate Input
+    if (!email_id || !otp || !new_password) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // ✅ Check OTP
+    const [otpRecords] = await db.promise().query("SELECT * FROM PasswordReset WHERE email_id = ? AND otp = ?", [email_id, otp]);
+
+    if (otpRecords.length === 0) {
+        return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    // ✅ Hash New Password
+    const hashedPassword = await bcrypt.hash(new_password, 10);
+
+    // ✅ Update Password in Database
+    await db.promise().query("UPDATE Login SET password = ? WHERE email_id = ?", [hashedPassword, email_id]);
+
+    // ✅ Delete OTP Record (One-time use)
+    await db.promise().query("DELETE FROM PasswordReset WHERE email_id = ?", [email_id]);
+
+    res.json({ message: "Password reset successful" });
+});
+
+
+// // 📌 Setup Email Transporter
+// const transporter = nodemailer.createTransport({
+//     host: "smtp.gmail.com", // Use Gmail's SMTP server
+//     port: 587, // Use 465 for SSL or 587 for TLS
+//     secure: false, // true for 465, false for 587
+//     auth: {
+//         user: process.env.EMAIL_USER, // Your email
+//         pass: process.env.EMAIL_PASS  // Your App Password (not your email password)
+//     }
+// });
+
+// // 📌 Generate OTP
+// function generateOTP() {
+//     return crypto.randomInt(100000, 999999).toString();
+// }
+
+// // 📌 Forgot Password - Request OTP
+// app.post("/forgot-password", async (req, res) => {
+//     const { email_id } = req.body;
+    
+//     console.log(email_id)
+    
+//     // ✅ Check if user exists
+//     const [users] = await db.promise().query("SELECT * FROM Login WHERE email_id = ?", [email_id]);
+
+//     if (users.length === 0) {
+//         return res.status(404).json({ message: "User not found" });
+//     }
+
+//     // ✅ Generate and store OTP
+//     const otp = generateOTP();
+//     await db.promise().query("REPLACE INTO PasswordReset (email_id, otp) VALUES (?, ?)", [email_id, otp]);
+
+//     // ✅ Send OTP via email
+//     const mailOptions = {
+//         from: process.env.EMAIL_USER,
+//         to: email_id,
+//         subject: "Password Reset OTP",
+//         text: `Your OTP for password reset is: ${otp}`
+//     };
+
+//     try {
+//         await transporter.sendMail(mailOptions);
+//         res.json({ message: "OTP sent to your email" });
+//     } catch (error) {
+//         console.error("❌ Email Error:", error);
+//         res.status(500).json({ message: "Failed to send OTP" });
+//     }
+// });
+
+// // 📌 Verify OTP & Reset Password
+// app.post("/reset-password", async (req, res) => {
+//     const { email_id, otp, new_password } = req.body;
+
+//     // ✅ Validate Input
+//     if (!email_id || !otp || !new_password) {
+//         return res.status(400).json({ message: "All fields are required" });
+//     }
+
+//     // ✅ Check OTP
+//     const [otpRecords] = await db.promise().query("SELECT * FROM PasswordReset WHERE email_id = ? AND otp = ?", [email_id, otp]);
+
+//     if (otpRecords.length === 0) {
+//         return res.status(400).json({ message: "Invalid OTP" });
+//     }
+
+//     // ✅ Hash New Password
+//     const hashedPassword = await bcrypt.hash(new_password, 10);
+
+//     // ✅ Update Password in Database
+//     await db.promise().query("UPDATE Login SET password = ? WHERE email_id = ?", [hashedPassword, email_id]);
+
+//     // ✅ Delete OTP Record (One-time use)
+//     await db.promise().query("DELETE FROM PasswordReset WHERE email_id = ?", [email_id]);
+
+//     res.json({ message: "Password reset successful" });
+// });
+
+
+
+
+
 // 📌 Dashboard Route (Protected)
 app.get("/dashboard", (req, res) => {
     if (!req.session.user) {
         return res.redirect("/");
     }
-    res.sendFile(__dirname + "/public/dashboard.html");
+    res.sendFile(__dirname + "/public/html/dashboard.html");
 });
 
 // 📌 Logout

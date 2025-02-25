@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>OTP Verification</title>
+  <link rel="stylesheet" href="/css/login-style.css" />
+</head>
+<body>
+    <main class="main flow">
+        <div class="main__cards cards">
+            <div class="cards__inner">
+                <div class="cards__card card">
+                    <h1 class="card__heading">VERIFY OTP</h1>
+                    <p class="ca_c">
+                        Enter the OTP sent to your email and reset your password.
+                    </p>
+                    <form onsubmit="verifyOTP(event)">
+                        <input type="hidden" id="email" />
+                        <div class="field">
+                            <input
+                                type="text"
+                                id="otp"
+                                placeholder="ENTER OTP"
+                                required
+                            />
+                        </div>
+                        <div class="field">
+                            <input
+                                type="password"
+                                id="new-password"
+                                placeholder="NEW PASSWORD"
+                                required
+                            />
+                        </div>
+                        <button type="submit" class="card__cta cta">RESET PASSWORD</button>
+                    </form>
+                    <p id="message" style="text-align: center; margin-top: 10px;"></p>
+                </div>
+            </div>
+            <div class="overlay cards__inner"></div>
+        </div>
+    </main>
+
+    <script>
+        // Get email from URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        document.getElementById("email").value = urlParams.get("email");
+
+        async function verifyOTP(event) {
+            event.preventDefault();
+
+            const email = document.getElementById("email").value;
+            const otp = document.getElementById("otp").value;
+            const newPassword = document.getElementById("new-password").value;
+            const message = document.getElementById("message");
+
+            if (!otp || !newPassword) {
+                message.textContent = "All fields are required.";
+                message.style.color = "red";
+                return;
+            }
+
+            const response = await fetch("/reset-password", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email_id: email, otp: otp, new_password: newPassword })
+            });
+
+            const result = await response.json();
+            message.textContent = result.message;
+
+            if (response.ok) {
+                message.style.color = "green";
+                setTimeout(() => {
+                    window.location.href = "/login.html"; // Redirect to login page
+                }, 2000);
+            } else {
+                message.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>
