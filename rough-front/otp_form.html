@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email</title>
+    <style>
+        .error {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<link rel="stylesheet" href="style.css">
+<body>
+<main class="main flow">
+  <!-- <h1 class="main__heading">Pricing</h1> -->
+  <div class="main__cards cards">
+    <div class="cards__inner">
+      <div class="cards__card card">
+        <h1 class="card__heading">VERIFY YOUR EMAIL</h1>
+        <p class="ca_c">One-Time Password has been sent to the provided email.</p>
+        <p id="ca_msg" class="error">> Error Message</p>
+        <div class="field">
+          <form id="otpForm"> 
+            <input type="hidden" id="email" name="email">
+            <input type="text" id="otp" name="otp" maxlength="4" pattern="\d{4}" required>            <!-- <label for="account-login-email" class="screen-reader-only">Email</label> -->
+        </div>
+      
+      </form> 
+        <!-- <div class="forgot-password"> TRY THIS AFTERWARDS
+            <a href="#forgot-password" class="forgot-password-link">Forgot Password?</a>
+        </div> -->
+        <div class="resentOtp">
+            <a href="#" class="resend-otp-link" id="resendOtp">Resend OTP</a>
+        </div>
+    
+        <a href="#" id="submit-otp" class="card__cta cta">VERIFY</a>
+
+      </div>
+    </div>
+    <div class="overlay cards__inner"></div>
+  </div>
+</main>
+  <script src="otp-scirpt.js"></script>
+</body>
+</html>
