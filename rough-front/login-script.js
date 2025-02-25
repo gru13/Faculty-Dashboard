@@ -1,26 +1,3 @@
-//// Get the .card__cta element
-// const cardCta = document.querySelector('.card__cta');
-
-// // Function to be triggered by click or Enter key
-// function handleAction(event) {
-//     // Check if it's a click or an Enter key press
-//     if (event.type === 'click' || (event.type === 'keydown' && event.key === 'Enter')) {
-//         // Your existing logic here
-//         console.log('Action triggered by click or Enter key');
-//     }
-// }
-
-// // Add click event listener
-// cardCta.addEventListener('click', handleAction);
-
-// // Add keydown event listener for the Enter key
-// document.addEventListener('keydown', function(event) {
-//     if (event.key === 'Enter') {
-//         handleAction(event);
-//     }
-// });
-
-
 document.querySelector('.card__cta').addEventListener('click', function(event) {
   event.preventDefault();  // Prevent the default behavior of the anchor tag
 
@@ -42,40 +19,40 @@ document.querySelector('.card__cta').addEventListener('click', function(event) {
   console.log(formData);
 
   // Send data to the server for sign-in
-  fetch('/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(formData)
-  }) 
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      // Show success message
-      showError('> ' + data.success, 'green');
-      // You can redirect to a dashboard or home page here
-      window.location.href = '/dashboard';
-      // console.log('Signed in as:', data.username);
-      // window.location.href = data.redirect;
-    } else {
-      // Show error message from the server
-      showError('> ' + data.error, 'red');
-    }
-    console.log('Response:', data);
-  })
-  .catch(error => {
-    showError('> An error occurred while processing your request.', 'red');
-    console.error('Error:', error);
-  });
+//   fetch('/login', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     body: JSON.stringify(formData)
+//   }) 
+//   .then(response => response.json())
+//   .then(data => {
+//     if (data.success) {
+//       // Show success message
+//       showError('> ' + data.success, 'green');
+//       // You can redirect to a dashboard or home page here
+//       window.location.href = '/dashboard';
+//       // console.log('Signed in as:', data.username);
+//       // window.location.href = data.redirect;
+//     } else {
+//       // Show error message from the server
+//       showError('> ' + data.error, 'red');
+//     }
+//     console.log('Response:', data);
+//   })
+//   .catch(error => {
+//     showError('> An error occurred while processing your request.', 'red');
+//     console.error('Error:', error);
+//   });
  
-  function showError(message, color = 'red') {
-    caMsg.textContent = message;
-    caMsg.style.color = color;
-    caMsg.style.display = 'block';  // Ensure the message element is visible
-  }
+//   function showError(message, color = 'red') {
+//     caMsg.textContent = message;
+//     caMsg.style.color = color;
+//     caMsg.style.display = 'block';  // Ensure the message element is visible
+//   }
   
-});
+// });
 
 // Function to show messages
 

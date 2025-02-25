@@ -39,13 +39,15 @@ db.connect((err) => {
 
 // 📌 Serve Static Files (Frontend)
 app.use(express.static("public"));
+app.use(express.static('rough-front'));
+
 
 // 📌 Route: Home (`/`)
 app.get("/", (req, res) => {
     if (req.session.user) {
         return res.redirect("/dashboard");
     }
-    res.sendFile(__dirname + "/public/login.html");
+    res.sendFile(__dirname + "/rough-front/login.html");
 });
 
 
