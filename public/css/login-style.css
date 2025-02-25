@@ -128,9 +128,9 @@ nav {
 }
 
 .card:nth-child(2) {
-  --hue: 291.34;
-  --saturation: 95.9%;
-  --lightness: 61.76%;
+  --hue: 1667;
+  --saturation: 82.26%;
+  --lightness: 51.37%;
 }
 
 .card:nth-child(3) {
@@ -175,6 +175,23 @@ nav {
   border-radius: 10px;
   font-size: 1rem;
   font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.cta:hover {
+  background-color: #1a1a1a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px #5562da;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cta:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  background-color: #000000;
 }
 
 .field {
@@ -362,4 +379,85 @@ canvas#particleCanvas {
 
 body.gold canvas {
   filter: drop-shadow(2em 4em 0px #d8bd10) drop-shadow(-8em -14em 0px #d8bd10);
+}
+
+input[type=checkbox]{
+	height: 0;
+	width: 0;
+	visibility: hidden;
+}
+
+label {
+	cursor: pointer;
+	text-indent: -9999px;
+	width: 35px;
+	height: 20px;
+	background: grey;
+	display: block;
+	border-radius: 100px;
+	position: relative;
+}
+
+label:after {
+	content: '';
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	width: 10px;
+	height: 10px;
+	background: #fff;
+	border-radius: 90px;
+	transition: 0.3s;
+}
+
+input:checked + label {
+	background: #5562da;
+}
+
+input:checked + label:after {
+	left: calc(100% - 5px);
+	transform: translateX(-100%);
+}
+
+label:active:after {
+	width: 15px;
+}
+
+body {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
+
+.cards__card:first-child {
+  
+  /* Transition for transform only, preserves your existing transitions */
+  transition: transform 0.5s ease, background 400ms ease; 
+}
+
+/* Faculty card styling */
+#facultyDetailsCard {
+  opacity: 0;
+  transform: translateX(20px);
+  pointer-events: none;
+  
+  /* Add transitions for animation properties only */
+  transition: opacity 0.5s ease, transform 0.5s ease, 
+              pointer-events 0s 0.5s, background 400ms ease;
+}
+
+/* When faculty mode is active */
+.faculty-active #facultyDetailsCard {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  
+  transition: opacity 0.5s ease, transform 0.5s ease, 
+              pointer-events 0s, background 400ms ease;
+}
+
+/* Move first card when faculty is active */
+.faculty-active .cards__card:first-child {
+  transform: translateX(-20px); /* Move left slightly */
 }
