@@ -3,44 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login / Sign Up</title>
+    <title>Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        form { max-width: 400px; margin: auto; padding: 20px; border-radius: 10px; background: #f4f4f4; }
+        input { width: 100%; padding: 8px; margin: 10px 0; }
+        button { padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #loginMessage { margin-top: 10px; font-weight: bold; }
+    </style>
 </head>
 <body>
-    <h2 id="formTitle">Login</h2>
 
-    <!-- Login Form -->
+    <h2>Login</h2>
     <form id="loginForm">
         <label for="email">Email:</label>
-        <input type="email" id="email" required>
+        <input type="email" id="email" required autocomplete="email">
 
         <label for="password">Password:</label>
-        <input type="password" id="password" required>
+        <input type="password" id="password" required minlength="8" autocomplete="current-password">
 
+        <p id="loginMessage"></p>
         <button type="submit">Login</button>
     </form>
 
-    <!-- Registration Form (Initially Hidden) -->
-    <form id="registerForm" style="display: none;">
-        <label for="regEmail">Email:</label>
-        <input type="email" id="regEmail" required>
+    <p>Don't have an account? <a href="/register.html">Register here</a></p>
 
-        <label for="regPassword">Password:</label>
-        <input type="password" id="regPassword" required>
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
 
-        <label for="role">Role:</label>
-        <select id="role">
-            <option value="faculty">Faculty</option>
-            <option value="admin">Admin</option>
-        </select>
+            const email_id = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const loginMessage = document.getElementById("loginMessage");
 
-        <button type="submit">Create Account</button>
-    </form>
+            loginMessage.textContent = ""; // Clear old messages
 
-    <!-- Toggle Buttons -->
-    <p id="message"></p>
-    <button id="toggleRegister">Create an account</button>
-    <button id="toggleLogin" style="display: none;">Already have an account? Login</button>
+            if (!email_id || !password) {
+                loginMessage.textContent = "Email and password are required!";
+                loginMessage.style.color = "red";
+                return;
+            }
 
-    <script src="login.js"></script>
+            try {
+                const response = await fetch("/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email_id, password }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    loginMessage.textContent = data.message || "Invalid credentials!";
+                    loginMessage.style.color = "red";
+                    return;
+                }
+
+                alert("Login successful!");
+                window.location.href = "/dashboard"; // Redirect to dashboard
+            } catch (error) {
+                console.error("❌ Login Request Failed:", error);
+                loginMessage.textContent = "Server error. Please try again.";
+                loginMessage.style.color = "red";
+            }
+        });
+    </script>
+
 </body>
 </html>
