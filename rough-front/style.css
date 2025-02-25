@@ -21,7 +21,7 @@ body {
   font-optical-sizing: auto;
   font-weight: 400;
   line-height: 1.2;
-  background-color: #212121;
+  background-color: #dadada;
   color: #ddd;
 }
 
@@ -122,7 +122,7 @@ nav {
 }
 
 .card:nth-child(1) {
-  --hue: 165;
+  --hue: 1667;
   --saturation: 82.26%;
   --lightness: 51.37%;
 }
@@ -330,8 +330,27 @@ nav {
 }
 
 :not(.overlay) > .card:hover {
-  --lightness: 95%;
+  --lightness: 85%;
   background: hsla(var(--hsl), 0.1);
+  color :rgb(0, 0, 0)
+  
+}
+
+.cards__card:hover .field input {
+  --lightness: 85%;
+  color: rgb(0, 0, 0);
+  border-bottom: 2px solid #000000;
+}
+.cards__card:hover .forgot-password-link {
+  color: #000; /* Change to your preferred color */
+}
+
+.cards__card:hover #linkanimation {
+  color: #000; /* Change to your preferred color */
+}
+
+.cards__card:hover #linkanimation::before {
+  background-color: #000; /* Change to your preferred color */
 }
 
 canvas#particleCanvas {
