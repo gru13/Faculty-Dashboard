@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create An Account</title>
+    <style>
+        .error {
+            color: red;
+            display: noNe;
+        }
+    </style>
+</head>
+<link rel="stylesheet" href="style.css">
+<body>
+<main class="main flow">
+  <!-- <h1 class="main__heading">Pricing</h1> -->
+  <div class="main__cards cards">
+    <div class="cards__inner">
+      <div class="cards__card card">
+        <h1 class="card__heading">RESET PASSWORD</h1>
+        <p class="ca_c">Make sure password contains symbols, numbers and <br>
+          different case letters.</p>
+        <p id="ca_msg" class="error">> Error Message</p>
+        <div class="field">
+          <form id="reset-pass-form"> 
+            <input type="password" name="password" id="account-password" autocomplete="off" placeholder="PASSWORD" required>
+            <!-- <label for="account-login-password" class="screen-reader-only">Password</label> -->
+        </div>
+        <div class="field">
+          <input type="password" name="cpassword" id="confirm-password" autocomplete="off" placeholder="CONFIRM PASSWORD" required>
+          <!-- <label for="account-login-password" class="screen-reader-only">Password</label> -->
+      </div>
+        <a href="#afterclick" id="submit-form" class="card__cta cta">RESET PASSWORD</a>
+      
+      </form> 
+      </div>
+    </div>
+    <div class="overlay cards__inner"></div>
+  </div>
+</main>
+  <script src="new_pass.js"></script>
+</body>
+</html>
