@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create An Account</title>
+    <style>
+        .error {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<link rel="stylesheet" href="/css/login-style.css">
+<body>
+<main class="main flow">
+  <!-- <h1 class="main__heading">Pricing</h1> -->
+  <div class="main__cards cards">
+    <div class="cards__inner">
+      <div class="cards__card card">
+        <h1 class="card__heading">Register</h1>
+
+        <p id="ca_msg" class="error">> Error Message</p>
+        <div class="field">
+          <form id="signin-form"> 
+            <input type="email" name="reg-email" id="regEmail" autocorrect="off" autocapitalize="none" autocomplete="on" placeholder="EMAIL" class="">
+            <!-- <label for="account-login-email" class="screen-reader-only">Email</label> -->
+        </div>
+        <div class="field">
+            <input type="password" name="reg-pass" id="regPassword" autocomplete="off" placeholder="PASSWORD" required minlength="8">
+            <!-- <label for="account-login-password" class="screen-reader-only">Password</label> -->
+        </div>
+        <!-- <div class="forgot-password">
+            <a href="#forgot-password" class="forgot-password-link">Forgot Password?</a>
+        </div> -->
+        <div class="field-container">
+          <span class="text">Are you a faculty?</span>
+          <input type="checkbox" id="switch" /><label for="switch">Toggle</label>
+        </div>
+        <div class="forgot-password">
+          <span class="text"><a href="login.html" id="linkanimation" class="forgot-password-link">Already have an account?</a>
+        </span>
+        </div>
+        <a href="#login" id="signsubmit" class="card__cta cta">REGISTER</a>
+      </div>
+    </form>
+      <div class="cards__card card" id="facultyDetailsCard">
+
+        <h1 class="card__heading">Faculty Details</h1>
+        <p class="ca_c">Enter your Details! If needed later on, you can change it in your profile page.</p>
+        <div class="field"> 
+        <form id="create-account-form"> 
+          <input type="text" name="name" id="name" autocorrect="off" autocapitalize="none" autocomplete="on" placeholder="NAME"  required>
+          
+        </div>
+        <div class="field-container">
+          <div class="field">
+              <input type="text" name="degree" id="degree" autocorrect="off" autocapitalize="none" autocomplete="on" placeholder="DEGREE" required>
+          </div>
+          <div class="field">
+              <input type="text" name="department" id="department" autocorrect="off" autocapitalize="none" placeholder="DEPARTMENT" required>
+          </div>
+        </div>
+        
+        <div class="field"> 
+            <input type="text" name="mobile" id="mobile" autocorrect="off" autocapitalize="none" autocomplete="on" placeholder="MOBILE"  required>
+        </div>
+      </form> 
+     </div>
+  
+    </div>
+    
+  </div>
+</main>
+  <script src="/js/register-script.js"></script>
+</body>
+</html>
