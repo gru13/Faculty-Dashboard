@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Profile</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Faculty Profile</h2>
+        <div class="profile">
+            <label>Name:</label> <span id="facultyName"></span><br>
+            <label>Email:</label> <span id="facultyEmail"></span><br>
+            <label>Department:</label> <span id="facultyDepartment"></span><br>
+            <label>Phone:</label> <span id="facultyPhone"></span><br>
+            <button onclick="editProfile()">Edit</button>
+        </div>
+
+        <div id="editForm" class="hidden">
+            <h3>Edit Profile</h3>
+            <form id="profileForm">
+                <label>Name:</label>
+                <input type="text" id="editName"><br>
+                <label>Department:</label>
+                <input type="text" id="editDepartment"><br>
+                <label>Phone:</label>
+                <input type="text" id="editPhone"><br>
+                <button type="submit">Save</button>
+                <button type="button" onclick="cancelEdit()">Cancel</button>
+            </form>
+        </div>
+    </div>
+    <script src="../js/faculty-profile.js"></script>
+</body>
+</html>
