@@ -1,24 +1,24 @@
-document.querySelector('.card__cta').addEventListener('click', function(event) {
-  event.preventDefault();  // Prevent the default behavior of the anchor tag
+// document.querySelector('.card__cta').addEventListener('click', function(event) {
+//   event.preventDefault();  // Prevent the default behavior of the anchor tag
 
-  const formData = {
-    email_id: document.querySelector('input[name="customer-email"]').value.trim(),
-    password: document.querySelector('input[name="customer-pass"]').value.trim(),
-  };
+//   const formData = {
+//     email_id: document.querySelector('input[name="customer-email"]').value.trim(),
+//     password: document.querySelector('input[name="customer-pass"]').value.trim(),
+//   };
 
-  const caMsg = document.getElementById('ca_msg');
+//   const caMsg = document.getElementById('ca_msg');
 
-  // Validate that none of the fields are empty
-  for (const key in formData) {
-    if (!formData[key]) {
-      showError(`> ${key.replace('_', ' ')} is required.`, 'red');
-      return;  // Stop further execution if any field is empty
-    }
-  }
+//   // Validate that none of the fields are empty
+//   for (const key in formData) {
+//     if (!formData[key]) {
+//       showError(`> ${key.replace('_', ' ')} is required.`, 'red');
+//       return;  // Stop further execution if any field is empty
+//     }
+//   }
 
-  console.log(formData);
-
-  // Send data to the server for sign-in
+//   console.log(formData);
+  
+// // Send data to the server for sign-in
 //   fetch('/login', {
 //     method: 'POST',
 //     headers: {
@@ -53,6 +53,108 @@ document.querySelector('.card__cta').addEventListener('click', function(event) {
 //   }
   
 // });
+
+// document.querySelector('.card__cta').addEventListener('click', function(event) {
+//   event.preventDefault();  // Prevent default anchor behavior
+
+//   const formData = {
+//     email_id: document.querySelector('input[name="customer-email"]').value.trim(),
+//     password: document.querySelector('input[name="customer-pass"]').value.trim(),
+//   };
+
+//   const caMsg = document.getElementById('ca_msg');
+
+//   // Validate input fields
+//   if (!formData.email_id || !formData.password) {
+//     showError("> Email and password are required!", "red");
+//     return;
+//   }
+
+//   console.log("Sending login request with data:", formData);
+
+//   fetch('/login', {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify(formData)
+//   })
+//   .then(response => response.json())
+//   .then(data => {
+//     if (data.success) {
+//       showError("> " + data.success, "green");
+//       window.location.href = '/dashboard'; // Redirect
+//     } else {
+//       showError("> " + (data.message || "Invalid credentials!"), "red");
+//     }
+//     console.log("Response:", data);
+//   })
+//   .catch(error => {
+//     showError("> An error occurred while processing your request.", "red");
+//     console.error("Error:", error);
+//   });
+
+//   function showError(message, color = "red") {
+//     if (caMsg) {
+//       caMsg.textContent = message;
+//       caMsg.style.color = color;
+//       caMsg.style.display = "block";  
+//     }
+//   }
+// });
+  
+
+
+document.querySelector('.card__cta').addEventListener('click', function(event) {
+  event.preventDefault();  // Prevent default behavior
+
+  const formData = {
+    email_id: document.querySelector('input[name="customer-email"]').value.trim(),
+    password: document.querySelector('input[name="customer-pass"]').value.trim(),
+  };
+
+  const caMsg = document.getElementById('ca_msg');
+
+  // Validate input fields
+  if (!formData.email_id || !formData.password) {
+    showError("> Email and password are required!", "red");
+    return;
+  }
+
+  console.log("Sending login request with data:", formData);
+
+  fetch('/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(formData)
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Response:", data);
+
+    if (data.message === "Login successful") {
+      showError("> Login successful! Redirecting...", "green");
+
+      // Wait 1 second before redirecting to let the message be visible
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 1000);
+    } else {
+      showError("> " + (data.message || "Invalid credentials!"), "red");
+    }
+  })
+  .catch(error => {
+    showError("> An error occurred while processing your request.", "red");
+    console.error("Error:", error);
+  });
+
+  function showError(message, color = "red") {
+    if (caMsg) {
+      caMsg.textContent = message;
+      caMsg.style.color = color;
+      caMsg.style.display = "block";  
+    }
+  }
+});
+
 
 // Function to show messages
 
