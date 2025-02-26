@@ -4,12 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Faculty Profile</title>
-    <!-- <link rel="stylesheet" href="../css/styles.css"> -->
+    <!-- <link rel="stylesheet" href="../css/styles.css">  --> 
+     <style>
+        .hidden {
+            display: none;
+        }        
+     </style> 
 </head>
 <body>
     <div class="container">
         <h2>Faculty Profile</h2>
+
         <div class="profile">
+            <img id="facultyProfilePic" src="" alt="Profile Picture" width="100"><br>
             <label>Name:</label> <span id="facultyName"></span><br>
             <label>Email:</label> <span id="facultyEmail"></span><br>
             <label>Department:</label> <span id="facultyDepartment"></span><br>
@@ -19,18 +26,26 @@
 
         <div id="editForm" class="hidden">
             <h3>Edit Profile</h3>
-            <form id="profileForm">
+            <form id="profileForm" enctype="multipart/form-data">
+                <label>Profile Picture:</label>
+                <input type="file" id="editProfilePic" accept="image/*"><br>
+                <img id="previewImage" src="" alt="Profile Preview" width="100"><br>
+
                 <label>Name:</label>
                 <input type="text" id="editName"><br>
+
                 <label>Department:</label>
                 <input type="text" id="editDepartment"><br>
+
                 <label>Phone:</label>
                 <input type="text" id="editPhone"><br>
+
                 <button type="submit">Save</button>
                 <button type="button" onclick="cancelEdit()">Cancel</button>
             </form>
         </div>
     </div>
+
     <script src="../js/faculty-profile.js"></script>
 </body>
 </html>

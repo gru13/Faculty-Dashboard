@@ -99,14 +99,16 @@ INSERT INTO Login (email_id, password, role) VALUES
 ('faculty3@example.com', '$2b$10$PeB5G.W1H0fQIjfJR.AkA.lkrUgX/UMcx/Y72yS0QI7m4CgcPUn/i', 'faculty'),
 ('admin1@example.com', '$2b$10$PeB5G.W1H0fQIjfJR.AkA.lkrUgX/UMcx/Y72yS0QI7m4CgcPUn/i', 'admin'),
 ('admin2@example.com', '$2b$10$PeB5G.W1H0fQIjfJR.AkA.lkrUgX/UMcx/Y72yS0QI7m4CgcPUn/i', 'admin');
+('guruprasath1302@gmail.com', '$2b$10$PeB5G.W1H0fQIjfJR.AkA.lkrUgX/UMcx/Y72yS0QI7m4CgcPUn/i', 'faculty');
 
 -- Insert Data into Faculty Table
 INSERT INTO Faculty (faculty_id, email_id, name, mobile_no, degree, profile_pic, department) VALUES
-(1, 'faculty1@example.com', 'Alice Johnson', '9876543210', 'PhD CS', 'alice.jpg', 'CS'),
-(2, 'faculty2@example.com', 'Bob Smith', '9876543211', 'PhD Math', 'bob.jpg', 'Math'),
-(3, 'faculty3@example.com', 'Charlie Brown', '9876543212', 'PhD Physics', 'charlie.jpg', 'Physics'),
-(4, 'faculty4@example.com', 'David White', '9876543213', 'PhD Chemistry', 'david.jpg', 'Chemistry'),
-(5, 'faculty5@example.com', 'Emma Black', '9876543214', 'PhD Biology', 'emma.jpg', 'Biology');
+(1, 'faculty1@example.com', 'Alice Johnson', '9876543210', 'PhD CS', '/uploads/default.png', 'CS'),
+(2, 'faculty2@example.com', 'Bob Smith', '9876543211', 'PhD Math', '/uploads/default.png', 'Math'),
+(3, 'faculty3@example.com', 'Charlie Brown', '9876543212', 'PhD Physics', '/uploads/default.png', 'Physics'),
+(4, 'faculty4@example.com', 'David White', '9876543213', 'PhD Chemistry', '/uploads/default.png', 'Chemistry'),
+(5, 'faculty5@example.com', 'Emma Black', '9876543214', 'PhD Biology', '/uploads/default.png', 'Biology'),
+(6, 'guruprasath1302@gmail.com', 'Guruprasath M R', '8148781026','PhD AIE', '/uploads/default.png', 'AIE');
 
 -- Insert Data into Class List
 INSERT INTO class_list (class_id, class_name) VALUES
@@ -123,7 +125,6 @@ INSERT INTO courses (course_id, course_name, class_id, faculty_id, resources_lin
 (203, 'Quantum Physics', 103, 3, 'quantum.pdf'),
 (204, 'Organic Chemistry', 104, 4, 'organic_chem.pdf'),
 (205, 'Genetics', 105, 5, 'genetics_resources.pdf');
-INSERT INTO courses (course_id, course_name, class_id, faculty_id, resources_link) VALUES (206, 'DAA', 102, 1, 'DAA.pdf');
 
 -- Insert Data into Students
 INSERT INTO students (roll_no, name, class_id) VALUES
