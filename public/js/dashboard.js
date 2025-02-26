@@ -12,19 +12,23 @@ document.addEventListener("DOMContentLoaded", function () {
             const courseList = document.getElementById("courseList");
             courseList.innerHTML = ""; // Clear previous data
 
+            if (data.courses.length === 0) {
+                courseList.textContent = "No courses available.";
+                return;
+            }
+
             // Create table element
             const table = document.createElement("table");
             table.border = "1"; // Add border for visibility
 
-            // Create table header
+            // Create table header dynamically
             const thead = document.createElement("thead");
             const headerRow = document.createElement("tr");
 
-            // Define column names (adjust based on actual DB fields)
-            const columns = ["Course Name", "Course ID", "Class ID", "Faculty ID", "Resources Link"];
+            const columns = Object.keys(data.courses[0]); // Get field names dynamically
             columns.forEach(colName => {
                 const th = document.createElement("th");
-                th.textContent = colName;
+                th.textContent = colName.replace(/_/g, " "); // Format column names
                 headerRow.appendChild(th);
             });
             thead.appendChild(headerRow);
@@ -37,11 +41,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 row.style.cursor = "pointer"; // Make it clickable
                 row.dataset.courseId = course.course_id; // Store course_id in dataset
 
-                // Add each field as a cell
-                const fields = [course.course_name, course.course_id, course.class_id, course.faculty_id, course.resources_link];
-                fields.forEach(field => {
+                columns.forEach(field => {
                     const td = document.createElement("td");
-                    td.textContent = field;
+                    td.textContent = course[field] !== null ? course[field] : "N/A"; // Handle null values
                     row.appendChild(td);
                 });
 

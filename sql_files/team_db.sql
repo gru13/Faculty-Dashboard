@@ -99,7 +99,6 @@ INSERT INTO Login (email_id, password, role) VALUES
 ('faculty3@example.com', '$2b$10$PeB5G.W1H0fQIjfJR.AkA.lkrUgX/UMcx/Y72yS0QI7m4CgcPUn/i', 'faculty'),
 ('admin1@example.com', '$2b$10$PeB5G.W1H0fQIjfJR.AkA.lkrUgX/UMcx/Y72yS0QI7m4CgcPUn/i', 'admin'),
 ('admin2@example.com', '$2b$10$PeB5G.W1H0fQIjfJR.AkA.lkrUgX/UMcx/Y72yS0QI7m4CgcPUn/i', 'admin');
-('guruprasath1302@gmail.com', '$2b$10$PeB5G.W1H0fQIjfJR.AkA.lkrUgX/UMcx/Y72yS0QI7m4CgcPUn/i', 'faculty');
 
 -- Insert Data into Faculty Table
 INSERT INTO Faculty (faculty_id, email_id, name, mobile_no, degree, profile_pic, department) VALUES
@@ -124,6 +123,7 @@ INSERT INTO courses (course_id, course_name, class_id, faculty_id, resources_lin
 (203, 'Quantum Physics', 103, 3, 'quantum.pdf'),
 (204, 'Organic Chemistry', 104, 4, 'organic_chem.pdf'),
 (205, 'Genetics', 105, 5, 'genetics_resources.pdf');
+INSERT INTO courses (course_id, course_name, class_id, faculty_id, resources_link) VALUES (206, 'DAA', 102, 1, 'DAA.pdf');
 
 -- Insert Data into Students
 INSERT INTO students (roll_no, name, class_id) VALUES
@@ -172,3 +172,42 @@ INSERT INTO course_deadlines (course_id, date, deadline_name) VALUES
 (203, '2025-03-03 23:59:59', 'Assignment 3'),
 (204, '2025-03-04 23:59:59', 'Assignment 4'),
 (205, '2025-03-05 23:59:59', 'Assignment 5');
+
+
+-- Timetable Table
+CREATE TABLE timetable (
+    date DATE NOT NULL,
+    slot INT CHECK (slot BETWEEN 1 AND 7) NOT NULL,
+    faculty_id INT NOT NULL,
+    course_id INT NOT NULL,
+    class_id INT NOT NULL
+);
+
+-- Academic Calendar Table
+CREATE TABLE academic_calendar (
+    date DATE NOT NULL,
+    work_description VARCHAR(255) NOT NULL,
+    course_id INT NOT NULL,
+    faculty_id INT NOT NULL
+);
+
+-- Insert Dummy Data into Timetable
+INSERT INTO timetable (date, slot, faculty_id, course_id, class_id) VALUES
+('2025-02-27', 1, 1, 201, 101),
+('2025-02-27', 2, 2, 202, 102),
+('2025-02-27', 3, 3, 203, 103),
+('2025-02-28', 4, 4, 204, 104),
+('2025-02-28', 5, 5, 205, 105),
+('2025-03-01', 6, 1, 201, 101),
+('2025-03-01', 7, 2, 202, 102);
+
+-- Insert Dummy Data into Academic Calendar
+INSERT INTO academic_calendar (date, work_description, course_id, faculty_id) VALUES
+('2025-03-05', 'Assignment 1 submission deadline', 201, 1),
+('2025-03-10', 'Midterm Exam', 202, 2),
+('2025-03-15', 'Lab Practical Exam', 203, 3),
+('2025-03-20', 'Assignment 2 submission deadline', 204, 4),
+('2025-03-25', 'Final Project Submission', 205, 5),
+('2025-04-01', 'End Semester Exams Begin', 201, 1),
+('2025-04-15', 'End Semester Exams End', 202, 2);
+
