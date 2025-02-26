@@ -28,31 +28,21 @@ router.get("/dashboard/data", async (req, res) => {
         );
 
         // Fetch Time Table
-        // const [timeTableResult] = await db.promise().query(
-        //     "SELECT timetable FROM FacultyTimeTable WHERE faculty_id = ?", 
-        //     [faculty_id]
-        // );
-        // const timeTable = timeTableResult.length ? timeTableResult[0].timetable : null;
+        const [timeTable] = await db.promise().query(
+            "SELECT * FROM timetable WHERE faculty_id = ?", 
+            [faculty_id]
+        );
 
-        // // Fetch Academic Calendar
-        // const [academicCalendarResult] = await db.promise().query(
-        //     "SELECT calendar FROM AcademicCalendar WHERE faculty_id = ?", 
-        //     [faculty_id]
-        // );
-        // const academicCalendar = academicCalendarResult.length ? academicCalendarResult[0].calendar : null;
-
-        // // Fetch Notifications
-        // const [notificationsResult] = await db.promise().query(
-        //     "SELECT message FROM Notifications WHERE faculty_id = ?", 
-        //     [faculty_id]
-        // );
-        // const notifications = notificationsResult.map(n => n.message);
+        // Fetch Academic Calendar
+        const [academicCalendar] = await db.promise().query(
+            "SELECT * FROM academic_calendar WHERE faculty_id = ?", 
+            [faculty_id]
+        );
 
         res.json({
             courses,
-            // timeTable,
-            // academicCalendar,
-            // notifications
+            timeTable,
+            academicCalendar
         });
 
     } catch (error) {
