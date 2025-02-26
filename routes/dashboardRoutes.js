@@ -72,6 +72,7 @@ router.post("/dashboard/select-course", (req, res) => {
         return res.status(400).json({ error: "Course ID is required" });
     }
 
+    console.log(course_id);
     req.session.course_id = course_id; // Store course_id in session
     res.json({ success: true });
 });
