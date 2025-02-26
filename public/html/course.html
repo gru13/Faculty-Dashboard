@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Page</title>
+</head>
+<body>
+    <h1 id="course-name"></h1>
+    <p><strong>Faculty:</strong> <span id="faculty-name"></span></p>
+    <p><strong>Class:</strong> <span id="class-name"></span></p>
+    <h2>Students</h2>
+    <ul id="students-list"></ul>
+
+    <script>
+        // Extract course_id from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get("course_id");
+
+        if (!courseId) {
+            alert("Course ID missing!");
+            window.location.href = "/";
+        }
+
+        // Fetch Course Data
+        fetch(`/course/data?course_id=${courseId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("course-name").innerText = data.course.course_name;
+                document.getElementById("faculty-name").innerText = data.course.faculty_name;
+                document.getElementById("class-name").innerText = data.course.class_name;
+
+                // Populate Students List
+                const studentsList = document.getElementById("students-list");
+                data.students.forEach(student => {
+                    const li = document.createElement("li");
+                    li.innerText = `${student.roll_no} - ${student.name}`;
+                    studentsList.appendChild(li);
+                });
+            })
+            .catch(error => console.error("Error loading course data:", error));
+    </script>
+</body>
+</html>

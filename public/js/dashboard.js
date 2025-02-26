@@ -60,7 +60,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     .then(response => response.json())
                     .then(result => {
                         if (result.success) {
-                            window.location.href = "/course_page";
+                            window.location.href = `/course?course_id=${courseId}`;
+
                         } else {
                             alert("Error selecting course");
                         }
