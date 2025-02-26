@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <link rel="stylesheet" href="Profile_new.css">
+</head>
+<body>
+    <div class="logout-popup" id="logoutPopup">
+        <div class="popup-content">
+          <p>Are you sure you want to logout?</p>
+          <div class="popup-buttons">
+            <button id="confirmLogout">Yes, logout</button>
+            <button id="cancelLogout">Cancel</button>
+          </div>
+        </div>
+    </div>
+    <div class="container">
+        <!-- Sidebar -->
+        <!-- Replace the existing sidebar div with this -->
+        <div class="sidebar">
+            <!-- Top Section -->
+            <div class="sidebar-section">
+                <button class="sidebar-icon">
+                    <span class="material-symbols-rounded">school</span>
+                </button>
+            </div>
+
+            <!-- Middle Section -->
+            <div class="sidebar-section">
+                <button class="sidebar-icon">
+                    <span class="material-symbols-rounded">home</span>
+                </button>
+                <button class="sidebar-icon">
+                    <span class="material-symbols-rounded">person</span>
+                </button>
+            </div>
+
+            <!-- Bottom Section -->
+            <div class="sidebar-section">
+                <button class="sidebar-icon logout">
+                    <span class="material-symbols-rounded">logout</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Info Box -->
+            <div class="box info-box">
+                <h2>User Information</h2>
+                <p id="ca_msg" class="error">> Error Message</p>
+                <button class="cancel-button">
+                    Cancel
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+                <button class="edit-button">
+                    Edit Details
+                    <span class="material-symbols-rounded">edit</span>
+                </button>
+                <form id="profileForm">
+                <div class="profile-details">
+                    <div class="profile-field">
+                        <span class="field-label">Name</span>
+                        <span class="field-value first-name">John Doe</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Department</span>
+                        <span class="field-value department">AIE</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Mobile</span>
+                        <span class="field-value mobile">1234567890</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Email</span>
+                        <span class="field-value email">john.doe@example.com</span>
+                    </div>
+                </div>
+            </form>
+            </div>
+
+            <!-- Profile Box -->
+            <div class="box profile-box">
+                <div class="profile-image"></div>
+                <h3>John Doe</h3>
+                <p class="text-gray">Software Developer</p>
+            </div>
+
+            <!-- Skills Box -->
+            <div class="box skills-box">
+                <h3>Skills</h3>
+                <ul class="text-gray">
+                    <li>JavaScript</li>
+                    <li>HTML/CSS</li>
+                    <li>React</li>
+                </ul>
+            </div>
+
+            <div class="box skills-box">
+                <h3>Skills</h3>
+                <ul class="text-gray">
+                    <li>JavaScript</li>
+                    <li>HTML/CSS</li>
+                    <li>React</li>
+                </ul>
+            </div>
+
+            
+            <!-- Activity Box -->
+            <div class="box recent-box">
+                <h3>Recent Activity</h3>
+                <p class="text-gray">Posted new project 2 hours ago</p>
+            </div>
+
+            <!-- Empty Box -->
+            <div class="box empty-box">
+                <p>Empty Box</p>
+            </div>
+        </div>
+    </div>
+    <script src="Profile_new.js"></script>
+</body>
+</html>
