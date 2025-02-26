@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const headerRow = document.createElement("tr");
 
             // Define column names (adjust based on actual DB fields)
-            const columns = ["Course Name", "Course id", "Class ID", "Faculty ID", "Resources Link"];
+            const columns = ["Course Name", "Course ID", "Class ID", "Faculty ID", "Resources Link"];
             columns.forEach(colName => {
                 const th = document.createElement("th");
                 th.textContent = colName;
@@ -34,6 +34,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const tbody = document.createElement("tbody");
             data.courses.forEach(course => {
                 const row = document.createElement("tr");
+                row.style.cursor = "pointer"; // Make it clickable
+                row.dataset.courseId = course.course_id; // Store course_id in dataset
 
                 // Add each field as a cell
                 const fields = [course.course_name, course.course_id, course.class_id, course.faculty_id, course.resources_link];
@@ -43,12 +45,32 @@ document.addEventListener("DOMContentLoaded", function () {
                     row.appendChild(td);
                 });
 
+                // Click event to navigate to course page
+                row.addEventListener("click", function () {
+                    const courseId = this.dataset.courseId;
+                    
+                    // Store course_id in session
+                    fetch("/dashboard/select-course", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ course_id: courseId })
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            window.location.href = "/course_page";
+                        } else {
+                            alert("Error selecting course");
+                        }
+                    })
+                    .catch(error => console.error("Error selecting course:", error));
+                });
+
                 tbody.appendChild(row);
             });
 
             table.appendChild(tbody);
-            courseList.appendChild(table); // Append the table to the container
-
+            courseList.appendChild(table);
 
             // Populate Time Table
             document.getElementById("timeTable").textContent = data.timeTable || "No timetable available.";

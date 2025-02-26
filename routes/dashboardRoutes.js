@@ -61,4 +61,19 @@ router.get("/dashboard/data", async (req, res) => {
     }
 });
 
+// API to Select Course and Store in Session
+router.post("/dashboard/select-course", (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    const { course_id } = req.body;
+    if (!course_id) {
+        return res.status(400).json({ error: "Course ID is required" });
+    }
+
+    req.session.course_id = course_id; // Store course_id in session
+    res.json({ success: true });
+});
+
 module.exports = router;
