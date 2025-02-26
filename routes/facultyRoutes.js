@@ -4,61 +4,43 @@ const db = require("../config/db");
 
 const router = express.Router();
 
-// Serve Dashboard Page
-router.get("/dashboard", (req, res) => {
+// Serve Faculty Page
+router.get("/faculty", (req, res) => {
     if (!req.session.user) {
         return res.redirect("/");
     }
-    res.sendFile(path.join(__dirname, "../public/html/dashboard.html"));
+    res.sendFile(path.join(__dirname, "../public/html/faculty-profile.html"));
 });
 
-// API to Fetch Dashboard Data
-router.get("/dashboard/data", async (req, res) => {
+router.get("/session-data", (req, res) => {
     if (!req.session.user) {
-        return res.json({ error: "Not authenticated" });
+        return res.status(401).json({ message: "Not logged in" });
     }
-
-    const faculty_id = req.session.user.faculty_id;
-
-    try {
-        // Fetch Courses
-        const [courses] = await db.promise().query(
-            "SELECT * FROM courses WHERE faculty_id = ?", 
-            [faculty_id]
-        );
-
-        // Fetch Time Table
-        // const [timeTableResult] = await db.promise().query(
-        //     "SELECT timetable FROM FacultyTimeTable WHERE faculty_id = ?", 
-        //     [faculty_id]
-        // );
-        // const timeTable = timeTableResult.length ? timeTableResult[0].timetable : null;
-
-        // // Fetch Academic Calendar
-        // const [academicCalendarResult] = await db.promise().query(
-        //     "SELECT calendar FROM AcademicCalendar WHERE faculty_id = ?", 
-        //     [faculty_id]
-        // );
-        // const academicCalendar = academicCalendarResult.length ? academicCalendarResult[0].calendar : null;
-
-        // // Fetch Notifications
-        // const [notificationsResult] = await db.promise().query(
-        //     "SELECT message FROM Notifications WHERE faculty_id = ?", 
-        //     [faculty_id]
-        // );
-        // const notifications = notificationsResult.map(n => n.message);
-
-        res.json({
-            courses,
-            // timeTable,
-            // academicCalendar,
-            // notifications
-        });
-
-    } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
+    console.log(req.session.user);
+    res.json({ user: req.session.user });
 });
+
+router.post("/update-profile", (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ message: "Not logged in" });
+    }
+
+    const { name, department, mobile_no } = req.body;
+    const email_id = req.session.user.email_id;
+
+    const query = `UPDATE Faculty SET name=?, department=?, mobile_no=? WHERE email_id=?`;
+
+    db.query(query, [name, department, mobile_no, email_id], (err, result) => {
+        if (err) return res.status(500).json({ message: "Database error" });
+
+        // Update session with new data
+        req.session.user.name = name;
+        req.session.user.department = department;
+        req.session.user.mobile_no = mobile_no;
+
+        res.json({ message: "Profile updated successfully", user: req.session.user });
+    });
+});
+
 
 module.exports = router;

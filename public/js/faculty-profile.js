@@ -1,62 +1,76 @@
-document.addEventListener("DOMContentLoaded", function () {
-    fetchProfile();
+document.addEventListener("DOMContentLoaded", async function () {
+    try {
+        const response = await fetch("/session-data"); // API to get session user data
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to fetch session data");
+        }
+
+        if (!data.user) {
+            window.location.href = "/login.html"; // Redirect to login if no session
+            return;
+        }
+
+        // Set session data to UI
+        document.getElementById("facultyName").textContent = data.user.name || "N/A";
+        document.getElementById("facultyEmail").textContent = data.user.email_id || "N/A";
+        document.getElementById("facultyDepartment").textContent = data.user.department || "N/A";
+        document.getElementById("facultyPhone").textContent = data.user.mobile_no || "N/A";
+
+        // Store data for editing
+        sessionStorage.setItem("facultyData", JSON.stringify(data.user));
+    } catch (error) {
+        console.error("Error fetching profile:", error);
+    }
 });
 
-// ✅ Fetch Faculty Profile Data
-function fetchProfile() {
-    fetch("/profile")
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                alert(data.error);
-                return;
-            }
-            document.getElementById("facultyName").textContent = data.name;
-            document.getElementById("facultyEmail").textContent = data.email;
-            document.getElementById("facultyDepartment").textContent = data.department;
-            document.getElementById("facultyPhone").textContent = data.phone;
-        })
-        .catch(error => console.error("Error fetching profile:", error));
-}
-
-// ✅ Edit Profile Function
 function editProfile() {
-    document.getElementById("editForm").classList.remove("hidden");
+    const user = JSON.parse(sessionStorage.getItem("facultyData"));
 
-    document.getElementById("editName").value = document.getElementById("facultyName").textContent;
-    document.getElementById("editDepartment").value = document.getElementById("facultyDepartment").textContent;
-    document.getElementById("editPhone").value = document.getElementById("facultyPhone").textContent;
+    if (!user) {
+        alert("No profile data found.");
+        return;
+    }
+
+    document.getElementById("editName").value = user.name || "";
+    document.getElementById("editDepartment").value = user.department || "";
+    document.getElementById("editPhone").value = user.mobile_no || "";
+
+    document.querySelector(".profile").style.display = "none";
+    document.getElementById("editForm").style.display = "block";
 }
 
-// ✅ Cancel Edit Function
 function cancelEdit() {
-    document.getElementById("editForm").classList.add("hidden");
+    document.getElementById("editForm").style.display = "none";
+    document.querySelector(".profile").style.display = "block";
 }
 
-// ✅ Save Edited Profile
-document.getElementById("profileForm").addEventListener("submit", function (event) {
+document.getElementById("profileForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
-    const updatedData = {
+    const updatedProfile = {
         name: document.getElementById("editName").value,
         department: document.getElementById("editDepartment").value,
-        phone: document.getElementById("editPhone").value
+        mobile_no: document.getElementById("editPhone").value
     };
 
-    fetch("/profile", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert("Profile updated!");
-            fetchProfile(); // Refresh UI
-            document.getElementById("editForm").classList.add("hidden");
-        } else {
-            alert("Update failed: " + data.error);
+    try {
+        const response = await fetch("/update-profile", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedProfile)
+        });
+
+        const result = await response.json();
+        alert(result.message);
+
+        if (response.ok) {
+            sessionStorage.setItem("facultyData", JSON.stringify({ ...JSON.parse(sessionStorage.getItem("facultyData")), ...updatedProfile }));
+            window.location.reload(); // Refresh to update UI
         }
-    })
-    .catch(error => console.error("Error updating profile:", error));
+    } catch (error) {
+        console.error("Update failed:", error);
+        alert("Failed to update profile.");
+    }
 });
