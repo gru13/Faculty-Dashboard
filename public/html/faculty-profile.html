@@ -3,49 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faculty Profile</title>
-    <!-- <link rel="stylesheet" href="../css/styles.css">  --> 
-     <style>
-        .hidden {
-            display: none;
-        }        
-     </style> 
+    <title>Profile Page</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded&text=schoolhomepersonlogouteditsaveclose">
+    <link rel="stylesheet" href="../css/profile-style.css">
 </head>
 <body>
-    <div class="container">
-        <h2>Faculty Profile</h2>
-
-        <div class="profile">
-            <img id="facultyProfilePic" src="" alt="Profile Picture" width="100"><br>
-            <label>Name:</label> <span id="facultyName"></span><br>
-            <label>Email:</label> <span id="facultyEmail"></span><br>
-            <label>Department:</label> <span id="facultyDepartment"></span><br>
-            <label>Phone:</label> <span id="facultyPhone"></span><br>
-            <button onclick="editProfile()">Edit</button>
-        </div>
-
-        <div id="editForm" class="hidden">
-            <h3>Edit Profile</h3>
-            <form id="profileForm" enctype="multipart/form-data">
-                <label>Profile Picture:</label>
-                <input type="file" id="editProfilePic" accept="image/*"><br>
-                <img id="previewImage" src="" alt="Profile Preview" width="100"><br>
-
-                <label>Name:</label>
-                <input type="text" id="editName"><br>
-
-                <label>Department:</label>
-                <input type="text" id="editDepartment"><br>
-
-                <label>Phone:</label>
-                <input type="text" id="editPhone"><br>
-
-                <button type="submit">Save</button>
-                <button type="button" onclick="cancelEdit()">Cancel</button>
-            </form>
+    <div class="logout-popup" id="logoutPopup">
+        <div class="popup-content">
+          <p>Are you sure you want to logout?</p>
+          <div class="popup-buttons">
+            <button id="confirmLogout">Yes, logout</button>
+            <button id="cancelLogout">Cancel</button>
+          </div>
         </div>
     </div>
+    <div class="container">
+        <!-- Sidebar -->
+        <!-- Replace the existing sidebar div with this -->
+        <div class="sidebar">
+            <!-- Top Section -->
+            <div class="sidebar-section">
+                <button class="sidebar-icon">
+                    <span class="material-symbols-rounded">school</span>
+                </button>
+            </div>
 
+            <!-- Middle Section -->
+            <div class="sidebar-section">
+                <button class="sidebar-icon">
+                    <span class="material-symbols-rounded">home</span>
+                </button>
+                <button class="sidebar-icon">
+                    <span class="material-symbols-rounded">person</span>
+                </button>
+            </div>
+
+            <!-- Bottom Section -->
+            <div class="sidebar-section">
+                <button class="sidebar-icon logout">
+                    <span class="material-symbols-rounded">logout</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Info Box -->
+            <div class="box info-box">
+                <h2>User Information</h2>
+                <p id="ca_msg" class="error">> Error Message</p>
+                <button class="cancel-button">
+                    Cancel
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+                <button class="edit-button">
+                    Edit Details
+                    <span class="material-symbols-rounded">edit</span>
+                </button>
+                <form id="profileForm">
+                <div class="profile-details">
+                    <div class="profile-field">
+                        <span class="field-label">Name</span>
+                        <span class="field-value first-name">John Doe</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Department</span>
+                        <span class="field-value department">AIE</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Mobile</span>
+                        <span class="field-value mobile">1234567890</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Email</span>
+                        <span class="field-value email">john.doe@example.com</span>
+                    </div>
+                </div>
+            </form>
+            </div>
+
+            <!-- Profile Box -->
+            <div class="box profile-box">
+                <p id="img_msg" class="error">> Error Message</p>
+                <div class="profile-image-container">
+                    
+                    <div class="profile-image">
+                        <img id="profilePreview" src="#" alt="" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 16px;">
+                    </div>
+                    <input type="file" id="profilePicInput" accept="image/*" style="display: none;">
+                    <button class="edit-profile-pic">
+                        <span class="material-symbols-rounded">edit</span>
+                    </button>
+                    <div class="profile-pic-actions" style="display: none;">
+                        <span class="selected-file"></span>
+                        <button class="save-profile-pic">
+                            Save
+                            <span class="material-symbols-rounded">save</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <span class="field-label role">JOB</span>
+                <span class="field-value first-name-profile">John Doe</span>
+                
+            </div>
+
+            <!-- Skills Box -->
+            <div class="box skills-box">
+                <h3>Skills</h3>
+                <ul class="text-gray">
+                    <li>JavaScript</li>
+                    <li>HTML/CSS</li>
+                    <li>React</li>
+                </ul>
+            </div>
+
+            <div class="box skills-box">
+                <h3>Skills</h3>
+                <ul class="text-gray">
+                    <li>JavaScript</li>
+                    <li>HTML/CSS</li>
+                    <li>React</li>
+                </ul>
+            </div>
+
+            
+            <!-- Activity Box -->
+            <div class="box recent-box">
+                <h3>Recent Activity</h3>
+                <p class="text-gray">Posted new project 2 hours ago</p>
+            </div>
+
+            <!-- Empty Box -->
+            <div class="box empty-box">
+                <p>Empty Box</p>
+            </div>
+        </div>
+    </div>
     <script src="../js/faculty-profile.js"></script>
 </body>
 </html>
