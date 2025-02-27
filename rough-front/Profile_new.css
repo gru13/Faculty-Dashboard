@@ -136,6 +136,8 @@
             margin-bottom: 16px;
         }
 
+        
+
         /* Empty Box Section */
         .empty-box {
             grid-column: 3 / 4;
@@ -431,4 +433,165 @@
         .error {
             color: red;
             display: none;
+        }
+
+        /* Add these new styles */
+       /* Add these new styles */
+        .profile-image-container {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .profile-image {
+            width: 260px;
+            height: 260px;
+            background: #e5e7eb;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .edit-profile-pic {
+            position: absolute;
+            bottom: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            border: none;
+            color: #e5e7eb;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-profile-pic .material-symbols-rounded {
+            font-size: 20px;
+        }
+
+        .edit-profile-pic:hover {
+            background: #2c2c2c;
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 6px 20px #5562da;
+        }
+
+        .profile-image-container:hover .profile-image {
+            filter: brightness(0.9);
+        }
+
+        .profile-pic-actions {
+            position: absolute;
+            bottom: -160px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+        
+        .profile-editing-mode .container::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 1;
+            pointer-events: none;
+            transition: all 0.3s ease-out;
+            opacity: 1;
+        }
+        
+        .profile-editing-mode .box:not(.profile-box),
+        .profile-editing-mode .sidebar {
+            filter: blur(5px) brightness(0.7);
+            pointer-events: none;
+            transition: all 0.3s ease-out;
+        }
+        
+        .profile-box {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .edit-profile-pic.cancel {
+            background: #dc2626;
+            color: white;
+        }
+        
+        .edit-profile-pic.cancel:hover {
+            background: #b91c1c;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        .selected-file {
+            font-size: 0.875rem;
+            color: #4b5563;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .save-profile-pic {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            color: #4b5563;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .save-profile-pic:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(85, 98, 218, 0.2);
+        }
+        
+        .profile-image {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .box.profile-box {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px;
+        }
+        
+        .box.profile-box #img_msg {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            margin: 0;
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+            font-size: 0.875rem;
+            z-index: 4;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            display: none;
+        }
+        
+        .box.profile-box #img_msg.show {
+            opacity: 1;
+            display: block;
         }
