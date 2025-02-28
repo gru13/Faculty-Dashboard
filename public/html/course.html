@@ -3,42 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Page</title>
+    <title>Course Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #ccc;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-bottom: none;
+            background: #f1f1f1;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background: white;
+            border-top: 3px solid #007bff;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #007bff;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <h1 id="course-name"></h1>
-    <p><strong>Faculty:</strong> <span id="faculty-name"></span></p>
-    <p><strong>Class:</strong> <span id="class-name"></span></p>
-    <h2>Students</h2>
-    <ul id="students-list"></ul>
 
-    <script>
-        // Extract course_id from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const courseId = urlParams.get("course_id");
+    <h1>Course Details</h1>
+    
+    <div class="tabs" id="classTabs"></div>
+    
+    <div id="tabContents"></div>
 
-        if (!courseId) {
-            alert("Course ID missing!");
-            window.location.href = "/";
-        }
-
-        // Fetch Course Data
-        fetch(`/course/data?course_id=${courseId}`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("course-name").innerText = data.course.course_name;
-                document.getElementById("faculty-name").innerText = data.course.faculty_name;
-                document.getElementById("class-name").innerText = data.course.class_name;
-
-                // Populate Students List
-                const studentsList = document.getElementById("students-list");
-                data.students.forEach(student => {
-                    const li = document.createElement("li");
-                    li.innerText = `${student.roll_no} - ${student.name}`;
-                    studentsList.appendChild(li);
-                });
-            })
-            .catch(error => console.error("Error loading course data:", error));
-    </script>
+    <script src="../js/course.js"></script>
 </body>
 </html>
