@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <link rel="stylesheet" href="dash-new.css">
+</head>
+<body>
+    <div class="logout-popup" id="logoutPopup">
+        <div class="popup-content">
+          <p>Are you sure you want to logout?</p>
+          <div class="popup-buttons">
+            <button id="confirmLogout">Yes, logout</button>
+            <button id="cancelLogout">Cancel</button>
+          </div>
+        </div>
+    </div>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <button class="sidebar-icon">
+                    <span class="material-symbols-rounded">dashboard</span>
+                </button>
+            </div>
+            <div class="sidebar-section">
+                <button class="sidebar-icon">
+                    <span class="material-symbols-rounded">school</span>
+                </button>
+                <button class="sidebar-icon">
+                    <span class="material-symbols-rounded">person</span>
+                </button>
+            </div>
+            <div class="sidebar-section">
+                <button class="sidebar-icon logout">
+                    <span class="material-symbols-rounded">logout</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Greeting Box -->
+            <div class="box greeting-box">
+                <h1>Loading...</h1>
+                <p class="text-gray">Here's what's happening with your courses today.</p>            </div>
+            
+            <!-- Courses Grid -->
+            <div class="box info-box">
+                <div class="box-header">
+                    <h2>Your Courses</h2>
+                </div>
+                
+                <div class="courses-grid">
+                    <div class="empty-state">No courses to display</div>
+                    <!-- <div class="course-box">
+                        <div class="circular-progress"></div>
+                        <div class="course-content">
+                            <div class="course-icon" style="background: #ffe0e0;">
+                                <span class="material-symbols-rounded">code</span>
+                            </div>
+                            <h3>Machine Learning</h3>
+                            <p class="course-info">
+                                <span class="course-code">CS-410</span>
+                                <span class="separator">•</span>
+                                <span class="class-id">AIE22</span>
+                            </p>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+
+            <!-- Timetable Box -->
+            <div class="box timetable-box">
+                <div class="box-header">
+                    <h2>Today's Schedule</h2>
+                    <span class="material-symbols-rounded">schedule</span>
+                </div>
+                <div class="timetable-list">
+                    <div class="empty-state">No classes scheduled</div>
+                    <!-- <div class="timetable-item finished">
+                        <span class="class-time">09:00 - 10:30</span>
+                        <div class="class-info">
+                            <h4>Data Structures</h4>
+                            <p>Room 305 • Prof. Smith</p>
+                        </div>
+                        <span class="material-symbols-rounded">check_circle</span>
+                    </div> -->
+                    
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Panel: Notifications and Calendar -->
+        <div class="right-panel">
+            <!-- Notifications Box -->
+            <div class="box notifications-box">
+                <div class="box-header">
+                    <h2>Notifications</h2>
+                    <div class="header-right">
+                        <span class="notification-badge">1 New</span>
+                        <span class="material-symbols-rounded">notifications</span>
+                    </div>
+                </div>
+                <div class="notifications-list">
+                    <div class="empty-state">No new notifications</div>
+                    <!-- <div class="notification-item new">
+                        <span class="material-symbols-rounded">assignment</span>
+                        <div class="notification-content">
+                            <p>New assignment posted in CS-410</p>
+                            <small>2 hours ago</small>
+                        </div>
+                    </div>
+                    <div class="notification-item">
+                        <span class="material-symbols-rounded">assignment</span>
+                        <div class="notification-content">
+                            <p>New assignment posted in CS-410</p>
+                            <small>2 hours ago</small>
+                        </div>
+                    </div> -->
+                    
+                </div>
+            </div>
+
+            <!-- Calendar Box -->
+            <div class="box calendar-box">
+                <div class="box-header">
+                    <h2>Academic Calendar</h2>
+                    <div class="calendar-nav">
+                        <button class="nav-button"><span class="material-symbols-rounded">chevron_left</span></button>
+                        <span class="current-month">March 2025</span>
+                        <button class="nav-button"><span class="material-symbols-rounded">chevron_right</span></button>
+                    </div>
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-header-day">Sun</div>
+                    <div class="calendar-header-day">Mon</div>
+                    <div class="calendar-header-day">Tue</div>
+                    <div class="calendar-header-day">Wed</div>
+                    <div class="calendar-header-day">Thu</div>
+                    <div class="calendar-header-day">Fri</div>
+                    <div class="calendar-header-day">Sat</div>
+                    <div class="calendar-day sample">
+                        15
+                        <div class="agenda-dots">
+                            <div class="agenda-dot"></div>
+                            <div class="agenda-dot"></div>
+                            <div class="agenda-dot"></div>
+                        </div>
+                    </div>
+                    <!-- Calendar days would be dynamically generated -->
+                    <!-- ... more days ... -->
+                </div>
+                <!-- <div class="agenda-popup">
+                    <div class="agenda-popup-header">
+                        <h3>March 15, 2025</h3>
+                        <button class="agenda-popup-close">
+                            <span class="material-symbols-rounded">close</span>
+                        </button>
+                    </div>
+                    <div class="agenda-list">
+                        <div class="agenda-item">
+                            <span class="time">10:00</span>
+                            <span class="title">CS-410 Assignment Due</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="time">14:30</span>
+                            <span class="title">Meeting with Prof. Smith</span>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="dash.js"></script>
+</body>
+</html>
