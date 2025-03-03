@@ -34,6 +34,7 @@ const pageRoutes = require("./routes/pageRoutes");
 const facultyRoutes = require("./routes/facultyRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const courseRoutes = require("./routes/courseRoutes");
+const assignmentRoutes = require("./routes/assignmentRoutes"); // New assignment routes
 
 // ✅ Use Routes
 app.use("/", facultyRoutes);
@@ -42,6 +43,7 @@ app.use("/", authRoutes);  // Now `/login` & `/register` work directly
 app.use("/", otpRoutes);   // Now `/forgot-password` works directly
 app.use("/", dashboardRoutes);   
 app.use("/", courseRoutes);   
+app.use("/", assignmentRoutes); // Use the new assignment routes
 
 // ✅ Start Server
 app.listen(PORT, () => {

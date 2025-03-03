@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #007bff;
+            color: white;
+        }
+        .edit-assignment-btn, .save-grade-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .edit-assignment-btn:hover, .save-grade-btn:hover {
+            background: #0056b3;
+        }
+        .assignment-form, .grade-form {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+        }
+        .assignment-form label, .grade-form label {
+            display: block;
+            margin-top: 10px;
+        }
+        .assignment-form input, .assignment-form textarea, .grade-form input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+        }
+        .save-assignment, .save-grade {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .save-assignment:hover, .save-grade:hover {
+            background: #0056b3;
+        }
+        .editable-grade {
+            background-color: #f9f9f9;
+            cursor: text;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Assignment Details</h1>
+    
+    <div class="assignment-details">
+        <h2>Assignment Information</h2>
+        <p><strong>Title:</strong> <span id="assignment-title"></span></p>
+        <p><strong>Details:</strong> <span id="assignment-details"></span></p>
+        <p><strong>Deadline:</strong> <span id="assignment-deadline"></span></p>
+        <p><strong>Submission Link:</strong> <a id="assignment-link" href="#" target="_blank">Submit</a></p>
+        <p><strong>Document:</strong> <a id="assignment-doc" href="#" target="_blank">View</a></p>
+        <p><strong>Max Marks:</strong> <span id="assignment-max-marks"></span></p> <!-- This line displays the max marks -->
+        <button class="edit-assignment-btn">Edit Assignment</button>
+    </div>
+
+    <div class="assignment-form" id="assignmentForm">
+        <h2>Edit Assignment</h2>
+        <label for="edit-assignment-title">Title:</label>
+        <input type="text" id="edit-assignment-title">
+        
+        <label for="edit-assignment-details">Details:</label>
+        <textarea id="edit-assignment-details"></textarea>
+        
+        <label for="edit-assignment-deadline">Deadline:</label>
+        <input type="datetime-local" id="edit-assignment-deadline">
+        
+        <label for="edit-assignment-link">Submission Link:</label>
+        <input type="text" id="edit-assignment-link">
+        
+        <label for="edit-assignment-max-marks">Max Marks:</label>
+        <input type="number" id="edit-assignment-max-marks" step="0.1" min="0" max="100">
+        
+        <button id="save-assignment" class="save-assignment">Save Assignment</button>
+    </div>
+
+    <div class="submissions">
+        <h2>Student Submissions</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Roll No</th>
+                    <th>Name</th>
+                    <th>Submission Date</th>
+                    <th>File</th>
+                    <th>Grade</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="submissionsTableBody">
+                <!-- Submissions will be populated here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="grade-form" id="gradeForm">
+        <h2>Grade Assignment</h2>
+        <label for="grade-roll-no">Roll No:</label>
+        <input type="text" id="grade-roll-no" readonly>
+        
+        <label for="grade-assignment-id">Assignment ID:</label>
+        <input type="text" id="grade-assignment-id" readonly>
+        
+        <label for="grade-submission-id">Submission ID:</label>
+        <input type="text" id="grade-submission-id" readonly>
+        
+        <label for="grade">Grade:</label>
+        <input type="number" id="grade" step="0.1" min="0" max="10">
+        
+        <button id="save-grade" class="save-grade">Save Grade</button>
+    </div>
+
+    <script src="../js/assignment.js"></script>
+</body>
+</html>

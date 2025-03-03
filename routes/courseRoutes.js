@@ -73,20 +73,20 @@ router.get("/course/data", async (req, res) => {
 
 // 📌 Add Assignment Route
 router.post("/course/add-assignment", upload, async (req, res) => {
-    const { courseId, classId, title, details, deadline, link } = req.body;
+    const { courseId, classId, title, details, deadline, link, maxMarks } = req.body;
     const file = req.file;
     const facultyId = req.session.user.faculty_id.toString();
 
-    if (!courseId || !classId || !title || !details || !deadline || !link || !file || !facultyId) {
+    if (!courseId || !classId || !title || !details || !deadline || !link || !maxMarks || !file || !facultyId) {
         return res.status(400).json({ success: false, message: "All fields are required." });
     }
 
     try {
         const query = `
-            INSERT INTO assignments (course_id, class_id, title, details, deadline, submission_link, assignment_doc_url)
-            VALUES (?, ?, ?, ?, ?, ?, ?);
+            INSERT INTO assignments (course_id, class_id, title, details, deadline, submission_link, assignment_doc_url, max_marks)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
         `;
-        const [result] = await db.promise().query(query, [courseId, classId, title, details, deadline, link, '']);
+        const [result] = await db.promise().query(query, [courseId, classId, title, details, deadline, link, '', maxMarks]);
         const assignmentId = result.insertId.toString();
         const assignmentDocUrl = `/uploads/assignments/${facultyId}/${assignmentId}${path.extname(file.originalname)}`;
 
@@ -178,7 +178,7 @@ async function getStudentsByCourse(courseId) {
 async function getAssignmentsByCourse(courseId) {
     try {
         const query = `
-            SELECT assignment_id, class_id, title, details, deadline, submission_link, assignment_doc_url
+            SELECT assignment_id, class_id, title, details, deadline, submission_link, assignment_doc_url, max_marks
             FROM assignments
             WHERE course_id = ?;
         `;

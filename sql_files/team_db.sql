@@ -61,11 +61,13 @@ CREATE TABLE assignments (
     details VARCHAR(255) NOT NULL,
     deadline DATETIME NOT NULL,
     submission_link TEXT,
-    assignment_doc_url TEXT -- New column for storing assignment document URL
+    assignment_doc_url TEXT, -- New column for storing assignment document URL
+    max_marks DECIMAL(5,2) NOT NULL -- New column for maximum marks
 );
 
 -- Assignment Submissions Table
 CREATE TABLE assignment_submissions (
+    submission_id INT AUTO_INCREMENT PRIMARY KEY,
     course_id INT NOT NULL,
     class_id INT NOT NULL,
     assignment_id INT NOT NULL,
@@ -76,11 +78,13 @@ CREATE TABLE assignment_submissions (
 
 -- Grades Table
 CREATE TABLE grades (
+    submission_id INT NOT NULL,
     roll_no VARCHAR(255) NOT NULL,
     class_id INT NOT NULL,
     course_id INT NOT NULL,
     assignment_id INT NOT NULL,
-    grade DECIMAL(3,1) NOT NULL
+    grade DECIMAL(5,2) DEFAULT 0 NOT NULL, -- Set initial grading to 0
+    PRIMARY KEY (submission_id)
 );
 
 -- Course Deadlines Table
@@ -240,42 +244,42 @@ INSERT INTO students (roll_no, name, class_id) VALUES
 ('BIO2021002', 'Wendy Scott', 114);
 
 -- Insert Data into Assignments Table
-INSERT INTO assignments (assignment_id, course_id, class_id, title, details, deadline, submission_link, assignment_doc_url) VALUES
-(301, 201, 101, 'DS Assignment 1', 'Implement linked list', '2025-02-10 23:59:59', '<link>','ds_assignment1.pdf'),
-(302, 202, 101, 'Algorithms Assignment 1', 'Solve sorting problems', '2025-02-12 23:59:59', '<link>','algo_assignment1.pdf'),
-(303, 205, 105, 'Linear Algebra Assignment 1', 'Matrix operations', '2025-02-14 23:59:59', '<link>','la_assignment1.pdf'),
-(304, 213, 109, 'ML Assignment 1', 'Build a regression model', '2025-02-15 23:59:59', '<link>','ml_assignment1.pdf'),
-(305, 214, 110, 'AI Assignment 1', 'Implement a chatbot', '2025-02-17 23:59:59', '<link>','ai_assignment1.pdf'),
-(306, 219, 111, 'Organic Chemistry Assignment 1', 'Analyze hydrocarbons', '2025-02-18 23:59:59', '<link>','orgchem_assignment1.pdf'),
-(307, 223, 113, 'Genetics Assignment 1', 'Study DNA sequencing', '2025-02-19 23:59:59', '<link>','genetics_assignment1.pdf');
+INSERT INTO assignments (assignment_id, course_id, class_id, title, details, deadline, submission_link, assignment_doc_url, max_marks) VALUES
+(301, 201, 101, 'DS Assignment 1', 'Implement linked list', '2025-02-10 23:59:59', '<link>', 'ds_assignment1.pdf', 100),
+(302, 202, 101, 'Algorithms Assignment 1', 'Solve sorting problems', '2025-02-12 23:59:59', '<link>', 'algo_assignment1.pdf', 100),
+(303, 205, 105, 'Linear Algebra Assignment 1', 'Matrix operations', '2025-02-14 23:59:59', '<link>', 'la_assignment1.pdf', 100),
+(304, 213, 109, 'ML Assignment 1', 'Build a regression model', '2025-02-15 23:59:59', '<link>', 'ml_assignment1.pdf', 100),
+(305, 214, 110, 'AI Assignment 1', 'Implement a chatbot', '2025-02-17 23:59:59', '<link>', 'ai_assignment1.pdf', 100),
+(306, 219, 111, 'Organic Chemistry Assignment 1', 'Analyze hydrocarbons', '2025-02-18 23:59:59', '<link>', 'orgchem_assignment1.pdf', 100),
+(307, 223, 113, 'Genetics Assignment 1', 'Study DNA sequencing', '2025-02-19 23:59:59', '<link>', 'genetics_assignment1.pdf', 100);
 
 -- Insert Data into Assignment Submissions Table
-INSERT INTO assignment_submissions (course_id, class_id, assignment_id, roll_no, submission_date, file_link) VALUES
-(201, 101, 301, 'CSE2021001', '2025-02-09 20:00:00', 'ds_submission1.pdf'),
-(201, 101, 301, 'CSE2021002', '2025-02-09 21:00:00', 'ds_submission2.pdf'),
-(202, 101, 302, 'CSE2021001', '2025-02-11 20:30:00', 'algo_submission1.pdf'),
-(202, 101, 302, 'CSE2021002', '2025-02-11 21:00:00', 'algo_submission2.pdf'),
-(205, 105, 303, 'MATH2021001', '2025-02-13 18:00:00', 'la_submission1.pdf'),
-(205, 105, 303, 'MATH2021002', '2025-02-13 18:30:00', 'la_submission2.pdf'),
-(213, 109, 304, 'AI2021001', '2025-02-14 19:00:00', 'ml_submission1.pdf'),
-(214, 110, 305, 'AI2021002', '2025-02-16 20:00:00', 'ai_submission1.pdf'),
-(219, 111, 306, 'CHEM2021001', '2025-02-17 17:00:00', 'orgchem_submission1.pdf'),
-(223, 113, 307, 'BIO2021001', '2025-02-18 16:30:00', 'genetics_submission1.pdf'),
-(223, 113, 307, 'BIO2021002', '2025-02-18 17:00:00', 'genetics_submission2.pdf');
+INSERT INTO assignment_submissions (submission_id, course_id, class_id, assignment_id, roll_no, submission_date, file_link) VALUES
+(1, 201, 101, 301, 'CSE2021001', '2025-02-09 20:00:00', 'ds_submission1.pdf'),
+(2, 201, 101, 301, 'CSE2021002', '2025-02-09 21:00:00', 'ds_submission2.pdf'),
+(3, 202, 101, 302, 'CSE2021001', '2025-02-11 20:30:00', 'algo_submission1.pdf'),
+(4, 202, 101, 302, 'CSE2021002', '2025-02-11 21:00:00', 'algo_submission2.pdf'),
+(5, 205, 105, 303, 'MATH2021001', '2025-02-13 18:00:00', 'la_submission1.pdf'),
+(6, 205, 105, 303, 'MATH2021002', '2025-02-13 18:30:00', 'la_submission2.pdf'),
+(7, 213, 109, 304, 'AI2021001', '2025-02-14 19:00:00', 'ml_submission1.pdf'),
+(8, 214, 110, 305, 'AI2021002', '2025-02-16 20:00:00', 'ai_submission1.pdf'),
+(9, 219, 111, 306, 'CHEM2021001', '2025-02-17 17:00:00', 'orgchem_submission1.pdf'),
+(10, 223, 113, 307, 'BIO2021001', '2025-02-18 16:30:00', 'genetics_submission1.pdf'),
+(11, 223, 113, 307, 'BIO2021002', '2025-02-18 17:00:00', 'genetics_submission2.pdf');
 
 -- Insert Data into Grades Table
-INSERT INTO grades (roll_no, class_id, course_id, assignment_id, grade) VALUES
-('CSE2021001', 101, 201, 301, 8.5),
-('CSE2021002', 101, 201, 301, 7.8),
-('CSE2021001', 101, 202, 302, 8.0),
-('CSE2021002', 101, 202, 302, 7.5),
-('MATH2021001', 105, 205, 303, 9.0),
-('MATH2021002', 105, 205, 303, 8.5),
-('AI2021001', 109, 213, 304, 8.7),
-('AI2021002', 110, 214, 305, 8.2),
-('CHEM2021001', 111, 219, 306, 8.9),
-('BIO2021001', 113, 223, 307, 9.2),
-('BIO2021002', 113, 223, 307, 9.0);
+INSERT INTO grades (submission_id, roll_no, class_id, course_id, assignment_id, grade) VALUES
+(1, 'CSE2021001', 101, 201, 301, 8.5),
+(2, 'CSE2021002', 101, 201, 301, 7.8),
+(3, 'CSE2021001', 101, 202, 302, 8.0),
+(4, 'CSE2021002', 101, 202, 302, 7.5),
+(5, 'MATH2021001', 105, 205, 303, 9.0),
+(6, 'MATH2021002', 105, 205, 303, 8.5),
+(7, 'AI2021001', 109, 213, 304, 8.7),
+(8, 'AI2021002', 110, 214, 305, 8.2),
+(9, 'CHEM2021001', 111, 219, 306, 8.9),
+(10, 'BIO2021001', 113, 223, 307, 9.2),
+(11, 'BIO2021002', 113, 223, 307, 9.0);
 
 -- Insert Data into Course Deadlines Table
 INSERT INTO course_deadlines (course_id, date, deadline_name) VALUES

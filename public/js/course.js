@@ -84,7 +84,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                             <td>${new Date(assignment.deadline).toLocaleString()}</td> <!-- Format the date -->
                             <td><a href="${assignment.submission_link}" target="_blank">Submit</a></td>
                             <td><a href="${assignment.assignment_doc_url}" target="_blank">View</a></td>
-                            <td><button class="delete-assignment-btn" data-assignment-id="${assignment.assignment_id}">Delete</button></td>
+                            <td>
+                                <a href="/assignment?assignment_id=${assignment.assignment_id}" class="view-assignment-btn">View</a>
+                                <button class="delete-assignment-btn" data-assignment-id="${assignment.assignment_id}">Delete</button>
+                            </td>
                         </tr>
                     `).join("")}
                 </table>
@@ -153,10 +156,11 @@ document.addEventListener("DOMContentLoaded", async function () {
             const details = document.getElementById("assignment-details").value;
             const deadline = document.getElementById("assignment-deadline").value;
             const link = document.getElementById("assignment-link").value;
+            const maxMarks = document.getElementById("assignment-max-marks").value;
             const fileInput = document.getElementById("assignment-file");
             const file = fileInput.files[0];
 
-            if (!title || !details || !deadline || !link || !file) {
+            if (!title || !details || !deadline || !link || !maxMarks || !file) {
                 alert("All fields are required.");
                 return;
             }
@@ -168,6 +172,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             formData.append("details", details);
             formData.append("deadline", deadline);
             formData.append("link", link);
+            formData.append("maxMarks", maxMarks);
             formData.append("file", file);
             formData.append("assignmentId", Date.now().toString()); // Generate assignmentId as string
 
