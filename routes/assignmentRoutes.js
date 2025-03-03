@@ -72,11 +72,27 @@ router.post("/assignment/grade", async (req, res) => {
     try {
         console.log("Grading submission:", { submissionId, rollNo, grade }); // Add logging
 
+        // Fetch the course_id and class_id for the given submission
+        const [assignment] = await db.promise().query(`
+            SELECT a.course_id, s.class_id, s.assignment_id
+            FROM assignments a
+            JOIN assignment_submissions s ON a.assignment_id = s.assignment_id
+            WHERE s.submission_id = ?
+        `, [submissionId]);
+
+        if (assignment.length === 0) {
+            console.error("Assignment not found for submissionId:", submissionId); // Add logging
+            return res.status(404).json({ success: false, message: "Assignment not found" });
+        }
+
+        const { course_id, class_id, assignment_id } = assignment[0];
+        console.log("Fetched course_id:", course_id, "class_id:", class_id, "assignment_id:", assignment_id); // Add logging
+
         await db.promise().query(`
             INSERT INTO grades (submission_id, roll_no, class_id, course_id, assignment_id, grade)
-            VALUES (?, ?, (SELECT class_id FROM students WHERE roll_no = ?), (SELECT course_id FROM assignments WHERE assignment_id = ?), ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE grade = VALUES(grade)
-        `, [submissionId, rollNo, rollNo, submissionId, submissionId, grade]);
+        `, [submissionId, rollNo, class_id, course_id, assignment_id, grade]);
 
         res.json({ success: true });
     } catch (error) {

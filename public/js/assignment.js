@@ -111,6 +111,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     const result = await response.json();
                     if (result.success) {
                         alert("Grade saved successfully!");
+                        gradeCell.innerText = grade; // Update the grade in the frontend
                     } else {
                         alert("Failed to save grade.");
                     }
