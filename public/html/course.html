@@ -1,3 +1,4 @@
+<!-- course.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,6 +36,11 @@
         .tab-content.active {
             display: block;
         }
+        .assignments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -49,12 +55,78 @@
             background: #007bff;
             color: white;
         }
+        .add-assignment-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .add-assignment-btn:hover {
+            background: #218838;
+        }
+        .assignment-form {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+        }
+        .assignment-form label {
+            display: block;
+            margin-top: 10px;
+        }
+        .assignment-form input, 
+        .assignment-form textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+        }
+        .save-assignment {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .save-assignment:hover {
+            background: #0056b3;
+        }
     </style>
 </head>
 <body>
 
     <h1>Course Details</h1>
     
+    <div class="tabs" id="classTabs"></div>
+    
+    <div id="tabContents"></div>
+
+    <!-- Assignment Form -->
+    <div class="assignment-form" id="assignmentForm">
+        <h2>Add Assignment</h2>
+        <label for="assignment-title">Title:</label>
+        <input type="text" id="assignment-title">
+        
+        <label for="assignment-details">Details:</label>
+        <textarea id="assignment-details"></textarea>
+        
+        <label for="assignment-deadline">Deadline:</label>
+        <input type="datetime-local" id="assignment-deadline">
+        
+        <label for="assignment-link">Submission Link:</label>
+        <input type="text" id="assignment-link">
+        
+        <label for="assignment-file">Upload Assignment PDF:</label>
+        <input type="file" id="assignment-file" accept="application/pdf">
+        
+        <button id="save-assignment" class="save-assignment">Save Assignment</button>
+    </div>
+
     <div class="tabs" id="classTabs"></div>
     
     <div id="tabContents"></div>

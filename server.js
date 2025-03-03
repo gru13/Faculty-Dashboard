@@ -26,7 +26,6 @@ const db = require("./config/db");
 
 // ✅ Serve Static Files
 app.use(express.static("public"));
-// app.use(express.static("rough-front"));// remove this 
 
 // ✅ Import Routes
 const authRoutes = require("./routes/authRoutes");

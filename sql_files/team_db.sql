@@ -54,13 +54,14 @@ CREATE TABLE attendance (
 
 -- Assignments Table
 CREATE TABLE assignments (
-    assignment_id INT NOT NULL,
+    assignment_id INT AUTO_INCREMENT PRIMARY KEY,
     course_id INT NOT NULL,
     class_id INT NOT NULL,
     title VARCHAR(255) NOT NULL,
     details VARCHAR(255) NOT NULL,
     deadline DATETIME NOT NULL,
-    submission_link TEXT
+    submission_link TEXT,
+    assignment_doc_url TEXT -- New column for storing assignment document URL
 );
 
 -- Assignment Submissions Table
@@ -239,14 +240,14 @@ INSERT INTO students (roll_no, name, class_id) VALUES
 ('BIO2021002', 'Wendy Scott', 114);
 
 -- Insert Data into Assignments Table
-INSERT INTO assignments (assignment_id, course_id, class_id, title, details, deadline, submission_link) VALUES
-(301, 201, 101, 'DS Assignment 1', 'Implement linked list', '2025-02-10 23:59:59', 'ds_assignment1.pdf'),
-(302, 202, 101, 'Algorithms Assignment 1', 'Solve sorting problems', '2025-02-12 23:59:59', 'algo_assignment1.pdf'),
-(303, 205, 105, 'Linear Algebra Assignment 1', 'Matrix operations', '2025-02-14 23:59:59', 'la_assignment1.pdf'),
-(304, 213, 109, 'ML Assignment 1', 'Build a regression model', '2025-02-15 23:59:59', 'ml_assignment1.pdf'),
-(305, 214, 110, 'AI Assignment 1', 'Implement a chatbot', '2025-02-17 23:59:59', 'ai_assignment1.pdf'),
-(306, 219, 111, 'Organic Chemistry Assignment 1', 'Analyze hydrocarbons', '2025-02-18 23:59:59', 'orgchem_assignment1.pdf'),
-(307, 223, 113, 'Genetics Assignment 1', 'Study DNA sequencing', '2025-02-19 23:59:59', 'genetics_assignment1.pdf');
+INSERT INTO assignments (assignment_id, course_id, class_id, title, details, deadline, submission_link, assignment_doc_url) VALUES
+(301, 201, 101, 'DS Assignment 1', 'Implement linked list', '2025-02-10 23:59:59', '<link>','ds_assignment1.pdf'),
+(302, 202, 101, 'Algorithms Assignment 1', 'Solve sorting problems', '2025-02-12 23:59:59', '<link>','algo_assignment1.pdf'),
+(303, 205, 105, 'Linear Algebra Assignment 1', 'Matrix operations', '2025-02-14 23:59:59', '<link>','la_assignment1.pdf'),
+(304, 213, 109, 'ML Assignment 1', 'Build a regression model', '2025-02-15 23:59:59', '<link>','ml_assignment1.pdf'),
+(305, 214, 110, 'AI Assignment 1', 'Implement a chatbot', '2025-02-17 23:59:59', '<link>','ai_assignment1.pdf'),
+(306, 219, 111, 'Organic Chemistry Assignment 1', 'Analyze hydrocarbons', '2025-02-18 23:59:59', '<link>','orgchem_assignment1.pdf'),
+(307, 223, 113, 'Genetics Assignment 1', 'Study DNA sequencing', '2025-02-19 23:59:59', '<link>','genetics_assignment1.pdf');
 
 -- Insert Data into Assignment Submissions Table
 INSERT INTO assignment_submissions (course_id, class_id, assignment_id, roll_no, submission_date, file_link) VALUES
