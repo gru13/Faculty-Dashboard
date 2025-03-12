@@ -33,7 +33,6 @@ document.getElementById('confirmLogout').addEventListener('click', () => {
 });
 
 // Close popup when clicking outside
-// Close popup when clicking outside
 document.getElementById('logoutPopup').addEventListener('click', (e) => {
     if (e.target === document.getElementById('logoutPopup')) {
         logoutPopup.classList.remove('active');
@@ -239,7 +238,6 @@ function setupAssignmentForm(courseId) {
         formData.append("title", form.title.value);
         formData.append("details", form.details.value);
         formData.append("deadline", `${form.date.value}T${form.time.value}`);
-        formData.append("link", form.submissionLink.value);
         formData.append("maxMarks", form.maxMarks.value);
         formData.append("file", fileInput.files[0]);
 
