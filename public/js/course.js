@@ -114,6 +114,13 @@ function switchClass(classId, data) {
     // Filter students for this class
     window.courseData = data;
 
+    const activeClass = data.courses.find(course => course.class_id === classId);
+    
+    // Update course info header with active class
+    if (activeClass) {
+        document.querySelector('.course-meta .batch').textContent = activeClass.class_name;
+    }
+
     const classStudents = data.students.filter(s => s.class_id === classId);
     
     // Filter assignments for this class
@@ -124,6 +131,7 @@ function switchClass(classId, data) {
     updateAssignmentsList(classAssignments);
     updateDeadlinesList(classAssignments);
 }
+
 
 function updateStudentsList(students) {
     const studentsList = document.querySelector('.students-list');
