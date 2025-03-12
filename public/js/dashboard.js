@@ -455,7 +455,7 @@ async function updateCourses() {
         
         // Add click handler for course navigation
         courseBox.addEventListener('click', () => {
-            window.location.href = `/courses/${course.courseCode.toLowerCase()}`;
+            window.location.href = `/course?course_id=${course.courseCode}`;
         });
 
         courseBox.innerHTML = `

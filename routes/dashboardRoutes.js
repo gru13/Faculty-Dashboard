@@ -27,7 +27,7 @@ router.get('/api/courses', authenticate, async (req, res) => {
         }
 
         db.query(
-            'SELECT * FROM courses WHERE faculty_id = ?',
+            'SELECT distinct course_id, course_name FROM courses WHERE faculty_id = ? order by course_id',
             [faculty_id],
             (error, results) => {
                 if (error) {
@@ -44,7 +44,7 @@ router.get('/api/courses', authenticate, async (req, res) => {
                 const formattedData = results.map(item => ({
                     courseCode: item.course_id,
                     courseName: item.course_name,
-                    classId: item.class_id,
+                    classId: '.',
                     completionPercentage: 50,
                     department: 'CSE'
                 }));
