@@ -1,4 +1,46 @@
-// //  this is course.js
+document.querySelector('.sidebar-icon.logout').addEventListener('click', () => {
+    const logoutPopup = document.getElementById('logoutPopup');
+    requestAnimationFrame(() => {
+        logoutPopup.classList.add('active');
+    });
+});
+
+document.getElementById('cancelLogout').addEventListener('click', () => {
+    const logoutPopup = document.getElementById('logoutPopup');
+    logoutPopup.classList.remove('active');
+});
+
+
+document.getElementById('confirmLogout').addEventListener('click', () => {
+    // Logout the user by sending a POST request to /logout
+    fetch('/logout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = data.redirect;
+        } else {
+            alert('Error logging out');
+        }
+    })
+    .catch(error => {
+        console.error('Error logging out:', error);
+    });
+});
+
+// Close popup when clicking outside
+// Close popup when clicking outside
+document.getElementById('logoutPopup').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('logoutPopup')) {
+        logoutPopup.classList.remove('active');
+    }
+});
+
+// ...existing logout code...
 
 document.addEventListener("DOMContentLoaded", async function () {
     const urlParams = new URLSearchParams(window.location.search);
@@ -14,192 +56,230 @@ document.addEventListener("DOMContentLoaded", async function () {
         const data = await response.json();
         
         if (!data.courses || data.courses.length === 0) {
-            alert("No course details found.");
+            alert("Failed to load course data");
             return;
         }
-        console.log(data);
 
-        document.title = `Course: ${data.courses[0].course_name}`;
+        // Setup class tabs based on course data
+        setupClassTabs(data.courses);
+        
+        // Update course info using first course entry
+        updateCourseInfo(data.courses[0]);
 
-        const courseMap = {};
-        data.courses.forEach(course => {
-            courseMap[course.class_id] = course;
-        });
+        // Initial load with first class
+        const firstClass = data.courses[0];
+        if (firstClass) {
+            switchClass(firstClass.class_id, data);
+        }
 
-        const studentsByClass = {};
-        data.students.forEach(student => {
-            if (!studentsByClass[student.class_id]) {
-                studentsByClass[student.class_id] = [];
-            }
-            studentsByClass[student.class_id].push(student);
-        });
-
-        const assignmentsByClass = {};
-        data.assignments.forEach(assignment => {
-            if (!assignmentsByClass[assignment.class_id]) {
-                assignmentsByClass[assignment.class_id] = [];
-            }
-            assignmentsByClass[assignment.class_id].push(assignment);
-        });
-
-        const tabsContainer = document.getElementById("classTabs");
-        const contentContainer = document.getElementById("tabContents");
-
-        Object.keys(courseMap).forEach((classId, index) => {
-            const classInfo = courseMap[classId];
-
-            const tab = document.createElement("div");
-            tab.className = `tab ${index === 0 ? "active" : ""}`;
-            tab.innerText = classInfo.class_name;
-            tab.dataset.classId = classId;
-            tabsContainer.appendChild(tab);
-
-            const contentDiv = document.createElement("div");
-            contentDiv.className = `tab-content ${index === 0 ? "active" : ""}`;
-            contentDiv.dataset.classId = classId;
-
-            let addAssignmentButton = `<button class="add-assignment-btn" data-class-id="${classId}">+ Add Assignment</button>`;
-
-            let studentsTable = `
-                <h2>Students (${classInfo.class_name})</h2>
-                <table>
-                    <tr><th>Roll No</th><th>Name</th></tr>
-                    ${ (studentsByClass[classId] || []).map(student => `
-                        <tr>
-                            <td>${student.roll_no}</td>
-                            <td>${student.name}</td>
-                        </tr>
-                    `).join("")}
-                </table>
-            `;
-
-            let assignmentsTable = `
-                <h2>Assignments (${classInfo.class_name})</h2>
-                <table>
-                    <tr><th>ID</th><th>Title</th><th>Deadline</th><th>Submission Link</th><th>Document</th><th>Actions</th></tr>
-                    ${ (assignmentsByClass[classId] || []).map(assignment => `
-                        <tr>
-                            <td>${assignment.assignment_id}</td>
-                            <td>${assignment.title}</td>
-                            <td>${new Date(assignment.deadline).toLocaleString()}</td> <!-- Format the date -->
-                            <td><a href="${assignment.submission_link}" target="_blank">Submit</a></td>
-                            <td><a href="${assignment.assignment_doc_url}" target="_blank">View</a></td>
-                            <td>
-                                <a href="/assignment?assignment_id=${assignment.assignment_id}" class="view-assignment-btn">View</a>
-                                <button class="delete-assignment-btn" data-assignment-id="${assignment.assignment_id}">Delete</button>
-                            </td>
-                        </tr>
-                    `).join("")}
-                </table>
-            `;
-
-            let deadlinesTable = `
-                <h2>Deadlines</h2>
-                <table>
-                    <tr><th>Deadline Name</th><th>Date</th></tr>
-                    ${ data.deadlines.map(deadline => `
-                        <tr>
-                            <td>${deadline.deadline_name}</td>
-                            <td>${new Date(deadline.date).toLocaleString()}</td> <!-- Format the date -->
-                        </tr>
-                    `).join("")}
-                </table>
-            `;
-
-            contentDiv.innerHTML = addAssignmentButton + studentsTable + assignmentsTable + deadlinesTable;
-            contentContainer.appendChild(contentDiv);
-        });
-
-        document.querySelectorAll(".tab").forEach(tab => {
-            tab.addEventListener("click", function () {
-                document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-                document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
-
-                this.classList.add("active");
-                document.querySelector(`.tab-content[data-class-id="${this.dataset.classId}"]`).classList.add("active");
-            });
-        });
-
-        document.querySelectorAll(".add-assignment-btn").forEach(button => {
-            button.addEventListener("click", function () {
-                document.getElementById("assignmentForm").style.display = "block";
-                document.getElementById("assignmentForm").dataset.classId = this.dataset.classId;
-            });
-        });
-
-        document.querySelectorAll(".delete-assignment-btn").forEach(button => {
-            button.addEventListener("click", async function () {
-                const assignmentId = this.dataset.assignmentId;
-                if (confirm("Are you sure you want to delete this assignment?")) {
-                    try {
-                        const response = await fetch(`/course/delete-assignment/${assignmentId}`, {
-                            method: "DELETE"
-                        });
-                        const result = await response.json();
-                        if (result.success) {
-                            alert("Assignment deleted successfully!");
-                            location.reload();
-                        } else {
-                            alert("Failed to delete assignment.");
-                        }
-                    } catch (error) {
-                        console.error("Error deleting assignment:", error);
-                        alert("An error occurred.");
-                    }
-                }
-            });
-        });
-
-        document.getElementById("save-assignment").addEventListener("click", async function () {
-            const classId = document.getElementById("assignmentForm").dataset.classId;
-            const title = document.getElementById("assignment-title").value;
-            const details = document.getElementById("assignment-details").value;
-            const deadline = document.getElementById("assignment-deadline").value;
-            const link = document.getElementById("assignment-link").value;
-            const maxMarks = document.getElementById("assignment-max-marks").value;
-            const fileInput = document.getElementById("assignment-file");
-            const file = fileInput.files[0];
-
-            if (!title || !details || !deadline || !link || !maxMarks || !file) {
-                alert("All fields are required.");
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append("courseId", courseId);
-            formData.append("classId", classId);
-            formData.append("title", title);
-            formData.append("details", details);
-            formData.append("deadline", deadline);
-            formData.append("link", link);
-            formData.append("maxMarks", maxMarks);
-            formData.append("file", file);
-            formData.append("assignmentId", Date.now().toString()); // Generate assignmentId as string
-
-            console.log("📂 Uploading file...", formData);
-
-            try {
-                const response = await fetch("/course/add-assignment", {
-                    method: "POST",
-                    body: formData
-                });
-
-                const result = await response.json();
-                if (result.success) {
-                    alert("Assignment added successfully!");
-                    location.reload();
-                } else {
-                    alert("Failed to add assignment.");
-                }
-            } catch (error) {
-                console.error("Error adding assignment:", error);
-                alert("An error occurred.");
-            }
-        });
+        // Setup form handlers
+        setupAssignmentForm(courseId);
 
     } catch (error) {
         console.error("Error fetching course data:", error);
         alert("Failed to load course details.");
     }
 });
+
+function setupClassTabs(courses) {
+    const tabsContainer = document.querySelector('.class-tabs');
+    tabsContainer.innerHTML = '';
+    
+    courses.forEach((course, index) => {
+        const tab = document.createElement('div');
+        tab.className = `tab${index === 0 ? ' active' : ''}`;
+        tab.dataset.classId = course.class_id;
+        tab.innerHTML = `<span>${course.class_name}</span>`;
+        
+        tab.addEventListener('click', () => {
+            // Update active state
+            document.querySelectorAll('.class-tabs .tab').forEach(t => 
+                t.classList.toggle('active', t === tab));
+            
+            // Switch content
+            switchClass(course.class_id, window.courseData);
+        });
+        
+        tabsContainer.appendChild(tab);
+    });
+}
+
+function updateCourseInfo(course) {
+    document.querySelector('.course-info-header h1').textContent = course.course_name;
+    document.querySelector('.course-meta .course-code').textContent = course.course_id;
+    document.querySelector('.course-meta .batch').textContent = course.class_name;
+}
+
+function switchClass(classId, data) {
+    // Filter students for this class
+    window.courseData = data;
+
+    const classStudents = data.students.filter(s => s.class_id === classId);
+    
+    // Filter assignments for this class
+    const classAssignments = data.assignments.filter(a => a.class_id === classId);
+    
+    // Update UI
+    updateStudentsList(classStudents);
+    updateAssignmentsList(classAssignments);
+    updateDeadlinesList(classAssignments);
+}
+
+function updateStudentsList(students) {
+    const studentsList = document.querySelector('.students-list');
+    if (!students || students.length === 0) {
+        studentsList.innerHTML = '<div class="empty-state">No students enrolled</div>';
+        return;
+    }
+
+    studentsList.innerHTML = students.map(student => `
+        <div class="student-item">
+            <span class="roll-no">${student.roll_no}</span>
+            <span class="student-name">${student.name}</span>
+        </div>
+    `).join('');
+}
+
+function updateAssignmentsList(assignments) {
+    const assignmentsList = document.querySelector('.assignments-list');
+    if (!assignments || assignments.length === 0) {
+        assignmentsList.innerHTML = '<div class="empty-state">No assignments posted</div>';
+        return;
+    }
+
+    assignmentsList.innerHTML = assignments.map(assignment => `
+        <div class="assignment-item">
+            <a href="/assignment?assignment_id=${assignment.assignment_id}" class="assignment-info">
+                <h4>${assignment.title}</h4>
+                <small>Due ${new Date(assignment.deadline).toLocaleDateString()}</small>
+                <p>${assignment.details}</p>
+            <div class="assignment-actions">
+                ${assignment.assignment_doc_url ? `
+                    <a href="${assignment.assignment_doc_url}" class="action-button view" target="_blank">
+                        <span class="material-symbols-rounded">visibility</span>
+                    </a>
+                ` : ''}
+                <a href="${assignment.submission_link}" class="action-button submit" target="_blank">
+                    <span class="material-symbols-rounded">upload_file</span>
+                </a>
+                <button class="action-button delete" data-id="${assignment.assignment_id}">
+                    <span class="material-symbols-rounded">delete</span>
+                </button>
+            </div>
+        </div>
+    `).join('');
+
+    setupAssignmentActions();
+}
+
+function updateDeadlinesList(assignments) {
+    const deadlinesList = document.querySelector('.deadlines-list');
+    if (!assignments || assignments.length === 0) {
+        deadlinesList.innerHTML = '<div class="empty-state">No upcoming deadlines</div>';
+        return;
+    }
+
+    const upcomingDeadlines = assignments
+        .filter(a => new Date(a.deadline) > new Date())
+        .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
+        .slice(0, 5);
+
+    deadlinesList.innerHTML = upcomingDeadlines.map(deadline => `
+        <div class="deadline-item">
+            <span class="date">${new Date(deadline.deadline).toLocaleDateString('default', { month: 'short', day: 'numeric' })}</span>
+            <div class="deadline-info">
+                <h4>${deadline.title}</h4>
+                <p>${new Date(deadline.deadline).toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' })}</p>
+            </div>
+            <span class="material-symbols-rounded">schedule</span>
+        </div>
+    `).join('');
+}
+
+function setupAssignmentForm(courseId) {
+    const form = document.querySelector('.assignment-form');
+    const fileInput = document.getElementById('pdf');
+    const fileLabel = document.querySelector('.file-name');
+
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Truncate long file names
+            const fileName = file.name.length > 30 
+                ? file.name.substring(0, 27) + '...' 
+                : file.name;
+            fileLabel.textContent = fileName;
+            fileLabel.title = file.name; // Show full name on hover
+            
+            // Add a visual indication that file is selected
+            fileLabel.parentElement.classList.add('has-file');
+        } else {
+            fileLabel.textContent = 'No file chosen';
+            fileLabel.title = '';
+            fileLabel.parentElement.classList.remove('has-file');
+        }
+    });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const activeTab = document.querySelector('.class-tabs .tab.active');
+        const classId = activeTab.dataset.classId;
+        const formData = new FormData();
+        formData.append("courseId", courseId);
+        formData.append("classId", classId); // Add this
+        formData.append("title", form.title.value);
+        formData.append("details", form.details.value);
+        formData.append("deadline", `${form.date.value}T${form.time.value}`);
+        formData.append("link", form.submissionLink.value);
+        formData.append("maxMarks", form.maxMarks.value);
+        formData.append("file", fileInput.files[0]);
+
+        try {
+            const response = await fetch("/course/add-assignment", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert("Assignment added successfully!");
+                location.reload();
+            } else {
+                alert("Failed to add assignment.");
+            }
+        } catch (error) {
+            console.error("Error adding assignment:", error);
+            alert("An error occurred.");
+        }
+    });
+}
+
+function setupAssignmentActions() {
+    document.querySelectorAll('.action-button').forEach(button => {
+        button.addEventListener('click', async function() {
+            const assignmentId = this.dataset.id;
+            
+            if (this.classList.contains('delete')) {
+                if (confirm('Are you sure you want to delete this assignment?')) {
+                    try {
+                        const response = await fetch(`/course/delete-assignment/${assignmentId}`, {
+                            method: 'DELETE'
+                        });
+                        const result = await response.json();
+                        if (result.success) {
+                            alert('Assignment deleted successfully!');
+                            location.reload();
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Failed to delete assignment');
+                    }
+                }
+            }
+            // Add view and submit handlers as needed
+        });
+    });
+}
+
 
