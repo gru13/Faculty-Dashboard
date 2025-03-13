@@ -71,44 +71,6 @@ router.get("/course/data", async (req, res) => {
     }
 });
 
-// // 📌 Add Assignment Route
-// router.post("/course/add-assignment", upload, async (req, res) => {
-//     const { courseId, classId, title, details, deadline, link, maxMarks } = req.body;
-//     const file = req.file;
-//     const facultyId = req.session.user.faculty_id.toString();
-
-//     if (!courseId || !classId || !title || !details || !deadline || !link || !maxMarks || !file || !facultyId) {
-//         return res.status(400).json({ success: false, message: "All fields are required." });
-//     }
-
-//     try {
-//         const query = `
-//             INSERT INTO assignments (course_id, class_id, title, details, deadline, submission_link, assignment_doc_url, max_marks)
-//             VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-//         `;
-//         const [result] = await db.promise().query(query, [courseId, classId, title, details, deadline, link, '', maxMarks]);
-//         const assignmentId = result.insertId.toString();
-//         const assignmentDocUrl = `/uploads/assignments/${facultyId}/${assignmentId}${path.extname(file.originalname)}`;
-
-//         // Update the assignment record with the correct assignment_doc_url
-//         await db.promise().query(
-//             "UPDATE assignments SET assignment_doc_url = ? WHERE assignment_id = ?",
-//             [assignmentDocUrl, assignmentId]
-//         );
-
-//         // Move the file to the correct location with the correct filename
-//         const oldPath = path.join(uploadDir, facultyId, file.filename);
-//         const newPath = path.join(uploadDir, facultyId, `${assignmentId}${path.extname(file.originalname)}`);
-//         fs.renameSync(oldPath, newPath);
-
-//         res.json({ success: true });
-//     } catch (error) {
-//         console.error("Error adding assignment:", error);
-//         res.status(500).json({ success: false, message: "Internal server error" });
-//     }
-// });
-
-// ...existing code...
 
 // 📌 Add Assignment Route
 router.post("/course/add-assignment", upload, async (req, res) => {

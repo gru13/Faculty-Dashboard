@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const db = require("../config/db");
+const fs = require("fs");
 
 const router = express.Router();
 
@@ -97,6 +98,38 @@ router.post("/assignment/grade", async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         console.error("Error saving grade:", error); // Add logging
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+});
+
+// 📌 API to delete a submitted assignment
+router.delete("/assignment/delete-submission/:submissionId", async (req, res) => {
+    const { submissionId } = req.params;
+
+    try {
+        // Get the submission details
+        const [submission] = await db.promise().query("SELECT * FROM assignment_submissions WHERE submission_id = ?", [submissionId]);
+        if (submission.length === 0) {
+            return res.status(404).json({ success: false, message: "Submission not found" });
+        }
+
+        const submissionDocUrl = submission[0].file_link;
+        const filePath = path.join(__dirname, "../public", submissionDocUrl);
+
+        // Delete the submission record from the database
+        await db.promise().query("DELETE FROM assignment_submissions WHERE submission_id = ?", [submissionId]);
+
+        // Delete the grade record from the database
+        await db.promise().query("DELETE FROM grades WHERE submission_id = ?", [submissionId]);
+
+        // Delete the submission file from the filesystem
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Error deleting submission:", error);
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 });

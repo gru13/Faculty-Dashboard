@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     <td contenteditable="true" class="editable-grade" data-submission-id="${submission.submission_id}" data-roll-no="${submission.roll_no}" data-assignment-id="${assignmentId}">${submission.grade || ''}</td>
                     <td>
                         <button class="save-grade-btn" data-submission-id="${submission.submission_id}" data-roll-no="${submission.roll_no}" data-assignment-id="${assignmentId}">Save</button>
+                        <button class="delete-submission-btn" data-submission-id="${submission.submission_id}">Delete</button>
                     </td>
                 </tr>
             `).join("");
@@ -117,6 +118,33 @@ document.addEventListener("DOMContentLoaded", async function () {
                     }
                 } catch (error) {
                     console.error("Error saving grade:", error);
+                    alert("An error occurred.");
+                }
+            });
+        });
+
+        document.querySelectorAll(".delete-submission-btn").forEach(button => {
+            button.addEventListener("click", async function () {
+                const submissionId = this.dataset.submissionId;
+
+                if (!confirm("Are you sure you want to delete this submission?")) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/assignment/delete-submission/${submissionId}`, {
+                        method: "DELETE"
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        alert("Submission deleted successfully!");
+                        location.reload();
+                    } else {
+                        alert("Failed to delete submission.");
+                    }
+                } catch (error) {
+                    console.error("Error deleting submission:", error);
                     alert("An error occurred.");
                 }
             });
