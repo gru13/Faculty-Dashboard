@@ -2,8 +2,35 @@ const express = require("express");
 const path = require("path");
 const db = require("../config/db");
 const fs = require("fs");
+const multer = require("multer");
 
 const router = express.Router();
+
+// 📌 Configure Multer for file uploads
+const uploadDir = path.join(__dirname, "../public/uploads/assignments/");
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const facultyId = req.session.user.faculty_id.toString();
+        if (!facultyId) {
+            return cb(new Error("Missing facultyId"));
+        }
+        const dir = path.join(uploadDir, facultyId);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        cb(null, dir);
+    },
+    filename: (req, file, cb) => {
+        const tempFilename = Date.now().toString();
+        const ext = path.extname(file.originalname);
+        cb(null, `${tempFilename}${ext}`);
+    }
+});
+const upload = multer({ storage }).single('file');
 
 // 📌 Serve Assignment Page (HTML)
 router.get("/assignment", (req, res) => {
@@ -41,19 +68,31 @@ router.get("/assignment/data", async (req, res) => {
 });
 
 // 📌 API to edit assignment details
-router.post("/assignment/edit", async (req, res) => {
+router.post("/assignment/edit", upload, async (req, res) => {
     const { assignmentId, title, details, deadline, link, maxMarks } = req.body;
+    const file = req.file;
 
     if (!assignmentId || !title || !details || !deadline || !link || !maxMarks) {
         return res.status(400).json({ success: false, message: "All fields are required." });
     }
 
     try {
+        let assignmentDocUrl = null;
+        if (file) {
+            const facultyId = req.session.user.faculty_id.toString();
+            assignmentDocUrl = `/uploads/assignments/${facultyId}/${assignmentId}${path.extname(file.originalname)}`;
+
+            // Move the file to the correct location with the correct filename
+            const oldPath = path.join(uploadDir, facultyId, file.filename);
+            const newPath = path.join(uploadDir, facultyId, `${assignmentId}${path.extname(file.originalname)}`);
+            fs.renameSync(oldPath, newPath);
+        }
+
         await db.promise().query(`
             UPDATE assignments
-            SET title = ?, details = ?, deadline = ?, submission_link = ?, max_marks = ?
+            SET title = ?, details = ?, deadline = ?, submission_link = ?, max_marks = ?, assignment_doc_url = COALESCE(?, assignment_doc_url)
             WHERE assignment_id = ?
-        `, [title, details, deadline, link, maxMarks, assignmentId]);
+        `, [title, details, deadline, link, maxMarks, assignmentDocUrl, assignmentId]);
 
         res.json({ success: true });
     } catch (error) {

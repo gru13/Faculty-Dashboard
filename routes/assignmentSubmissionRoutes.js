@@ -45,6 +45,30 @@ router.get("/assignment-submission", (req, res) => {
     res.sendFile(path.join(__dirname, "../public/html/assignmentSubmission.html"));
 });
 
+// 📌 Fetch Question Paper URL
+router.get("/assignment/question-paper", async (req, res) => {
+    const { course_id, class_id, assignment_id } = req.query;
+    if (!course_id || !class_id || !assignment_id) {
+        return res.status(400).json({ success: false, message: "Missing required parameters" });
+    }
+
+    try {
+        const [assignment] = await db.promise().query(
+            "SELECT assignment_doc_url FROM assignments WHERE course_id = ? AND class_id = ? AND assignment_id = ?",
+            [course_id, class_id, assignment_id]
+        );
+
+        if (assignment.length === 0) {
+            return res.status(404).json({ success: false, message: "Assignment not found" });
+        }
+
+        res.json({ success: true, questionPaperUrl: assignment[0].assignment_doc_url });
+    } catch (error) {
+        console.error("Error fetching question paper:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+});
+
 // 📌 Check if a student has already submitted the assignment
 router.get("/assignment/check-submission", async (req, res) => {
     const { roll_no, assignment_id } = req.query;

@@ -60,19 +60,29 @@ document.addEventListener("DOMContentLoaded", async function () {
             const deadline = document.getElementById("edit-assignment-deadline").value;
             const link = document.getElementById("edit-assignment-link").value;
             const maxMarks = document.getElementById("edit-assignment-max-marks").value;
+            const fileInput = document.getElementById("edit-assignment-doc");
+            const file = fileInput.files[0];
 
             if (!title || !details || !deadline || !link || !maxMarks) {
                 alert("All fields are required.");
                 return;
             }
 
+            const formData = new FormData();
+            formData.append("assignmentId", assignmentId);
+            formData.append("title", title);
+            formData.append("details", details);
+            formData.append("deadline", deadline);
+            formData.append("link", link);
+            formData.append("maxMarks", maxMarks);
+            if (file) {
+                formData.append("file", file);
+            }
+
             try {
                 const response = await fetch(`/assignment/edit`, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ assignmentId, title, details, deadline, link, maxMarks })
+                    body: formData
                 });
 
                 const result = await response.json();
