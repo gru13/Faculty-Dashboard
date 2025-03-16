@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <link rel="stylesheet" href="ass.css">
+</head>
+<body>
+    <div class="logout-popup" id="logoutPopup">
+        <div class="popup-content">
+          <p>Are you sure you want to logout?</p>
+          <div class="popup-buttons">
+            <button id="confirmLogout">Yes, logout</button>
+            <button id="cancelLogout">Cancel</button>
+          </div>
+        </div>
+    </div>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <button class="sidebar-icon">
+                    <span class="material-symbols-rounded">school</span>
+                </button>
+            </div>
+            <div class="sidebar-section">
+                <button class="sidebar-icon">
+                    <span class="material-symbols-rounded">dashboard</span>
+                </button>
+                <button class="sidebar-icon">
+                    <span class="material-symbols-rounded">person</span>
+                </button>
+            </div>
+            <div class="sidebar-section">
+                <button class="sidebar-icon logout">
+                    <span class="material-symbols-rounded">logout</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">    
+            <!-- Courses Grid -->
+            <!-- Replace the info-boxes section -->
+            <div class="info-boxes">
+                <!-- Assignment Info Box -->
+                <!-- Replace the assignment-info-box div -->
+                <div class="box info-box assignment-info-box">
+                    <div class="box-header">
+                        <h2>Assignment Information</h2>
+                    </div>
+                    <div class="bento-grid">
+                        <div class="bento-item title-item">
+                            <span class="info-label">Title</span>
+                            <h3 class="info-value">Neural Networks Assignment</h3>
+                        </div>
+                        <div class="bento-item description-item">
+                            <span class="info-label">Description</span>
+                            <p class="info-value">Implement a basic neural network using Python and NumPy. Submit a detailed report with your implementation and results. </p>
+                        </div>
+                        <div class="bento-item course-item">
+                            <span class="info-label">Course</span>
+                            <div class="course-badge">
+                                <span class="material-symbols-rounded">school</span>
+                                <span class="info-value">CS-410 Machine Learning</span>
+                            </div>
+                        </div>
+                        <div class="bento-item class-item">
+                            <span class="info-label">Class</span>
+                            <div class="class-badge">
+                                <span class="material-symbols-rounded">groups</span>
+                                <span class="info-value">B.Tech CSE A</span>
+                            </div>
+                        </div>
+                        <div class="bento-item deadline-item">
+                            <span class="info-label">Deadline</span>
+                            <div class="deadline-badge">
+                                <span class="material-symbols-rounded">schedule</span>
+                                <span class="info-value">March 15, 2025 11:59 PM</span>
+                            </div>
+                        </div>
+                        <div class="bento-item marks-item">
+                            <span class="info-label">Maximum Marks</span>
+                            <div class="marks-badge">
+                                <span class="material-symbols-rounded">grade</span>
+                                <span class="info-value">100</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assignment Actions Box -->
+                <div class="box info-box actions-box">
+                    <div class="box-header">
+                        <h2>Actions</h2>
+                    </div>
+                    <div class="actions-list">
+                        <div class="action-item view-item" id="view-pdf">
+                            <span class="material-symbols-rounded">description</span>
+                            <div class="action-info">
+                                <h4>View Assignment</h4>
+                                <small>Open assignment PDF</small>
+                            </div>
+                            <button class="action-button view">
+                                <span class="material-symbols-rounded">arrow_forward</span>
+                            </button>
+                        </div>
+                        <div class="action-item submit-item" id="visit-submission">
+                            <span class="material-symbols-rounded">upload_file</span>
+                            <div class="action-info">
+                                <h4>Submission page</h4>
+                                <small>Visit submission page</small>
+                            </div>
+                            <button class="action-button submit">
+                                <span class="material-symbols-rounded">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <!-- Timetable Box -->
+            <div class="box timetable-box">
+                <div class="box-header">
+                    <h2>Student Submissions</h2>
+                    <span class="student-count">24 Submissions</span>
+                </div>
+                <div class="submissions-list">
+                    <!-- <div class="empty-state">No Submissions</div> -->
+                    <div class="submission-item">
+                        <div class="student-info">
+                            <span class="roll-no">CSE001</span>
+                            <span class="student-name">Alex Johnson</span>
+                        </div>
+                        <div class="submission-details">
+                            <div class="status-badge on-time">
+                                <span class="material-symbols-rounded">schedule</span>
+                                <span class="submission-time">Mar 15, 2025 10:30 PM</span>
+                            </div>
+                            <div class="grade-field">
+                                <input type="number" max="100" placeholder="Grade" value="85">
+                                <span class="max-grade">/100</span>
+                            </div>
+                        </div>
+                        <div class="submission-actions">
+                            <button class="action-button view" title="View Submission">
+                                <span class="material-symbols-rounded">visibility</span>
+                            </button>
+                            <button class="action-button save" title="Save Grade">
+                                <span class="material-symbols-rounded">save</span>
+                            </button>
+                            <button class="action-button delete" title="Delete Submission">
+                                <span class="material-symbols-rounded">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="submission-item">
+                        <div class="student-info">
+                            <span class="roll-no">CSE001</span>
+                            <span class="student-name">Alex Johnson</span>
+                        </div>
+                        <div class="submission-details">
+                            <div class="status-badge on-time">
+                                <span class="material-symbols-rounded">schedule</span>
+                                <span class="submission-time">Mar 15, 2025 10:30 PM</span>
+                            </div>
+                            <div class="grade-field">
+                                <input type="number" max="100" placeholder="Grade" value="85">
+                                <span class="max-grade">/100</span>
+                            </div>
+                        </div>
+                        <div class="submission-actions">
+                            <button class="action-button view" title="View Submission">
+                                <span class="material-symbols-rounded">visibility</span>
+                            </button>
+                            <button class="action-button save" title="Save Grade">
+                                <span class="material-symbols-rounded">save</span>
+                            </button>
+                            <button class="action-button delete" title="Delete Submission">
+                                <span class="material-symbols-rounded">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+
+
+        <!-- Right Panel: Notifications and Calendar -->
+        <!-- Replace the right panel content -->
+        <div class="right-panel">
+            <!-- <div class="box course-info-box">
+                <div class="course-info-header">
+                    <h1>Machine Learning</h1>
+                    <div class="course-meta">
+                        <span class="course-code">ML-410</span>
+                        <span class="separator">•</span>
+                        <span class="batch">B.Tech CSE A</span>
+                    </div>
+                </div>
+            </div> -->
+            <div class="box form-box">
+                <div class="box-header">
+                    <h2>Edit Assignment</h2>
+                </div>
+                <form class="assignment-form">
+                    <div class="form-group">
+                        <label for="title">Assignment Title</label>
+                        <input type="text" id="title" placeholder="e.g. Neural Networks Assignment" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="details">Details</label>
+                        <textarea id="details" rows="4" placeholder="Assignment description and requirements"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">Due Date</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="time">Due Time</label>
+                            <input type="time" id="time" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="submissionLink">Submission Link</label>
+                        <input type="url" id="submissionLink" placeholder="e.g. https://classroom.github.com/...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maxMarks">Maximum Marks</label>
+                        <input type="number" id="maxMarks" min="0" placeholder="e.g. 100" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pdf">Assignment PDF</label>
+                        <div class="file-input">
+                            <input type="file" id="pdf" accept=".pdf" required>
+                            <span class="file-name">No file chosen</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <span class="material-symbols-rounded">save</span>
+                            Save Edits
+                        </button>
+                        <button type="button" class="btn-secondary">
+                            <span class="material-symbols-rounded">close</span>
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    
+    <script src="ass.js"></script>
+</body>
+</html>
