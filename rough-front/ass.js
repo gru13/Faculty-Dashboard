@@ -127,16 +127,23 @@ function setupSubmissionsList(submissions) {
 
     submissionCount.textContent = `${submissions.length} Submissions`;
     
-    submissionsList.innerHTML = submissions.map(submission => `
+    submissionsList.innerHTML = submissions.map(submission => {
+        const submittedAt = new Date(submission.submission_date); // Changed from submitted_at
+        const deadline = new Date(window.assignmentData.assignment.deadline);
+        const isLate = submittedAt > deadline;
+        const fileUrl = submission.file_link; // Changed from file_url
+        const studentName = submission.name; // Changed from student_name
+
+        return `
         <div class="submission-item">
             <div class="student-info">
                 <span class="roll-no">${submission.roll_no}</span>
-                <span class="student-name">${submission.student_name}</span>
+                <span class="student-name">${studentName}</span>
             </div>
             <div class="submission-details">
-                <div class="status-badge on-time">
+                <div class="status-badge ${isLate ? 'late' : 'on-time'}">
                     <span class="material-symbols-rounded">schedule</span>
-                    <span class="submission-time">${new Date(submission.submitted_at).toLocaleString()}</span>
+                    <span class="submission-time">${new Date(submittedAt).toLocaleString()}</span>
                 </div>
                 <div class="grade-field">
                     <input type="number" max="100" placeholder="Grade" value="${submission.grade || ''}"
@@ -145,7 +152,7 @@ function setupSubmissionsList(submissions) {
                 </div>
             </div>
             <div class="submission-actions">
-                <button class="action-button view" title="View Submission" data-file="${submission.file_url}">
+                <button class="action-button view" title="View Submission" data-file="${fileUrl}">
                     <span class="material-symbols-rounded">visibility</span>
                 </button>
                 <button class="action-button save" title="Save Grade" data-id="${submission.submission_id}">
@@ -156,7 +163,7 @@ function setupSubmissionsList(submissions) {
                 </button>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 }
 
 function setupFormHandlers() {
@@ -212,16 +219,18 @@ function setupActionHandlers() {
             const submissionId = this.dataset.id;
             
             if (this.classList.contains('save')) {
+                const submissionItem = this.closest('.submission-item');
+                const rollNo = submissionItem.querySelector('.roll-no').textContent;
                 const gradeInput = this.closest('.submission-item').querySelector('.grade-field input');
                 const grade = gradeInput.value;
                 
                 try {
-                    const response = await fetch(`/submission/grade/${submissionId}`, {
+                    const response = await fetch(`/assignment/grade`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ grade })
+                        body: JSON.stringify({ submissionId, rollNo, grade })
                     });
                     
                     const result = await response.json();
@@ -235,7 +244,7 @@ function setupActionHandlers() {
             } else if (this.classList.contains('delete')) {
                 if (confirm('Are you sure you want to delete this submission?')) {
                     try {
-                        const response = await fetch(`/submission/delete/${submissionId}`, {
+                        const response = await fetch(`/assignment/delete-submission/${submissionId}`, {
                             method: 'DELETE'
                         });
                         const result = await response.json();
