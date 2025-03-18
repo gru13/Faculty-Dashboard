@@ -40,16 +40,79 @@ router.get("/assignment", (req, res) => {
     res.sendFile(path.join(__dirname, "../public/html/assignment.html"));
 });
 
-// 📌 API to fetch assignment details and submissions
+// // 📌 API to fetch assignment details and submissions
+// router.get("/assignment/data", async (req, res) => {
+//     const assignmentId = req.query.assignment_id;
+//     if (!assignmentId) {
+//         return res.status(400).json({success:false, error: "Assignment ID is required" });
+//     }
+//     try {
+//         const [assignment] = await db.promise().query("SELECT * FROM assignments WHERE assignment_id = ?", [assignmentId]);
+//         if (assignment.length === 0) {
+//             return res.status(404).json({success:false, error: "Assignment not found" });
+//         }
+
+//         const [submissions] = await db.promise().query(`
+//             SELECT s.submission_id, s.roll_no, s.submission_date, s.file_link, st.name, g.grade
+//             FROM assignment_submissions s
+//             JOIN students st ON s.roll_no = st.roll_no
+//             LEFT JOIN grades g ON s.submission_id = g.submission_id
+//             WHERE s.assignment_id = ?
+//         `, [assignmentId]);
+
+//         res.json({success:true, assignment: assignment[0], submissions });
+//     } catch (error) {
+//         console.error("Error fetching assignment data:", error);
+//         res.status(500).json({success:false, error: "Internal server error" });
+//     }
+// });
+
+// router.get("/assignment/data", async (req, res) => {
+//     const assignmentId = req.query.assignment_id;
+//     if (!assignmentId) {
+//         return res.status(400).json({ success: false, error: "Assignment ID is required" });
+//     }
+//     try {
+//         const [assignment] = await db.promise().query(`
+//             SELECT a.*, c.course_name
+//             FROM assignments a
+//             JOIN courses c ON a.course_id = c.course_id
+//             WHERE a.assignment_id = ?
+//         `, [assignmentId]);
+//         if (assignment.length === 0) {
+//             return res.status(404).json({ success: false, error: "Assignment not found" });
+//         }
+
+//         const [submissions] = await db.promise().query(`
+//             SELECT s.submission_id, s.roll_no, s.submission_date, s.file_link, st.name, g.grade
+//             FROM assignment_submissions s
+//             JOIN students st ON s.roll_no = st.roll_no
+//             LEFT JOIN grades g ON s.submission_id = g.submission_id
+//             WHERE s.assignment_id = ?
+//         `, [assignmentId]);
+
+//         res.json({ success: true, assignment: assignment[0], submissions });
+//     } catch (error) {
+//         console.error("Error fetching assignment data:", error);
+//         res.status(500).json({ success: false, error: "Internal server error" });
+//     }
+// });
+
 router.get("/assignment/data", async (req, res) => {
     const assignmentId = req.query.assignment_id;
     if (!assignmentId) {
-        return res.status(400).json({ error: "Assignment ID is required" });
+        return res.status(400).json({ success: false, error: "Assignment ID is required" });
     }
     try {
-        const [assignment] = await db.promise().query("SELECT * FROM assignments WHERE assignment_id = ?", [assignmentId]);
+        const [assignment] = await db.promise().query(`
+            SELECT a.*, c.course_name, cl.class_name
+            FROM assignments a
+            JOIN courses c ON a.course_id = c.course_id
+            JOIN class_list cl ON a.class_id = cl.class_id
+            WHERE a.assignment_id = ?
+        `, [assignmentId]);
         if (assignment.length === 0) {
-            return res.status(404).json({ error: "Assignment not found" });
+            return res.status(404).json({ success: false, error: "Assignment not found" });
         }
 
         const [submissions] = await db.promise().query(`
@@ -60,15 +123,49 @@ router.get("/assignment/data", async (req, res) => {
             WHERE s.assignment_id = ?
         `, [assignmentId]);
 
-        res.json({ assignment: assignment[0], submissions });
+        res.json({ success: true, assignment: assignment[0], submissions });
     } catch (error) {
         console.error("Error fetching assignment data:", error);
-        res.status(500).json({ error: "Internal server error" });
+        res.status(500).json({ success: false, error: "Internal server error" });
     }
 });
 
 // 📌 API to edit assignment details
 router.post("/assignment/edit", upload, async (req, res) => {
+    const { assignmentId, title, details, deadline, link, maxMarks } = req.body;
+    const file = req.file;
+
+    if (!assignmentId || !title || !details || !deadline || !link || !maxMarks) {
+        return res.status(400).json({ success: false, message: "All fields are required." });
+    }
+
+    try {
+        let assignmentDocUrl = null;
+        if (file) {
+            const facultyId = req.session.user.faculty_id.toString();
+            assignmentDocUrl = `/uploads/assignments/${facultyId}/${assignmentId}${path.extname(file.originalname)}`;
+
+            // Move the file to the correct location with the correct filename
+            const oldPath = path.join(uploadDir, facultyId, file.filename);
+            const newPath = path.join(uploadDir, facultyId, `${assignmentId}${path.extname(file.originalname)}`);
+            fs.renameSync(oldPath, newPath);
+        }
+
+        await db.promise().query(`
+            UPDATE assignments
+            SET title = ?, details = ?, deadline = ?, submission_link = ?, max_marks = ?, assignment_doc_url = COALESCE(?, assignment_doc_url)
+            WHERE assignment_id = ?
+        `, [title, details, deadline, link, maxMarks, assignmentDocUrl, assignmentId]);
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Error updating assignment:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+});
+
+// 📌 API to update assignment details
+router.post("/assignment/update", upload, async (req, res) => {
     const { assignmentId, title, details, deadline, link, maxMarks } = req.body;
     const file = req.file;
 

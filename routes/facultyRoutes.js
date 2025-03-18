@@ -85,4 +85,39 @@ router.post("/update-profile-picture", upload.single("profile_pic"), (req, res) 
     }
 });
 
+
+router.post("/update-profile", (req, res) => {
+    console.log("Received Data:", req.body);
+
+    if (!req.session.user) {
+        return res.status(401).json({ message: "Not logged in" });
+    }
+
+    const { name, mobile_no, degree, department } = req.body;
+    const facultyId = req.session.user.faculty_id;
+
+    if (!name || !mobile_no || !department) {
+        return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const updateQuery = `UPDATE Faculty SET name = ?, mobile_no = ?, degree = ?, department = ? WHERE faculty_id = ?`;
+
+    db.query(updateQuery, [name, mobile_no, degree || "", department, facultyId], (err, result) => {
+        if (err) {
+            console.error("❌ Database Error:", err);
+            return res.status(500).json({ message: "Database error" });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Faculty not found" });
+        }
+
+        req.session.user = { ...req.session.user, name, mobile_no, degree: degree || "", department };
+
+        return res.status(200).json({ message: "Profile updated successfully", user: req.session.user });
+    });
+});
+
+
+
 module.exports = router;

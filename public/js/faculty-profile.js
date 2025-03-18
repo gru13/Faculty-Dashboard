@@ -44,21 +44,26 @@ document.querySelector('.edit-button').addEventListener('click', function() {
     
     if (isEditing) {
         // Collecting and sending form data
-        const formData = new FormData();
+        // const formData = new FormData();
 
         console.log('Name:', document.querySelector('.field-value.first-name').textContent);
         console.log('Department:', document.querySelector('.field-value.department').textContent);
         console.log('Mobile:', document.querySelector('.field-value.mobile').textContent);
         
-        formData.append('name', document.querySelector('.field-value.first-name').textContent);
-        formData.append('department', document.querySelector('.field-value.department').textContent);
-        formData.append('mobile_no', document.querySelector('.field-value.mobile').textContent);
+        const formData = {
+            name: document.querySelector('.field-value.first-name').textContent.trim(),
+            department: document.querySelector('.field-value.department').textContent.trim(),
+            mobile_no: document.querySelector('.field-value.mobile').textContent.trim(),
+        };
 
         console.log('Form Data:', formData);
 
         fetch('/update-profile', {
             method: 'POST',
-            body: formData,
+            body: JSON.stringify(formData),
+            headers: {
+                'Content-Type': 'application/json',
+            },
         })
         .then(response => response.json())  // Parse response JSON
         .then(data => {
