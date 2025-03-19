@@ -178,6 +178,8 @@ function setupSubmissionsList(submissions) {
 
     submissionCount.textContent = `${submissions.length} Submissions`;
 
+    const maxMarks = window.assignmentData.maxMarks || 100; // Default to 100 if maxMarks is not defined
+
     submissionsList.innerHTML = submissions.map(submission => {
         const submittedAt = new Date(submission.submission_date);
         const deadline = window.assignmentData.deadline ? new Date(window.assignmentData.deadline) : null;
@@ -197,9 +199,9 @@ function setupSubmissionsList(submissions) {
                     <span class="submission-time">${new Date(submittedAt).toLocaleString()}</span>
                 </div>
                 <div class="grade-field">
-                    <input type="number" max="100" placeholder="Grade" value="${submission.grade || ''}"
+                    <input type="number" max="${maxMarks}" placeholder="Grade" value="${submission.grade || ''}"
                            data-submission-id="${submission.submission_id}">
-                    <span class="max-grade">/100</span>
+                    <span class="max-grade">/${maxMarks}</span>
                 </div>
             </div>
             <div class="submission-actions">
