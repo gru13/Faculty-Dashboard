@@ -22,7 +22,18 @@ router.get("/dashboard", (req, res) => {
     if (!req.session.user) {
         return res.redirect("/");
     }
+    if (req.session.user.role === 'admin') {
+        return res.redirect("/admin");
+    }
     res.sendFile(path.join(__dirname, "../public/html/dashboard.html"));
+});
+
+// Serve Admin Page (Protected Route)
+router.get("/admin", (req, res) => {
+    if (!req.session.user || req.session.user.role !== 'admin') {
+        return res.redirect("/");
+    }
+    res.sendFile(path.join(__dirname, "../public/html/admin.html"));
 });
 
 router.get("/profile", (req, res) => {

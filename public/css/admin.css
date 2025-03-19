@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+body {
+    background-color: #f3f4f6;
+    min-height: 100vh;
+}
+
+.container {
+    display: flex;
+    gap: 24px;
+    padding: 24px;
+    height: calc(100vh - 48px);
+}
+
+.sidebar {
+    width: 80px;
+    height: calc(100vh - 64px);
+    background: #1a1a1a;
+    padding: 24px 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Space out sections vertically */
+    align-items: center; /* Center icons horizontally */
+}
+
+.sidebar-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: #2c2c2c;
+    border: none;
+    outline: none;
+    color: #e5e7eb;
+}
+
+.sidebar-icon:hover {
+    background: #e5e7eb;
+    color: #2c2c2c;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px #5562da;
+}
+
+.sidebar-icon.logout:hover {
+    background: #ffffff;
+    color: #dc2626;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.sidebar-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center; /* Center icons horizontally */
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.admin-section {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.admin-section h2 {
+    margin-bottom: 16px;
+    color: #1e293b;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+table th {
+    background: #f8fafc;
+    color: #1e293b;
+}
+
+table td {
+    color: #4b5563;
+}
+
+button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    background: #e5e7eb;
+}
+
+.edit-input {
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.edit-input:focus {
+    border-color: #5562da;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(85, 98, 218, 0.2);
+}
+
+/* Logout Popup Styles */
+.logout-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.logout-popup.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.popup-content {
+    background: white;
+    padding: 32px 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.popup-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    justify-content: center;
+}
+
+.popup-buttons button {
+    padding: 10px 24px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+#confirmLogout {
+    background: #dc2626;
+    color: white;
+}
+
+#cancelLogout {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+#new-faculty-row input.add-input {
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+#new-faculty-row input.add-input:focus {
+    border-color: #5562da;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(85, 98, 218, 0.2);
+}
+
+#new-faculty-row button.add-faculty {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #22c55e;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#new-faculty-row button.add-faculty:hover {
+    background: #16a34a;
+}
+
+#new-faculty-row td:first-child {
+    text-align: center;
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 500;
+}

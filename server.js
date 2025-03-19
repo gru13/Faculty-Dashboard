@@ -36,6 +36,7 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const assignmentRoutes = require("./routes/assignmentRoutes"); // New assignment routes
 const assignmentSubmissionRoutes = require("./routes/assignmentSubmissionRoutes"); // New assignment submission routes
+const adminRoutes = require('./routes/adminRoutes');
 
 // ✅ Use Routes
 app.use("/", facultyRoutes);
@@ -46,6 +47,7 @@ app.use("/", dashboardRoutes);
 app.use("/", courseRoutes);   
 app.use("/", assignmentRoutes); // Use the new assignment routes
 app.use("/", assignmentSubmissionRoutes); // Use the new assignment submission routes
+app.use('/admin', adminRoutes);
 
 // ✅ Start Server
 app.listen(PORT, () => {
