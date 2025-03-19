@@ -38,39 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('Failed to fetch classes');
             }
             const result = await response.json();
-            const classSelect = document.getElementById('class-select');
-            classSelect.innerHTML = result.classes.map(cls => `
-                <option value="${cls.class_id}">${cls.class_name}</option>
-            `).join('');
         } catch (error) {
             console.error('Error fetching classes:', error);
             alert('Failed to load classes.');
         }
-    }
-
-    // View students by class
-    const viewStudentsButton = document.getElementById('view-students');
-    if (viewStudentsButton) {
-        viewStudentsButton.addEventListener('click', async () => {
-            const classId = document.getElementById('class-select').value;
-            try {
-                const response = await fetch(`/admin/students/${classId}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch students');
-                }
-                const result = await response.json();
-                const studentsList = document.getElementById('students-list');
-                studentsList.innerHTML = result.students.map(student => `
-                    <div class="student-item">
-                        <span class="roll-no">${student.roll_no}</span>
-                        <span class="student-name">${student.name}</span>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('Error fetching students:', error);
-                alert('Failed to fetch students.');
-            }
-        });
     }
 
     // Fetch and display faculty list
@@ -234,6 +205,12 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('An error occurred while adding the faculty.');
         }
     });
+
+    // Remove any event listeners or functionality related to the "Add Class" button
+    const addClassButton = document.getElementById('add-class-tab');
+    if (addClassButton) {
+        addClassButton.remove(); // Remove the button from the DOM
+    }
 
     // Initial fetch of faculty list
     fetchFacultyList();

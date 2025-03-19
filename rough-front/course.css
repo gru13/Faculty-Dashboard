@@ -224,8 +224,8 @@ body {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0);
-    backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
+    backdrop-filter: blur(0px);
     z-index: 1;
     pointer-events: none;
     transition: all 0.3s ease-out;

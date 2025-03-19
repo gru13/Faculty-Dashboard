@@ -42,7 +42,8 @@ router.get('/students/:classId', async (req, res) => {
 // Fetch all classes
 router.get('/classes', async (req, res) => {
     try {
-        const [classes] = await db.promise().query('SELECT class_id, class_name FROM class_list');
+        const [classes] = await db.promise().query('SELECT class_id, class_name FROM class_list'); // Ensure correct query
+        console.log('Classes retrieved from database:', classes); // Debug log
         res.json({ success: true, classes });
     } catch (error) {
         console.error('Error fetching classes:', error);
@@ -214,6 +215,117 @@ router.delete('/delete-faculty/:id', async (req, res) => {
         res.json({ success: true, message: 'Faculty deleted successfully.' });
     } catch (error) {
         console.error('Error deleting faculty:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Add a new class
+router.post('/classes', async (req, res) => {
+    const { className } = req.body;
+    try {
+        await db.promise().query('INSERT INTO class_list (class_name) VALUES (?)', [className]); // Use 'class_list'
+        res.json({ success: true, message: 'Class added successfully.' });
+    } catch (error) {
+        console.error('Error adding class:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Update a class
+router.put('/classes/:classId', async (req, res) => {
+    const { classId } = req.params;
+    const { className } = req.body;
+    try {
+        await db.promise().query('UPDATE class_list SET class_name = ? WHERE class_id = ?', [className, classId]); // Use 'class_list'
+        res.json({ success: true, message: 'Class updated successfully.' });
+    } catch (error) {
+        console.error('Error updating class:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Delete a class
+router.delete('/classes/:classId', async (req, res) => {
+    const { classId } = req.params;
+    try {
+        await db.promise().query('DELETE FROM class_list WHERE class_id = ?', [classId]); // Use 'class_list'
+        res.json({ success: true, message: 'Class deleted successfully.' });
+    } catch (error) {
+        console.error('Error deleting class:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Fetch students in a class
+router.get('/classes/:classId/students', async (req, res) => {
+    const { classId } = req.params;
+    try {
+        const [students] = await db.promise().query('SELECT roll_no, name FROM students WHERE class_id = ?', [classId]);
+        res.json({ success: true, students });
+    } catch (error) {
+        console.error('Error fetching students:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Add a student to a class
+router.post('/classes/:classId/students', async (req, res) => {
+    const { classId } = req.params;
+    const { name, rollNo } = req.body;
+    try {
+        await db.promise().query('INSERT INTO students (name, roll_no, class_id) VALUES (?, ?, ?)', [name, rollNo, classId]);
+        res.json({ success: true, message: 'Student added successfully.' });
+    } catch (error) {
+        console.error('Error adding student:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Delete a student from a class
+router.delete('/classes/:classId/students/:studentId', async (req, res) => {
+    const { studentId } = req.params;
+    try {
+        await db.promise().query('DELETE FROM students WHERE student_id = ?', [studentId]);
+        res.json({ success: true, message: 'Student removed successfully.' });
+    } catch (error) {
+        console.error('Error removing student:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Fetch courses in a class
+router.get('/classes/:classId/courses', async (req, res) => {
+    const { classId } = req.params;
+    try {
+        const [courses] = await db.promise().query('SELECT course_id, course_name FROM courses WHERE class_id = ?', [classId]);
+        res.json({ success: true, courses });
+    } catch (error) {
+        console.error('Error fetching courses:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Add a course to a class
+router.post('/classes/:classId/courses', async (req, res) => {
+    const { classId } = req.params;
+    const { courseName, courseCode } = req.body;
+    try {
+        await db.promise().query('INSERT INTO courses (course_name, course_code, class_id) VALUES (?, ?, ?)', [courseName, courseCode, classId]);
+        res.json({ success: true, message: 'Course added successfully.' });
+    } catch (error) {
+        console.error('Error adding course:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Delete a course from a class
+router.delete('/classes/:classId/courses/:courseId', async (req, res) => {
+    const { courseId } = req.params;
+    try {
+        await db.promise().query('DELETE FROM courses WHERE course_id = ?', [courseId]);
+        res.json({ success: true, message: 'Course removed successfully.' });
+    } catch (error) {
+        console.error('Error removing course:', error);
         res.status(500).json({ success: false, message: 'Internal server error.' });
     }
 });

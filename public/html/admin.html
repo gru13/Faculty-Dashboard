@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/course-management.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
 </head>
 <body>
@@ -39,6 +40,7 @@
 
         <!-- Main Content -->
         <div class="main-content">
+            <!-- Faculty List Section -->
             <div class="admin-section">
                 <h2>Faculty List</h2>
                 <table id="faculty-table">
@@ -57,7 +59,6 @@
                     </tbody>
                     <tfoot>
                         <tr id="new-faculty-row">
-                            <!-- Removed faculty_id input -->
                             <td>Auto</td>
                             <td><input type="text" id="new-faculty-name" placeholder="Name" class="add-input" /></td>
                             <td><input type="email" id="new-faculty-email" placeholder="Email" class="add-input" /></td>
@@ -70,19 +71,70 @@
                     </tfoot>
                 </table>
             </div>
+
+            <!-- Class Management Section -->
             <div class="admin-section">
-                <h2>View Students</h2>
-                <label for="class-select">Select Class:</label>
-                <select id="class-select">
-                    <!-- Class options will be dynamically populated -->
-                </select>
-                <button id="view-students">View Students</button>
-                <div id="students-list">
-                    <!-- Students list will be dynamically populated -->
+                <h2>Class Management</h2>
+                <div class="class-tabs-container">
+                    <div class="class-tabs-wrapper">
+                        <div class="class-tabs">
+                            <!-- Class tabs will be dynamically populated -->
+                        </div>
+                    </div>
+                    <button id="add-class-tab" class="add-class-tab">+ Add Class</button>
+                </div>
+                <div class="class-details">
+                    <div class="details-tabs">
+                        <button class="tab-button active" data-tab="students">Students</button>
+                        <button class="tab-button" data-tab="courses">Courses</button>
+                    </div>
+                    <div class="tab-content" id="students">
+                        <table id="students-table">
+                            <thead>
+                                <tr>
+                                    <th>Roll No</th>
+                                    <th>Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Students will be dynamically populated -->
+                            </tbody>
+                        </table>
+                        <form id="add-student-form">
+                            <input type="text" id="student-name" placeholder="Name" required>
+                            <input type="text" id="student-roll" placeholder="Roll No" required>
+                            <button type="submit">Add Student</button>
+                        </form>
+                    </div>
+                    <div class="tab-content" id="courses" style="display: none;">
+                        <h3>Manage Courses</h3>
+                        <table id="courses-table">
+                            <thead>
+                                <tr>
+                                    <th>Course ID</th>
+                                    <th>Course Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Courses will be dynamically populated -->
+                            </tbody>
+                        </table>
+                        <form id="add-course-form">
+                            <input type="text" id="course-name" placeholder="Course Name" required>
+                            <input type="text" id="course-id" placeholder="Course ID" required>
+                            <button type="submit">Add Course</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Scripts -->
     <script src="../js/admin.js"></script>
+    <script src="../js/class-management.js"></script>
+    <script src="../js/course-management.js"></script>
 </body>
 </html>
