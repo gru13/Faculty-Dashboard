@@ -73,7 +73,13 @@ body {
     flex-direction: column;
     gap: 16px;
     height: calc(100vh - 64px);
-    overflow-y: auto;
+    overflow-y: auto; /* Allow vertical scrolling */
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none; /* For Internet Explorer and Edge */
+}
+
+.main-content::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Opera */
 }
 
 .admin-section {
@@ -116,12 +122,14 @@ table tbody tr:hover {
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     font-size: 0.95rem;
+    background-color: #f9fafb;
+    color: #1e293b;
 }
 
 .add-input:focus {
     border-color: #5562da;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(85, 98, 218, 0.1);
+    box-shadow: 0 0 0 3px rgba(85, 98, 218, 0.2);
 }
 
 .add-faculty {
@@ -234,13 +242,21 @@ button:hover {
     display: flex;
     align-items: center;
     gap: 16px;
+    margin-top: 16px;
 }
 
+.class-tabs {
+    display: inline-flex;
+    border-radius: 8px;
+    gap: 16px; /* Increased gap between class-tab elements */
+    padding: 8px;
+}
 .class-tabs-wrapper {
     flex: 1;
-    overflow-x: auto; /* Allow horizontal scrolling for the class list */
+    display: flex;
+    overflow-x: auto; /* Allow horizontal scrolling */
     white-space: nowrap;
-    padding-bottom: 8px;
+    padding: 8px;
     background: white;
     border-radius: 12px;
     scrollbar-width: none; /* For Firefox */
@@ -251,39 +267,28 @@ button:hover {
     display: none; /* For Chrome, Safari, and Opera */
 }
 
-.class-tabs {
-    display: inline-flex;
-    gap: 8px;
-    padding: 8px;
-}
-
-.class-tabs .tab {
+.class-tab {
     padding: 12px 24px;
     border-radius: 8px;
+    background: #f1f5f9;
+    color: #64748b;
     cursor: pointer;
     transition: all 0.2s ease;
+    border: 1px solid transparent;
     white-space: nowrap;
 }
 
-.class-tabs .tab span {
-    font-size: 0.95rem;
-    color: #64748b;
-}
-
-.class-tabs .tab.active {
-    background: #5562da;
-}
-
-.class-tabs .tab.active span {
+.class-tab.active {
+    background: #007bff;
     color: white;
+    border: 1px solid #0056b3;
 }
 
-.class-tabs .tab:hover:not(.active) {
-    background: #f1f5f9;
+.class-tab:hover:not(.active) {
+    background: #e9ecef;
 }
 
 .add-class-tab {
-    flex-shrink: 0; /* Prevent the button from shrinking */
     padding: 12px 24px;
     border-radius: 8px;
     background: #5562da;
@@ -291,6 +296,12 @@ button:hover {
     cursor: pointer;
     transition: all 0.2s ease;
     border: none;
+    white-space: nowrap;
+    flex-shrink: 0; /* Prevent shrinking */
+    display: inline-block; /* Ensure the button is visible */
+    text-align: center; /* Center the text inside the button */
+    position: relative; /* Changed from absolute */
+    margin-left: 16px; /* Add spacing from the scrollable area */
 }
 
 .add-class-tab:hover {
@@ -405,3 +416,214 @@ button:hover {
 #modify-course-outcome-form button:hover {
     background: #4549ac;
 }
+
+#students-table tfoot {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    border-top: 1px solid #e5e7eb;
+}
+
+#new-student-row .add-input {
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: #f9fafb;
+    color: #1e293b;
+}
+
+#new-student-row .add-input:focus {
+    border-color: #5562da;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(85, 98, 218, 0.2);
+}
+
+#add-student-button {
+    padding: 8px 16px;
+    background: #5562da;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#add-student-button:hover {
+    background: #4549ac;
+}
+
+#courses-table tfoot {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    border-top: 1px solid #e5e7eb;
+}
+
+#new-course-row .add-input {
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: #f9fafb;
+    color: #1e293b;
+}
+
+#new-course-row .add-input:focus {
+    border-color: #5562da;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(85, 98, 218, 0.2);
+}
+
+#add-course-button {
+    padding: 8px 16px;
+    background: #5562da;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#add-course-button:hover {
+    background: #4549ac;
+}
+
+.modify-class-name {
+    margin: 16px 0;
+    text-align: center;
+}
+
+.modify-class-name-button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+    display: inline-block;
+}
+
+.modify-class-name-button:hover {
+    background: #0056b3;
+}
+
+input[type="text"], input[type="email"], input[type="password"], textarea {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: #f9fafb;
+    color: #1e293b;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, textarea:focus {
+    border-color: #5562da;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(85, 98, 218, 0.2);
+}
+
+input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="password"]::placeholder, textarea::placeholder {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Ensure consistent spacing for input fields */
+input, textarea {
+    margin: 16px 2px;
+}
+
+.edit-class-name-container {
+    display: flex;
+    align-items: center; /* Vertically align items */
+    justify-content: flex-start; /* Align items horizontally */
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 8px;
+    background-color: #f9fafb;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.edit-class-name-input {
+    flex: 1;
+    font-size: larger;
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: white;
+    color: #1e293b;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.edit-class-name-input:focus {
+    border-color: #5562da;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(85, 98, 218, 0.2);
+}
+
+.save-class-name-button, .cancel-class-name-button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.save-class-name-button {
+    background: #007bff;
+    color: white;
+}
+
+.save-class-name-button:hover {
+    background: #0056b3;
+}
+
+.cancel-class-name-button {
+    background: #e5e7eb;
+    color: #1e293b;
+}
+
+.cancel-class-name-button:hover {
+    background: #d1d5db;
+}
+
+.delete-class-button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: #dc2626;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    margin-left: 8px; /* Add spacing from the "Edit Class Name" button */
+}
+
+.delete-class-button:hover {
+    background: #b91c1c;
+}
+
+/* Add spacing between the edit section and the tabs */
+.class-details .details-tabs {
+    margin-top: 16px;
+}
+

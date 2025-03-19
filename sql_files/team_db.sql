@@ -20,11 +20,13 @@ CREATE TABLE Faculty (
     department VARCHAR(255) NOT NULL
 );
 
--- Class List Table
+-- Modify Class List Table
+DROP TABLE IF EXISTS class_list;
+
 CREATE TABLE class_list (
-    class_id INT UNIQUE NOT NULL,
+    class_id INT AUTO_INCREMENT PRIMARY KEY, -- Changed to AUTO_INCREMENT
     class_name VARCHAR(255) UNIQUE NOT NULL
-);
+) AUTO_INCREMENT = 101; -- Start AUTO_INCREMENT from 101
 
 -- Courses Table
 CREATE TABLE courses (

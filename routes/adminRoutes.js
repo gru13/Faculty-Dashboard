@@ -42,7 +42,7 @@ router.get('/students/:classId', async (req, res) => {
 // Fetch all classes
 router.get('/classes', async (req, res) => {
     try {
-        const [classes] = await db.promise().query('SELECT class_id, class_name FROM class_list'); // Ensure correct query
+        const [classes] = await db.promise().query('SELECT class_id, class_name FROM class_list');
         console.log('Classes retrieved from database:', classes); // Debug log
         res.json({ success: true, classes });
     } catch (error) {
@@ -223,7 +223,7 @@ router.delete('/delete-faculty/:id', async (req, res) => {
 router.post('/classes', async (req, res) => {
     const { className } = req.body;
     try {
-        await db.promise().query('INSERT INTO class_list (class_name) VALUES (?)', [className]); // Use 'class_list'
+        await db.promise().query('INSERT INTO class_list (class_name) VALUES (?)', [className]); // class_id is now AUTO_INCREMENT
         res.json({ success: true, message: 'Class added successfully.' });
     } catch (error) {
         console.error('Error adding class:', error);
@@ -247,10 +247,42 @@ router.put('/classes/:classId', async (req, res) => {
 // Delete a class
 router.delete('/classes/:classId', async (req, res) => {
     const { classId } = req.params;
+
     try {
-        await db.promise().query('DELETE FROM class_list WHERE class_id = ?', [classId]); // Use 'class_list'
-        res.json({ success: true, message: 'Class deleted successfully.' });
+        // Start a transaction
+        await db.promise().query('START TRANSACTION');
+
+        // Delete related students
+        await db.promise().query('DELETE FROM students WHERE class_id = ?', [classId]);
+
+        // Delete related courses
+        await db.promise().query('DELETE FROM courses WHERE class_id = ?', [classId]);
+
+        // Delete related assignments
+        await db.promise().query('DELETE FROM assignments WHERE class_id = ?', [classId]);
+
+        // Delete related assignment submissions
+        await db.promise().query('DELETE FROM assignment_submissions WHERE class_id = ?', [classId]);
+
+        // Delete related grades
+        await db.promise().query('DELETE FROM grades WHERE class_id = ?', [classId]);
+
+        // Delete related timetable entries
+        await db.promise().query('DELETE FROM timetable WHERE class_id = ?', [classId]);
+
+        // Delete related academic calendar entries
+        await db.promise().query('DELETE FROM academic_calendar WHERE class_id = ?', [classId]);
+
+        // Delete the class itself
+        await db.promise().query('DELETE FROM class_list WHERE class_id = ?', [classId]);
+
+        // Commit the transaction
+        await db.promise().query('COMMIT');
+
+        res.json({ success: true, message: 'Class and all related data deleted successfully.' });
     } catch (error) {
+        // Rollback the transaction in case of an error
+        await db.promise().query('ROLLBACK');
         console.error('Error deleting class:', error);
         res.status(500).json({ success: false, message: 'Internal server error.' });
     }
@@ -271,21 +303,33 @@ router.get('/classes/:classId/students', async (req, res) => {
 // Add a student to a class
 router.post('/classes/:classId/students', async (req, res) => {
     const { classId } = req.params;
-    const { name, rollNo } = req.body;
+    const { rollNo, name } = req.body;
+
+    if (!rollNo || !name) {
+        return res.status(400).json({ success: false, message: 'Roll number and name are required.' });
+    }
+
     try {
-        await db.promise().query('INSERT INTO students (name, roll_no, class_id) VALUES (?, ?, ?)', [name, rollNo, classId]);
+        await db.promise().query(
+            'INSERT INTO students (roll_no, name, class_id) VALUES (?, ?, ?)',
+            [rollNo, name, classId]
+        );
         res.json({ success: true, message: 'Student added successfully.' });
     } catch (error) {
-        console.error('Error adding student:', error);
-        res.status(500).json({ success: false, message: 'Internal server error.' });
+        if (error.code === 'ER_DUP_ENTRY') {
+            res.status(400).json({ success: false, error, message: 'Duplicate entry for roll number.' });
+        } else {
+            console.error('Error adding student:', error);
+            res.status(500).json({ success: false, message: 'Internal server error.' });
+        }
     }
 });
 
 // Delete a student from a class
-router.delete('/classes/:classId/students/:studentId', async (req, res) => {
-    const { studentId } = req.params;
+router.delete('/classes/:classId/students/:rollNo', async (req, res) => {
+    const { rollNo } = req.params;
     try {
-        await db.promise().query('DELETE FROM students WHERE student_id = ?', [studentId]);
+        await db.promise().query('DELETE FROM students WHERE roll_no = ?', [rollNo]);
         res.json({ success: true, message: 'Student removed successfully.' });
     } catch (error) {
         console.error('Error removing student:', error);
@@ -297,7 +341,7 @@ router.delete('/classes/:classId/students/:studentId', async (req, res) => {
 router.get('/classes/:classId/courses', async (req, res) => {
     const { classId } = req.params;
     try {
-        const [courses] = await db.promise().query('SELECT course_id, course_name FROM courses WHERE class_id = ?', [classId]);
+        const [courses] = await db.promise().query('SELECT course_id, course_name, faculty_id FROM courses WHERE class_id = ?', [classId]);
         res.json({ success: true, courses });
     } catch (error) {
         console.error('Error fetching courses:', error);
@@ -308,12 +352,64 @@ router.get('/classes/:classId/courses', async (req, res) => {
 // Add a course to a class
 router.post('/classes/:classId/courses', async (req, res) => {
     const { classId } = req.params;
-    const { courseName, courseCode } = req.body;
+    const { courseId, courseName, facultyId } = req.body;
+
+    if (!courseId || !courseName || !facultyId) {
+        return res.status(400).json({ success: false, message: 'Course ID, Course Name, and Faculty ID are required.' });
+    }
+
     try {
-        await db.promise().query('INSERT INTO courses (course_name, course_code, class_id) VALUES (?, ?, ?)', [courseName, courseCode, classId]);
+        // Check if the course is already assigned to the class
+        const [existingCourse] = await db.promise().query(
+            'SELECT * FROM courses WHERE course_id = ? AND class_id = ?',
+            [courseId, classId]
+        );
+        if (existingCourse.length > 0) {
+            return res.status(400).json({ success: false, message: 'This course is already assigned to the class.' });
+        }
+
+        // Insert the course into the class
+        await db.promise().query(
+            'INSERT INTO courses (course_id, course_name, class_id, faculty_id) VALUES (?, ?, ?, ?)',
+            [courseId, courseName, classId, facultyId]
+        );
         res.json({ success: true, message: 'Course added successfully.' });
     } catch (error) {
         console.error('Error adding course:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Update a course
+router.put('/classes/courses/:courseId', async (req, res) => {
+    const { courseId } = req.params;
+    const { course_name, faculty_id } = req.body;
+
+    if (!course_name || !faculty_id) {
+        return res.status(400).json({ success: false, message: 'Course Name and Faculty ID are required.' });
+    }
+
+    try {
+        // Check if the course exists in the courses table
+        const [existingCourse] = await db.promise().query('SELECT * FROM courses WHERE course_id = ?', [courseId]);
+        if (existingCourse.length === 0) {
+            return res.status(400).json({ success: false, message: 'Course does not exist in the courses table.' });
+        }
+
+        // Check if the faculty exists in the faculty table
+        const [existingFaculty] = await db.promise().query('SELECT * FROM Faculty WHERE faculty_id = ?', [faculty_id]);
+        if (existingFaculty.length === 0) {
+            return res.status(400).json({ success: false, message: 'Faculty does not exist in the faculty table.' });
+        }
+
+        // Update the course
+        await db.promise().query(
+            'UPDATE courses SET course_name = ?, faculty_id = ? WHERE course_id = ?',
+            [course_name, faculty_id, courseId]
+        );
+        res.json({ success: true, message: 'Course updated successfully.' });
+    } catch (error) {
+        console.error('Error updating course:', error);
         res.status(500).json({ success: false, message: 'Internal server error.' });
     }
 });

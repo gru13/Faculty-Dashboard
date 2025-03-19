@@ -79,11 +79,23 @@
                     <div class="class-tabs-wrapper">
                         <div class="class-tabs">
                             <!-- Class tabs will be dynamically populated -->
+                            <button class="class-tab">Class 1</button>
+                            <button class="class-tab">Class 2</button>
+                            <button class="class-tab">Class 3</button>
+                            <!-- More class tabs -->
                         </div>
                     </div>
+                    <!-- Ensure the "Add Class" button is properly placed and visible -->
                     <button id="add-class-tab" class="add-class-tab">+ Add Class</button>
                 </div>
                 <div class="class-details">
+                    <div id="edit-class-name-container" class="edit-class-name-container" style="display: none;">
+                        <input type="text" id="edit-class-name-input" class="edit-class-name-input" placeholder="Enter new class name" />
+                        <button id="save-class-name-button" class="save-class-name-button">Save</button>
+                        <button id="cancel-class-name-button" class="cancel-class-name-button">Cancel</button>
+                    </div>
+                    <button id="modify-class-name-button" class="modify-class-name-button">Edit Class Name</button>
+                    <button id="delete-class-button" class="delete-class-button">Delete Class</button>
                     <div class="details-tabs">
                         <button class="tab-button active" data-tab="students">Students</button>
                         <button class="tab-button" data-tab="courses">Courses</button>
@@ -100,32 +112,41 @@
                             <tbody>
                                 <!-- Students will be dynamically populated -->
                             </tbody>
+                            <tfoot>
+                                <tr id="new-student-row">
+                                    <td><input type="text" id="new-student-roll" placeholder="Roll No" class="add-input" /></td>
+                                    <td><input type="text" id="new-student-name" placeholder="Name" class="add-input" /></td>
+                                    <td>
+                                        <button id="add-student-button" class="add-faculty">Add</button>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
-                        <form id="add-student-form">
-                            <input type="text" id="student-name" placeholder="Name" required>
-                            <input type="text" id="student-roll" placeholder="Roll No" required>
-                            <button type="submit">Add Student</button>
-                        </form>
                     </div>
                     <div class="tab-content" id="courses" style="display: none;">
-                        <h3>Manage Courses</h3>
                         <table id="courses-table">
                             <thead>
                                 <tr>
                                     <th>Course ID</th>
                                     <th>Course Name</th>
+                                    <th>Faculty ID</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <!-- Courses will be dynamically populated -->
                             </tbody>
+                            <tfoot>
+                                <tr id="new-course-row">
+                                    <td><input type="text" id="new-course-id" placeholder="Course ID" class="add-input" /></td>
+                                    <td><input type="text" id="new-course-name" placeholder="Course Name" class="add-input" /></td>
+                                    <td><input type="text" id="new-course-faculty-id" placeholder="Faculty ID" class="add-input" /></td>
+                                    <td>
+                                        <button id="add-course-button" class="add-faculty">Add</button>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
-                        <form id="add-course-form">
-                            <input type="text" id="course-name" placeholder="Course Name" required>
-                            <input type="text" id="course-id" placeholder="Course ID" required>
-                            <button type="submit">Add Course</button>
-                        </form>
                     </div>
                 </div>
             </div>
