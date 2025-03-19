@@ -1,30 +1,21 @@
 document.querySelector('.sidebar-icon.logout').addEventListener('click', () => {
-    console.log('Logout icon clicked');
-try {
+    console.log("Logout button clicked");
     const logoutPopup = document.getElementById('logoutPopup');
     requestAnimationFrame(() => {
         logoutPopup.classList.add('active');
-        console.log('Logout popup activated');
+        console.log("Logout popup activated");
     });
-} catch (error) {
-        console.error('Error activating logout popup:', error);
-    }
 });
 
 document.getElementById('cancelLogout').addEventListener('click', () => {
-    console.log('Cancel logout clicked');
-try {
+    console.log("Cancel logout button clicked");
     const logoutPopup = document.getElementById('logoutPopup');
     logoutPopup.classList.remove('active');
-    console.log('Logout popup deactivated');
-} catch (error) {
-        console.error('Error deactivating logout popup:', error);
-    }
+    console.log("Logout popup deactivated");
 });
 
 document.getElementById('confirmLogout').addEventListener('click', () => {
-    console.log('Confirm logout clicked');
-try {
+    console.log("Confirm logout button clicked");
     fetch('/logout', {
         method: 'POST',
         headers: {
@@ -33,58 +24,53 @@ try {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Logout response received:', data);
+        console.log("Logout response received:", data);
         if (data.success) {
-            console.log('Logout successful, redirecting to:', data.redirect);
+            console.log("Logout successful, redirecting to:", data.redirect);
             window.location.href = data.redirect;
         } else {
-            console.error('Error logging out:', data);
+            console.error("Logout failed");
             alert('Error logging out');
         }
     })
     .catch(error => {
-        console.error('Error logging out:', error);
+        console.error("Error logging out:", error);
     });
-} catch (error) {
-        console.error('Error in confirmLogout handler:', error);
-    }
 });
 
 // Close popup when clicking outside
 document.getElementById('logoutPopup').addEventListener('click', (e) => {
-try {
     if (e.target === document.getElementById('logoutPopup')) {
-        console.log('Clicked outside logout popup, closing it');
+        console.log("Clicked outside logout popup, closing popup");
         logoutPopup.classList.remove('active');
-    }
-} catch (error) {
-        console.error('Error closing logout popup:', error);
     }
 });
 
-document.addEventListener("DOMContentLoaded", async function () {
-    console.log('DOM fully loaded and parsed');
-    try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const assignmentId = urlParams.get("assignment_id");
-        console.log('Assignment ID from URL:', assignmentId);
+document.addEventListener("DOMContentLoaded", async function() {
+    console.log("DOM fully loaded and parsed");
+    const urlParams = new URLSearchParams(window.location.search);
+    const assignmentId = urlParams.get("assignment_id");
+    console.log("Assignment ID from URL:", assignmentId);
 
-        if (!assignmentId) {
-            console.error('Assignment ID is missing');
-            alert("Assignment ID is missing");
-            return;
-        }
-        console.log('Fetching assignment data for ID:', assignmentId);
+    if (!assignmentId) {
+        console.error("Assignment ID is missing");
+        alert("Assignment ID is missing");
+        return;
+    }
+
+    try {
+        console.log("Fetching assignment data for ID:", assignmentId);
         const response = await fetch(`/assignment/data?assignment_id=${assignmentId}`);
         const data = await response.json();
-        console.log("Assignment Data:", data);
+        console.log("Assignment data fetched:", data);
 
         if (!data.success) {
-            console.error('Failed to load assignment data:', data);
+            console.error("Failed to load assignment data");
             alert("Failed to load assignment data");
             return;
         }
 
+        console.log("Storing assignment data globally");
         window.assignmentData = {
             courseId: data.assignment.course_id,
             classId: data.assignment.class_id,
@@ -95,12 +81,17 @@ document.addEventListener("DOMContentLoaded", async function () {
             deadline: data.assignment.deadline,
             maxMarks: data.assignment.max_marks
         };
-        console.log('Global assignment data set:', window.assignmentData);
 
+        console.log("Updating assignment info");
         updateAssignmentInfo(data.assignment);
-        populateFormDefaults();
+
+        console.log("Setting up submissions list");
         setupSubmissionsList(data.submissions);
+
+        console.log("Setting up form handlers");
         setupFormHandlers();
+
+        console.log("Setting up action handlers");
         setupActionHandlers();
 
     } catch (error) {
@@ -109,106 +100,73 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 });
 
-function populateFormDefaults() {
-    console.log('Populating form with default values');
-    const form = document.querySelector('.assignment-form');
-    if (!form) return;
-
-    const titleInput = form.querySelector('#title');
-    const detailsInput = form.querySelector('#details');
-    const dateInput = form.querySelector('#date');
-    const timeInput = form.querySelector('#time');
-    const maxMarksInput = form.querySelector('#maxMarks');
-
-    if (titleInput) titleInput.value = window.assignmentData.title || '';
-    if (detailsInput) detailsInput.value = window.assignmentData.details || '';
-    if (dateInput && timeInput && window.assignmentData.deadline) {
-        const deadline = new Date(window.assignmentData.deadline);
-        dateInput.value = deadline.toISOString().split('T')[0];
-        timeInput.value = deadline.toTimeString().slice(0, 5);
-    }
-    if (maxMarksInput) maxMarksInput.value = window.assignmentData.maxMarks || '';
-}
-
 function updateAssignmentInfo(assignment) {
-    console.log('Updating assignment info:', assignment);
-    try {
-        // Update bento grid items
-        const titleElement = document.querySelector('.title-item .info-value');
-        if (titleElement) titleElement.textContent = assignment.title;
+    console.log("Updating assignment information in the UI");
+    // Update bento grid items
+    const titleElement = document.querySelector('.title-item .info-value');
+    if (titleElement) titleElement.textContent = assignment.title;
 
-        const descriptionElement = document.querySelector('.description-item .info-value');
-        if (descriptionElement) descriptionElement.textContent = assignment.details;
+    const descriptionElement = document.querySelector('.description-item .info-value');
+    if (descriptionElement) descriptionElement.textContent = assignment.details;
 
-        const courseBadgeElement = document.querySelector('.course-badge .info-value');
-        if (courseBadgeElement) courseBadgeElement.textContent = `${assignment.course_id} ${assignment.course_name}`;
+    const courseBadgeElement = document.querySelector('.course-badge .info-value');
+    if (courseBadgeElement) courseBadgeElement.textContent = `${assignment.course_id} ${assignment.course_name}`;
 
-        const classBadgeElement = document.querySelector('.class-badge .info-value');
-        if (classBadgeElement) classBadgeElement.textContent = assignment.class_name;
+    const classBadgeElement = document.querySelector('.class-badge .info-value');
+    if (classBadgeElement) classBadgeElement.textContent = assignment.class_name;
 
-        const deadlineBadgeElement = document.querySelector('.deadline-badge .info-value');
-        if (deadlineBadgeElement) deadlineBadgeElement.textContent = new Date(assignment.deadline).toLocaleString();
+    const deadlineBadgeElement = document.querySelector('.deadline-badge .info-value');
+    if (deadlineBadgeElement) deadlineBadgeElement.textContent = new Date(assignment.deadline).toLocaleString();
 
-        const marksBadgeElement = document.querySelector('.marks-badge .info-value');
-        if (marksBadgeElement) marksBadgeElement.textContent = assignment.max_marks;
+    const marksBadgeElement = document.querySelector('.marks-badge .info-value');
+    if (marksBadgeElement) marksBadgeElement.textContent = assignment.max_marks;
 
-        // Update form fields for editing
-        const titleInput = document.getElementById('title');
-        if (titleInput) titleInput.value = assignment.title;
+    // Pre-fill form fields with existing data
+    const titleInput = document.getElementById('title');
+    if (titleInput && !titleInput.value.trim()) titleInput.value = assignment.title;
 
-        const detailsInput = document.getElementById('details');
-        if (detailsInput) detailsInput.value = assignment.details;
+    const detailsInput = document.getElementById('details');
+    if (detailsInput && !detailsInput.value.trim()) detailsInput.value = assignment.details;
 
-        const deadline = window.assignmentData && window.assignmentData.assignment
-            ? new Date(window.assignmentData.assignment.deadline)
-            : null;
+    const deadline = new Date(assignment.deadline);
+    const dateInput = document.getElementById('date');
+    if (dateInput && !dateInput.value.trim()) dateInput.value = deadline.toISOString().split('T')[0];
 
-        const dateInput = document.getElementById('date');
-        const timeInput = document.getElementById('time');
-        if (deadline) {
-            if (dateInput) dateInput.value = deadline.toISOString().split('T')[0];
-            if (timeInput) timeInput.value = deadline.toTimeString().slice(0, 5);
-        } else {
-            if (dateInput) dateInput.value = "";
-            if (timeInput) timeInput.value = "";
-        }
+    const timeInput = document.getElementById('time');
+    if (timeInput && !timeInput.value.trim()) timeInput.value = deadline.toTimeString().slice(0, 5);
 
-        const submissionLinkInput = document.getElementById('submissionLink');
-        if (submissionLinkInput) submissionLinkInput.value = assignment.submission_link;
+    const submissionLinkInput = document.getElementById('submissionLink');
+    if (submissionLinkInput && !submissionLinkInput.value.trim()) submissionLinkInput.value = assignment.submission_link;
 
-        const maxMarksInput = document.getElementById('maxMarks');
-        if (maxMarksInput) maxMarksInput.value = assignment.max_marks;
+    const maxMarksInput = document.getElementById('maxMarks');
+    if (maxMarksInput && !maxMarksInput.value.trim()) maxMarksInput.value = assignment.max_marks;
 
-        const viewPdfItem = document.getElementById('view-pdf');
-        if (viewPdfItem) {
-            viewPdfItem.addEventListener('click', () => {
-                if (assignment.assignment_doc_url) {
-                    window.open(assignment.assignment_doc_url, '_blank');
-                } else {
-                    alert('Assignment document is not available');
-                }
-            });
-        }
-
-        const visitSubmissionItem = document.getElementById('visit-submission');
-        if (visitSubmissionItem) {
-            visitSubmissionItem.addEventListener('click', () => {
-                if (assignment.submission_link) {
-                    window.open(assignment.submission_link, '_blank');
-                } else {
-                    alert('Submission link is not available');
-                }
-            });
-        }
-
-        console.log('Assignment info updated');
-    } catch (error) {
-        console.error('Error updating assignment info:', error);
+    const viewPdfItem = document.getElementById('view-pdf');
+    if (viewPdfItem) {
+        viewPdfItem.addEventListener('click', () => {
+            if (assignment.assignment_doc_url) {
+                window.open(assignment.assignment_doc_url, '_blank');
+            } else {
+                alert('Assignment document is not available');
+            }
+        });
     }
+
+    const visitSubmissionItem = document.getElementById('visit-submission');
+    if (visitSubmissionItem) {
+        visitSubmissionItem.addEventListener('click', () => {
+            if (assignment.submission_link) {
+                window.open(assignment.submission_link, '_blank');
+            } else {
+                alert('Submission link is not available');
+            }
+        });
+    }
+    console.log("Assignment information updated");
 }
 
 function setupSubmissionsList(submissions) {
-    console.log('Setting up submissions list:', submissions);
+    console.log("Setting up submissions list");
     const submissionsList = document.querySelector('.submissions-list');
     const submissionCount = document.querySelector('.student-count');
     
@@ -219,13 +177,10 @@ function setupSubmissionsList(submissions) {
     }
 
     submissionCount.textContent = `${submissions.length} Submissions`;
-    
 
     submissionsList.innerHTML = submissions.map(submission => {
         const submittedAt = new Date(submission.submission_date);
-        const deadline = window.assignmentData && window.assignmentData.assignment
-            ? new Date(window.assignmentData.assignment.deadline)
-            : null;
+        const deadline = window.assignmentData.deadline ? new Date(window.assignmentData.deadline) : null;
         const isLate = deadline && submittedAt > deadline;
         const fileUrl = submission.file_link;
         const studentName = submission.name;
@@ -260,91 +215,102 @@ function setupSubmissionsList(submissions) {
             </div>
         </div>
     `}).join('');
-    console.log('Submissions list setup complete');
+    console.log("Submissions list setup complete");
 }
 
 function setupFormHandlers() {
-    console.log('Setting up form handlers');
+    console.log("Setting up form handlers");
     const form = document.querySelector('.assignment-form');
     const fileInput = document.getElementById('pdf');
     const fileLabel = document.querySelector('.file-name');
 
-    fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        fileLabel.textContent = file ? file.name : 'No file chosen';
-    });
+    if (fileInput && fileLabel) {
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            fileLabel.textContent = file ? file.name : 'No file chosen';
+            console.log("File selected:", file ? file.name : "No file chosen");
+        });
+    }
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log("Form submitted");
 
-        console.log('Form submission triggered');
-        const dateValue = form.date.value.trim();
-        const timeValue = form.time.value.trim();
+        const titleInput = form.title;
+        const detailsInput = form.details;
+        const dateInput = form.date;
+        const timeInput = form.time;
+        const submissionLinkInput = form.submissionLink;
+        const maxMarksInput = form.maxMarks;
 
-        let deadline;
-        if (dateValue && timeValue) {
-            deadline = `${dateValue}T${timeValue}`;
-        } else if (window.assignmentData.deadline) {
-            const existingDeadline = new Date(window.assignmentData.deadline);
-            deadline = `${existingDeadline.toISOString().split('T')[0]}T${existingDeadline.toTimeString().slice(0, 5)}`;
-        } else {
-            console.error('Invalid deadline: Both date and time are missing.');
-            alert('Please provide a valid deadline.');
+        if (!titleInput || !detailsInput || !dateInput || !timeInput || !maxMarksInput) {
+            console.error("One or more form fields are missing");
+            alert("One or more form fields are missing.");
             return;
         }
 
-        const updatedData = {
+        const title = titleInput.value.trim() || window.assignmentData.title;
+        const details = detailsInput.value.trim() || window.assignmentData.details;
+        const date = dateInput.value.trim() || new Date(window.assignmentData.deadline).toISOString().split('T')[0];
+        const time = timeInput.value.trim() || new Date(window.assignmentData.deadline).toTimeString().slice(0, 5);
+        const submissionLink = submissionLinkInput ? submissionLinkInput.value.trim() || window.assignmentData.submissionLink : window.assignmentData.submissionLink;
+        const maxMarks = maxMarksInput.value.trim() || window.assignmentData.maxMarks;
+
+        const formData = new FormData();
+        formData.append("assignmentId", window.assignmentData.assignmentId);
+        formData.append("courseId", window.assignmentData.courseId);
+        formData.append("classId", window.assignmentData.classId);
+        formData.append("title", title);
+        formData.append("details", details);
+        formData.append("deadline", `${date}T${time}`);
+        formData.append("link", submissionLink);
+        formData.append("maxMarks", maxMarks);
+
+        if (fileInput && fileInput.files[0]) {
+            formData.append("file", fileInput.files[0]);
+            console.log("New file selected:", fileInput.files[0].name);
+        } else if (window.assignmentData.assignment_doc_url) {
+            formData.append("filePath", window.assignmentData.assignment_doc_url);
+            console.log("Using existing file path:", window.assignmentData.assignment_doc_url);
+        }
+
+        console.log("Sending data to backend:", {
             assignmentId: window.assignmentData.assignmentId,
             courseId: window.assignmentData.courseId,
             classId: window.assignmentData.classId,
-            title: form.title.value.trim() || window.assignmentData.title,
-            details: form.details.value.trim() || window.assignmentData.details,
-            deadline: deadline,
-            link: form.submissionLink?.value.trim() || window.assignmentData.submissionLink,
-            maxMarks: form.maxMarks.value.trim() || window.assignmentData.maxMarks
-        };
-
-        const formData = new FormData();
-        Object.keys(updatedData).forEach(key => {
-            formData.append(key, updatedData[key]);
+            title,
+            details,
+            deadline: `${date}T${time}`,
+            link: submissionLink,
+            maxMarks,
+            file: fileInput && fileInput.files[0] ? fileInput.files[0].name : window.assignmentData.assignment_doc_url
         });
 
-        if (fileInput.files[0]) {
-            formData.append("file", fileInput.files[0]);
-        }
-
         try {
-            console.log('Sending updated data:', updatedData);
             const response = await fetch("/assignment/update", {
                 method: "POST",
                 body: formData
             });
 
-            if (!response.ok) {
-                console.error(`Server returned status: ${response.status}`);
-                const text = await response.text();
-                console.error('Response text:', text);
-                alert('Failed to update assignment. Please check the server.');
-                return;
-            }
-
             const result = await response.json();
+            console.log("Response from backend:", result);
+
             if (result.success) {
                 alert("Assignment updated successfully!");
                 location.reload();
             } else {
+                console.error("Failed to update assignment");
                 alert("Failed to update assignment");
             }
         } catch (error) {
             console.error("Error updating assignment:", error);
-            alert("An error occurred while updating the assignment.");
+            alert("An error occurred");
         }
     });
-    console.log('Form handlers setup complete');
 }
 
 function setupActionHandlers() {
-    console.log('Setting up action handlers');
+    console.log("Setting up action handlers");
     document.querySelectorAll('.submission-actions .action-button').forEach(button => {
         button.addEventListener('click', async function() {
             const submissionId = this.dataset.id;
@@ -393,5 +359,5 @@ function setupActionHandlers() {
             }
         });
     });
-    console.log('Action handlers setup complete');
+    console.log("Action handlers setup complete");
 }
