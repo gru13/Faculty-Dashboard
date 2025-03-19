@@ -119,6 +119,21 @@ CREATE TABLE academic_calendar (
     faculty_id INT NOT NULL
 );
 
+-- Course Outcomes Table
+CREATE TABLE course_outcomes (
+    outcome_id INT AUTO_INCREMENT PRIMARY KEY,
+    course_id INT NOT NULL,
+    outcome_description TEXT NOT NULL
+);
+
+-- Completed Outcomes Table
+CREATE TABLE completed_outcomes (
+    completion_id INT AUTO_INCREMENT PRIMARY KEY,
+    class_id INT NOT NULL,
+    outcome_id INT NOT NULL,
+    completion_date DATE NOT NULL
+);
+
 -- Insert Data into Login Table
 INSERT INTO Login (email_id, password, role) VALUES
 ('faculty1@example.com', '$2b$10$PeB5G.W1H0fQIjfJR.AkA.lkrUgX/UMcx/Y72yS0QI7m4CgcPUn/i', 'faculty'),
@@ -194,7 +209,7 @@ INSERT INTO courses (course_id, course_name, class_id, faculty_id, resources_lin
 (212, 'Statistical Mechanics', 103, 3, 'sm_resources.pdf'),
 (212, 'Statistical Mechanics', 104, 3, 'sm_resources.pdf'),
 (217, 'Classical Mechanics', 107, 3, 'cm_resources.pdf'),
-(217, 'Classical Mechanics', 108, 3, 'cm_resources.pdf'),
+(217, 'Classical Mechanics', 108, 3, 'optics_resources.pdf'),
 (218, 'Optics', 107, 3, 'optics_resources.pdf'),
 (218, 'Optics', 108, 3, 'optics_resources.pdf'),
 
@@ -241,7 +256,25 @@ INSERT INTO students (roll_no, name, class_id) VALUES
 ('CHEM2021001', 'Tina Roberts', 111),
 ('CHEM2021002', 'Umar Patel', 112),
 ('BIO2021001', 'Victor Hall', 113),
-('BIO2021002', 'Wendy Scott', 114);
+('BIO2021002', 'Wendy Scott', 114),
+('CSE2021005', 'Ethan Brown', 101),
+('CSE2021006', 'Sophia Davis', 102),
+('IT2021005', 'Liam Wilson', 103),
+('IT2021006', 'Mia Thomas', 104),
+('MATH2021005', 'Noah Carter', 105),
+('MATH2021006', 'Emma Young', 106),
+('PHYS2021005', 'Lucas Moore', 107),
+('PHYS2021006', 'Ava Wright', 108),
+('AI2021003', 'Oliver Scott', 109),
+('AI2021004', 'Isabella Turner', 110),
+('CHEM2021003', 'Charlotte Roberts', 111),
+('CHEM2021004', 'Amelia Patel', 112),
+('BIO2021003', 'James Hall', 113),
+('BIO2021004', 'Harper Scott', 114),
+('CSE2021007', 'Lily Evans', 101),
+('CSE2021008', 'Michael Brown', 101),
+('CSE2021009', 'Sophia Green', 101),
+('CSE2021010', 'Daniel White', 101);
 
 -- Insert Data into Assignments Table
 INSERT INTO assignments (assignment_id, course_id, class_id, title, details, deadline, submission_link, assignment_doc_url, max_marks) VALUES
@@ -251,7 +284,11 @@ INSERT INTO assignments (assignment_id, course_id, class_id, title, details, dea
 (304, 213, 109, 'ML Assignment 1', 'Build a regression model', '2025-02-15 23:59:59', '<link>', 'ml_assignment1.pdf', 100),
 (305, 214, 110, 'AI Assignment 1', 'Implement a chatbot', '2025-02-17 23:59:59', '<link>', 'ai_assignment1.pdf', 100),
 (306, 219, 111, 'Organic Chemistry Assignment 1', 'Analyze hydrocarbons', '2025-02-18 23:59:59', '<link>', 'orgchem_assignment1.pdf', 100),
-(307, 223, 113, 'Genetics Assignment 1', 'Study DNA sequencing', '2025-02-19 23:59:59', '<link>', 'genetics_assignment1.pdf', 100);
+(307, 223, 113, 'Genetics Assignment 1', 'Study DNA sequencing', '2025-02-19 23:59:59', '<link>', 'genetics_assignment1.pdf', 100),
+(308, 202, 102, 'Algorithms Assignment 2', 'Graph algorithms', '2025-02-20 23:59:59', '<link>', 'algo_assignment2.pdf', 100),
+(309, 213, 110, 'ML Assignment 2', 'Clustering techniques', '2025-02-22 23:59:59', '<link>', 'ml_assignment2.pdf', 100),
+(310, 219, 112, 'Organic Chemistry Assignment 2', 'Study of alcohols', '2025-02-25 23:59:59', '<link>', 'orgchem_assignment2.pdf', 100),
+(311, 223, 114, 'Genetics Assignment 2', 'Gene editing techniques', '2025-02-28 23:59:59', '<link>', 'genetics_assignment2.pdf', 100);
 
 -- Insert Data into Assignment Submissions Table
 INSERT INTO assignment_submissions (submission_id, course_id, class_id, assignment_id, roll_no, submission_date, file_link) VALUES
@@ -265,7 +302,11 @@ INSERT INTO assignment_submissions (submission_id, course_id, class_id, assignme
 (8, 214, 110, 305, 'AI2021002', '2025-02-16 20:00:00', 'ai_submission1.pdf'),
 (9, 219, 111, 306, 'CHEM2021001', '2025-02-17 17:00:00', 'orgchem_submission1.pdf'),
 (10, 223, 113, 307, 'BIO2021001', '2025-02-18 16:30:00', 'genetics_submission1.pdf'),
-(11, 223, 113, 307, 'BIO2021002', '2025-02-18 17:00:00', 'genetics_submission2.pdf');
+(11, 223, 113, 307, 'BIO2021002', '2025-02-18 17:00:00', 'genetics_submission2.pdf'),
+(12, 202, 102, 308, 'CSE2021006', '2025-02-19 18:00:00', 'algo_submission3.pdf'),
+(13, 213, 110, 309, 'AI2021004', '2025-02-21 20:00:00', 'ml_submission2.pdf'),
+(14, 219, 112, 310, 'CHEM2021004', '2025-02-24 17:00:00', 'orgchem_submission2.pdf'),
+(15, 223, 114, 311, 'BIO2021004', '2025-02-27 16:30:00', 'genetics_submission3.pdf');
 
 -- Insert Data into Grades Table
 INSERT INTO grades (submission_id, roll_no, class_id, course_id, assignment_id, grade) VALUES
@@ -279,7 +320,11 @@ INSERT INTO grades (submission_id, roll_no, class_id, course_id, assignment_id, 
 (8, 'AI2021002', 110, 214, 305, 8.2),
 (9, 'CHEM2021001', 111, 219, 306, 8.9),
 (10, 'BIO2021001', 113, 223, 307, 9.2),
-(11, 'BIO2021002', 113, 223, 307, 9.0);
+(11, 'BIO2021002', 113, 223, 307, 9.0),
+(12, 'CSE2021006', 102, 202, 308, 8.3),
+(13, 'AI2021004', 110, 213, 309, 8.8),
+(14, 'CHEM2021004', 112, 219, 310, 9.1),
+(15, 'BIO2021004', 114, 223, 311, 9.4);
 
 -- Insert Data into Course Deadlines Table
 INSERT INTO course_deadlines (course_id, date, deadline_name) VALUES
@@ -290,6 +335,32 @@ INSERT INTO course_deadlines (course_id, date, deadline_name) VALUES
 (214, '2025-02-17 23:59:59', 'AI Assignment 1 Due Date'),
 (219, '2025-02-18 23:59:59', 'Organic Chemistry Assignment 1 Due Date'),
 (223, '2025-02-19 23:59:59', 'Genetics Assignment 1 Due Date');
+
+-- Insert Data into Course Outcomes Table
+INSERT INTO course_outcomes (course_id, outcome_description) VALUES
+(201, 'Understand and implement basic data structures like arrays, linked lists, stacks, and queues.'),
+(201, 'Analyze the time and space complexity of data structure operations.'),
+(202, 'Design and analyze algorithms for sorting, searching, and graph traversal.'),
+(213, 'Build and evaluate machine learning models for regression and classification tasks.'),
+(214, 'Understand the principles of artificial intelligence and implement basic AI algorithms.'),
+(201, 'Develop proficiency in implementing stack and queue operations.'),
+(201, 'Understand and apply tree and graph data structures.'),
+(201, 'Design and implement hash tables for efficient data retrieval.'),
+(201, 'Analyze and optimize algorithms for data structure operations.');
+
+-- Insert Data into Completed Outcomes Table
+INSERT INTO completed_outcomes (class_id, outcome_id, completion_date) VALUES
+(101, 1, '2025-02-20'),
+(105, 3, '2025-02-22'),
+(109, 4, '2025-02-25'),
+(102, 2, '2025-02-21'),
+(110, 5, '2025-02-23'),
+(112, 6, '2025-02-26'),
+(114, 7, '2025-02-28'),
+(101, 1, '2025-03-01'),
+(101, 2, '2025-03-05'),
+(101, 3, '2025-03-10'),
+(101, 4, '2025-03-15');
 
 -- Insert Data into Password Reset Table
 INSERT INTO PasswordReset (email_id, otp) VALUES
@@ -306,7 +377,13 @@ INSERT INTO timetable (date, slot, faculty_id, course_id, class_id) VALUES
 ('2025-02-01', 3, 2, 205, 105),
 ('2025-02-01', 4, 3, 209, 103),
 ('2025-02-01', 5, 4, 219, 111),
-('2025-02-01', 6, 5, 223, 113);
+('2025-02-01', 6, 5, 223, 113),
+('2025-02-02', 1, 1, 202, 102),
+('2025-02-02', 2, 1, 203, 103),
+('2025-02-02', 3, 2, 206, 106),
+('2025-02-02', 4, 3, 210, 104),
+('2025-02-02', 5, 4, 220, 112),
+('2025-02-02', 6, 5, 224, 114);
 
 -- Insert Data into Academic Calendar Table
 INSERT INTO academic_calendar (date, class_id, work_description, course_id, faculty_id) VALUES
@@ -315,10 +392,8 @@ INSERT INTO academic_calendar (date, class_id, work_description, course_id, facu
 ('2025-03-01', 105, 'Quiz', 205, 2),
 ('2025-03-05', 103, 'Lab Experiment', 209, 3),
 ('2025-03-10', 111, 'Practical Exam', 219, 4),
-('2025-03-15', 113, 'Seminar', 223, 5);
-
-
-
-
-
-
+('2025-03-15', 113, 'Seminar', 223, 5),
+('2025-02-20', 102, 'Mid-Semester Exam', 202, 1),
+('2025-02-25', 110, 'Final Exam', 213, 1),
+('2025-03-01', 112, 'Quiz', 219, 4),
+('2025-03-05', 114, 'Lab Experiment', 223, 5);
