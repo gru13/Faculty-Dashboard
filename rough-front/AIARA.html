@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <link rel="stylesheet" href="AIARA.css">
+</head>
+<body>
+    <div class="logout-popup" id="logoutPopup">
+        <div class="popup-content">
+          <p>Are you sure you want to logout?</p>
+          <div class="popup-buttons">
+            <button id="confirmLogout">Yes, logout</button>
+            <button id="cancelLogout">Cancel</button>
+          </div>
+        </div>
+    </div>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <button class="sidebar-icon rainbow">
+                    <span class="material-symbols-rounded">brightness_empty</span>
+                </button>
+            </div>
+            <div class="sidebar-section">
+                <button class="sidebar-icon">
+                    <span class="material-symbols-rounded">dashboard</span>
+                </button>
+                <button class="sidebar-icon">
+                    <span class="material-symbols-rounded">school</span>
+                </button>
+                <button class="sidebar-icon">
+                    <span class="material-symbols-rounded">person</span>
+                </button>
+            </div>
+            <div class="sidebar-section">
+                <button class="sidebar-icon logout">
+                    <span class="material-symbols-rounded">logout</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="box chat-box">
+                <div class="box-header">
+                    <h2>AIARA</h2>
+                    <span class="material-symbols-rounded">brightness_empty</span>
+                </div>
+                <div class="chat-messages">
+                    <div class="greeting-box">
+                        <span class="material-symbols-rounded">brightness_empty</span>
+                        <h1>Good Morning, Faculty!</h1>
+                        <p>I can help you with your assignments and academic queries.<br>Feel free to ask me anything!</p>
+                    </div>
+                    <!-- <div class="message ai-message">
+                        <span class="material-symbols-rounded">brightness_empty</span>
+                        <div class="message-content">
+                            <p>Hello!</p>
+                            <span class="timestamp">2:30 PM</span>
+                        </div>
+                    </div>
+                    <div class="message user-message">
+                        <div class="message-content">
+                            <p>Hi! I need help with my assignment.</p>
+                            <span class="timestamp">2:31 PM</span>
+                        </div>
+                        <span class="material-symbols-rounded">person</span>
+                    </div>
+                    
+                    <div class="message ai-message">
+                        <span class="material-symbols-rounded">brightness_empty</span>
+                        <div class="message-content">
+                            <p>Here are the assignment details:</p>
+                            
+                            <div class="assignment-preview">
+                                <div class="preview-header">
+                                    <span class="material-symbols-rounded">description</span>
+                                    <span class="file-name">CNN_Assigasdadnment_Details.pdf</span>
+                                </div>
+                                <div class="preview-actions">
+                                    <button class="download-button" title="Download Assignment">
+                                        <span class="material-symbols-rounded">download</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <span class="timestamp">2:30 PM</span>
+                        </div>
+                    </div> -->
+                </div>
+                <div class="chat-input">
+                    <div class="chat-input-wrapper">
+                        <textarea id="userInput" placeholder="Type your message..." rows="1"></textarea>
+                        <button class="send-button">
+                            <span class="material-symbols-rounded">send</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="AIARA.js"></script>
+</body>
+</html>
