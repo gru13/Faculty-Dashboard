@@ -196,6 +196,120 @@ router.get('/api/timetable', authenticate, async (req, res) => {
 });
 
 
+router.get('/api/notifications', authenticate, async (req, res) => {
+    try {
+        const faculty_id = req.session.user.faculty_id;
+
+        if (!faculty_id) {
+            return res.status(400).json({ error: "Faculty ID is missing" });
+        }
+
+        // Combined SQL query to fetch notifications from 3 sources
+        const query = `
+            SELECT DISTINCT
+                id,
+                title,
+                time_stamp,
+                type,
+                courseCode,
+                link
+            FROM (
+                (
+                    SELECT DISTINCT
+                        a.assignment_id AS id,
+                        a.title,
+                        a.deadline AS time_stamp,
+                        'assignment' AS type,
+                        c.course_name AS courseCode,
+                        CONCAT('/assignments/', a.assignment_id) AS link
+                    FROM 
+                        assignments a
+                    JOIN 
+                        courses c ON a.course_id = c.course_id
+                    WHERE 
+                        c.faculty_id = ?
+                        AND DATE(a.deadline) >= CURDATE()
+                )
+                UNION
+                (
+                    SELECT DISTINCT
+                        CONCAT(DATE(ac.date), '-', ac.course_id) AS id, -- Unique identifier
+                        ac.work_description AS title,
+                        ac.date AS time_stamp,
+                        'academic' AS type,
+                        c.course_name AS courseCode,
+                        '' AS link
+                    FROM 
+                        academic_calendar ac
+                    JOIN 
+                        courses c ON ac.course_id = c.course_id
+                    WHERE 
+                        ac.faculty_id = ?
+                        AND DATE(ac.date) >= CURDATE()
+                )
+                UNION
+                (
+                    SELECT DISTINCT
+                        CONCAT(DATE(cd.date), '-', cd.course_id) AS id, -- Unique identifier
+                        cd.deadline_name AS title,
+                        cd.date AS time_stamp,
+                        'deadline' AS type,
+                        c.course_name AS courseCode,
+                        '' AS link
+                    FROM 
+                        course_deadlines cd
+                    JOIN 
+                        courses c ON cd.course_id = c.course_id
+                    WHERE 
+                        c.faculty_id = ?
+                        AND DATE(cd.date) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+                )
+            ) AS combined_results
+            GROUP BY 
+                id, title, time_stamp, type, courseCode, link
+            ORDER BY 
+                time_stamp DESC
+        `;
+
+        // Execute query with faculty_id passed 3 times for each part of the query
+        db.query(query, [faculty_id, faculty_id, faculty_id], (error, results) => {
+            if (error) {
+                console.error('Database query error:', error);
+                return res.status(500).json({ error: 'Failed to fetch notifications' });
+            }
+
+            if (!results || results.length === 0) {
+                return res.json({ notifications: [] });
+            }
+
+            // Format the notifications correctly
+            const formattedNotifications = results.map(item => ({
+                id: item.id,
+                title:
+                    item.type === 'assignment'
+                        ? "Assignment Posted: " + item.title
+                        : item.type === 'academic'
+                        ? "Event: " + item.title
+                        : "Upcoming Deadline: " + item.title,
+                time_stamp: new Date(item.time_stamp).toISOString(), // Convert to ISO format
+                type: item.type || 'general',
+                courseCode: item.courseCode || '',
+                link: item.link || ''
+            }));
+
+            console.log("Formatted notifications:", formattedNotifications);
+            res.json({ notifications: formattedNotifications });
+        });
+
+    } catch (error) {
+        console.error('Unexpected error:', error);
+        res.status(500).json({ error: 'Failed to fetch notifications' });
+    }
+});
+
+
+
+
 router.get('/api/user', (req, res) => {
     if (!req.session || !req.session.user) {
         return res.status(401).json({ error: "User not found" });
