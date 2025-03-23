@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <link rel="stylesheet" href="attend.css">
+</head>
+<body>
+    <div class="logout-popup" id="logoutPopup">
+        <div class="popup-content">
+          <p>Are you sure you want to logout?</p>
+          <div class="popup-buttons">
+            <button id="confirmLogout">Yes, logout</button>
+            <button id="cancelLogout">Cancel</button>
+          </div>
+        </div>
+    </div>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <button class="sidebar-icon" data-tooltip="Attendance">
+                    <span class="material-symbols-rounded">patient_list</span>
+                </button>
+            </div>
+            <div class="sidebar-section">
+                <button class="sidebar-icon" data-tooltip="Dashboard">
+                    <span class="material-symbols-rounded">dashboard</span>
+                </button>
+                <button class="sidebar-icon rainbow" data-tooltip="AIARA">
+                    <span class="material-symbols-rounded">brightness_empty</span>
+                </button>
+                <button class="sidebar-icon" data-tooltip="Profile">
+                    <span class="material-symbols-rounded">person</span>
+                </button>
+            </div>
+            <div class="sidebar-section">
+                <button class="sidebar-icon logout" data-tooltip="Log Out">
+                    <span class="material-symbols-rounded">logout</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            
+            <!-- Courses Grid -->
+            <div class="box info-box">
+                <div class="box-header">
+                    <h2>Your Courses</h2>
+                </div>
+                
+                <div class="courses-grid">
+                    <!-- <div class="empty-state">No courses to display</div> -->
+                    <div class="course-box">
+                        <div class="circular-progress" style="--percentage: 216deg;">60%</div>
+                        <div class="course-content">
+                            <div class="course-icon" style="background: #e0e7ff;">
+                                <span class="material-symbols-rounded">code</span>
+                            </div>
+                            <h3>Machine Learning</h3>
+                            <p class="course-info">
+                                <span class="course-code">CS-410</span>
+                                <span class="separator">•</span>
+                                <span class="class-id">AIE22</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="course-box">
+                        <!-- <div class="circular-progress" style="--percentage: 216deg;">60%</div> -->
+                        <div class="course-content">
+                            <div class="course-icon" style="background: #e0e7ff;">
+                                <span class="material-symbols-rounded">code</span>
+                            </div>
+                            <h3>Machine Learning</h3>
+                            <p class="course-info">
+                                <span class="course-code">CS-410</span>
+                                <span class="separator">•</span>
+                                <span class="class-id">AIE22</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="course-box">
+                        <!-- <div class="circular-progress" style="--percentage: 216deg;">60%</div> -->
+                        <div class="course-content">
+                            <div class="course-icon" style="background: #e0e7ff;">
+                                <span class="material-symbols-rounded">code</span>
+                            </div>
+                            <h3>Machine Learning</h3>
+                            <p class="course-info">
+                                <span class="course-code">CS-410</span>
+                                <span class="separator">•</span>
+                                <span class="class-id">AIE22</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="course-box">
+                        <!-- <div class="circular-progress" style="--percentage: 216deg;">60%</div> -->
+                        <div class="course-content">
+                            <div class="course-icon" style="background: #e0e7ff;">
+                                <span class="material-symbols-rounded">code</span>
+                            </div>
+                            <h3>Machine Learning</h3>
+                            <p class="course-info">
+                                <span class="course-code">CS-410</span>
+                                <span class="separator">•</span>
+                                <span class="class-id">AIE22</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="course-box">
+                        <div class="circular-progress" style="--percentage: 216deg;">60%</div>
+                        <div class="course-content">
+                            <div class="course-icon" style="background: #e0e7ff;">
+                                <span class="material-symbols-rounded">code</span>
+                            </div>
+                            <h3>Machine Learning</h3>
+                            <p class="course-info">
+                                <span class="course-code">CS-410</span>
+                                <span class="separator">•</span>
+                                <span class="class-id">AIE22</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box class-tabs">
+                <div class="tab active">
+                    <span>B.Tech CSE A</span>
+                </div>
+                <div class="tab">
+                    <span>B.Tech CSE B</span>
+                </div>
+                <div class="tab">
+                    <span>B.Tech IT A</span>
+                </div>
+            </div>
+
+            <!-- Timetable Box -->
+            <div class="box timetable-box">
+                <div class="box-header">
+                    <h2>Student Attendance</h2>
+                    <span class="student-count">24 Students</span>
+                </div>
+                <div class="attendance-list">
+                    <div class="empty-state">Select a course and class to view attendance</div>
+                    <div class="attendance-item">
+                        <div class="student-info">
+                            <span class="roll-no">CSE001</span>
+                            <span class="student-name">Alex Johnson</span>
+                        </div>
+                        <div class="attendance-stats">
+                            <div class="hours">
+                                <span class="attended">24</span>
+                                <span class="separator">/</span>
+                                <span class="total">32</span>
+                            </div>
+                            <div class="percentage high">75%</div>
+                        </div>
+                    </div>
+                    <div class="attendance-item">
+                        <div class="student-info">
+                            <span class="roll-no">CSE001</span>
+                            <span class="student-name">Alex Johnson</span>
+                        </div>
+                        <div class="attendance-stats">
+                            <div class="hours">
+                                <span class="attended">24</span>
+                                <span class="separator">/</span>
+                                <span class="total">32</span>
+                            </div>
+                            <div class="percentage high">60%</div>
+                        </div>
+                    </div>
+                    <div class="attendance-item">
+                        <div class="student-info">
+                            <span class="roll-no">CSE001</span>
+                            <span class="student-name">Alex Johnson</span>
+                        </div>
+                        <div class="attendance-stats">
+                            <div class="hours">
+                                <span class="attended">24</span>
+                                <span class="separator">/</span>
+                                <span class="total">32</span>
+                            </div>
+                            <div class="percentage high">75%</div>
+                        </div>
+                    </div>
+                    <div class="attendance-item">
+                        <div class="student-info">
+                            <span class="roll-no">CSE001</span>
+                            <span class="student-name">Alex Johnson</span>
+                        </div>
+                        <div class="attendance-stats">
+                            <div class="hours">
+                                <span class="attended">24</span>
+                                <span class="separator">/</span>
+                                <span class="total">32</span>
+                            </div>
+                            <div class="percentage high">75%</div>
+                        </div>
+                    </div>
+                    <div class="attendance-item">
+                        <div class="student-info">
+                            <span class="roll-no">CSE001</span>
+                            <span class="student-name">Alex Johnson</span>
+                        </div>
+                        <div class="attendance-stats">
+                            <div class="hours">
+                                <span class="attended">24</span>
+                                <span class="separator">/</span>
+                                <span class="total">32</span>
+                            </div>
+                            <div class="percentage high">75%</div>
+                        </div>
+                    </div>
+                    <div class="attendance-item">
+                        <div class="student-info">
+                            <span class="roll-no">CSE001</span>
+                            <span class="student-name">Alex Johnson</span>
+                        </div>
+                        <div class="attendance-stats">
+                            <div class="hours">
+                                <span class="attended">24</span>
+                                <span class="separator">/</span>
+                                <span class="total">32</span>
+                            </div>
+                            <div class="percentage high">75%</div>
+                        </div>
+                    </div>
+                    <div class="attendance-item">
+                        <div class="student-info">
+                            <span class="roll-no">CSE001</span>
+                            <span class="student-name">Alex Johnson</span>
+                        </div>
+                        <div class="attendance-stats">
+                            <div class="hours">
+                                <span class="attended">24</span>
+                                <span class="separator">/</span>
+                                <span class="total">32</span>
+                            </div>
+                            <div class="percentage high">75%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="absence-popup">
+                    <div class="absence-popup-header">
+                        <h3>Absence Details</h3>
+                        <button class="absence-popup-close">
+                            <span class="material-symbols-rounded">close</span>
+                        </button>
+                    </div>
+                    <div class="absence-list">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Panel: Notifications and Calendar -->
+        <div class="right-panel">
+            <!-- Notifications Box -->
+            <div class="box course-info-box">
+                <div class="course-info-header">
+                    <h1>Attendance</h1>
+                    <div class="course-meta">
+                        <span class="course-code"></span>
+                        <span class="separator">•</span>
+                        <span class="batch">Select a course and class</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Box -->
+            <div class="box calendar-box">
+                <!-- Update the calendar-box header -->
+                <div class="box-header">
+                    <div class="header-content">
+                        <h2>Update Attendance</h2>
+                        <span class="current-date"></span>
+                    </div>
+                </div>
+            
+                <div class="attendance-form">
+                    <div class="empty-state">Select a course and class to update attendance</div>
+                    <div class="time-selection">
+                        <div class="form-group">
+                            <label>Select Class Hours</label>
+                            <div class="hours-grid">
+                                <button class="hour-box" data-hour="1">1st Hour</button>
+                                <button class="hour-box" data-hour="2">2nd Hour</button>
+                                <button class="hour-box" data-hour="3">3rd Hour</button>
+                                <button class="hour-box" data-hour="4">4th Hour</button>
+                                <button class="hour-box" data-hour="5">5th Hour</button>
+                                <button class="hour-box" data-hour="6">6th Hour</button>
+                                <button class="hour-box" data-hour="7">7th Hour</button>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <div class="form-group">
+                        <label>Course Outcome</label>
+                        <select id="courseOutcome">
+                            <option value="">Select outcome covered</option>
+                            <option value="CO1">CO1: Understanding Neural Networks</option>
+                            <option value="CO2">CO2: Implementing CNNs</option>
+                            <option value="CO3">CO3: Training Models</option>
+                        </select>
+                    </div>
+            
+                    <div class="attendance-grid">
+                        <div class="grid-header">
+                            <span>Click to mark absent</span>
+                            <!-- <button class="select-all">Select All Present</button> -->
+                        </div>
+                        <div class="students-grid">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+            
+                    <button class="submit-attendance">
+                        <span class="material-symbols-rounded">save</span>
+                        Save Attendance
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="attend.js"></script>
+</body>
+</html>
