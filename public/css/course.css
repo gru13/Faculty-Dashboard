@@ -593,9 +593,10 @@ body {
 /* Add after the deadline-box styles */
 .outcomes-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.1fr 0.9fr;
+    height: calc(100vh - 48px);
     gap: 16px;
-    margin-top: 16px;
+    /* margin-top: 16px; */
 }
 
 .outcomes-box {
