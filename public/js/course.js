@@ -124,6 +124,16 @@ function switchClass(classId, data) {
     
     // Filter assignments for this class
     const classAssignments = data.assignments.filter(a => a.class_id === classId);
+
+    fetchCourseOutcomes(data.course_id, classId)
+        .then(outcomes => {
+            updateOutcomesList(outcomes);
+        })
+        .catch(error => {
+            console.error('Error updating outcomes:', error);
+            // Show empty state on error
+            updateOutcomesList([]);
+        });
     
     // Update UI
     updateStudentsList(classStudents);
@@ -288,4 +298,66 @@ function setupAssignmentActions() {
     });
 }
 
+async function fetchCourseOutcomes(courseId, classId) {
+    try {
+        const response = await fetch(`/course/outcomes?course_id=${courseId}&class_id=${classId}`);
+        const data = await response.json();
+        
+        /* Expected response format:
+        {
+            "success": true,
+            "outcomes": [
+                {
+                    "id": "CO1",
+                    "title": "Understanding Neural Networks",
+                    "description": "Fundamentals of neural networks and their architectures",
+                    "completed": true
+                },
+                // ... more outcomes
+            ]
+        }
+        */
+        
+        return data.outcomes;
+    } catch (error) {
+        console.error('Error fetching outcomes:', error);
+        return [];
+    }
+}
+
+function updateOutcomesList(outcomes) {
+    const outcomesList = document.querySelector('.outcomes-list');
+    if (!outcomes || outcomes.length === 0) {
+        outcomesList.innerHTML = '<div class="empty-state">No course outcomes defined</div>';
+        updateCompletionRatio(0, 0);
+        return;
+    }
+
+    outcomesList.innerHTML = outcomes.map(outcome => `
+        <div class="outcome-item${outcome.completed ? ' completed' : ''}">
+            <div class="outcome-info">
+                <h4>${outcome.id}: ${outcome.title}</h4>
+                <p>${outcome.description}</p>
+            </div>
+            <span class="material-symbols-rounded">
+                ${outcome.completed ? 'task_alt' : 'radio_button_unchecked'}
+            </span>
+        </div>
+    `).join('');
+
+    updateCompletionRatio();
+}
+
+function updateCompletionRatio() {
+    const totalOutcomes = document.querySelectorAll('.outcome-item').length;
+    const completedOutcomes = document.querySelectorAll('.outcome-item.completed').length;
+    
+    const completedSpan = document.querySelector('.completion-ratio .completed');
+    const totalSpan = document.querySelector('.completion-ratio .total');
+    
+    if (completedSpan && totalSpan) {
+        completedSpan.textContent = completedOutcomes;
+        totalSpan.textContent = totalOutcomes;
+    }
+}
 
