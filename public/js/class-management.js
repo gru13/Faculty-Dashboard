@@ -131,13 +131,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const studentsTable = document.querySelector('#students-table tbody');
             if (data.success && studentsTable) {
                 studentsTable.innerHTML = data.students.map(student => `
-                    <tr>
-                        <td>${student.roll_no}</td>
-                        <td>${student.name}</td>
-                        <td><button class="delete-student" data-roll-no="${student.roll_no}">Delete</button></td>
+                    <tr data-roll-no="${student.roll_no}">
+                        <td class="editable" data-field="roll_no">${student.roll_no}</td>
+                        <td class="editable" data-field="name">${student.name}</td>
+                        <td>
+                            <button class="edit-student">Edit</button>
+                            <button class="delete-student" data-roll-no="${student.roll_no}">Delete</button>
+                        </td>
                     </tr>
                 `).join('');
-                attachDeleteStudentListeners(classId);
+                attachStudentListeners(classId);
             } else {
                 console.warn('Failed to fetch students or students-table element not found.');
             }
@@ -147,29 +150,76 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Attach delete student listeners
-    function attachDeleteStudentListeners(classId) {
+    // Attach listeners for editing and deleting students
+    function attachStudentListeners(classId) {
+        document.querySelectorAll('.edit-student').forEach(button => {
+            button.addEventListener('click', (event) => handleEditStudent(event, classId));
+        });
         document.querySelectorAll('.delete-student').forEach(button => {
-            button.addEventListener('click', async () => {
+            button.addEventListener('click', async (event) => {
                 const rollNo = button.dataset.rollNo;
                 if (!rollNo) {
                     console.warn('Invalid roll number.');
                     return;
                 }
-                try {
-                    const response = await fetch(`/admin/classes/${classId}/students/${rollNo}`, { method: 'DELETE' });
-                    const data = await response.json();
-                    if (data.success) {
-                        fetchStudents(classId);
-                    } else {
-                        alert('Failed to delete student.');
+                if (confirm('Are you sure you want to delete this student?')) {
+                    try {
+                        const response = await fetch(`/admin/classes/${classId}/students/${rollNo}`, { method: 'DELETE' });
+                        const data = await response.json();
+                        if (data.success) {
+                            fetchStudents(classId);
+                        } else {
+                            alert('Failed to delete student.');
+                        }
+                    } catch (error) {
+                        console.error('Error deleting student:', error);
                     }
-                } catch (error) {
-                    console.error('Error deleting student:', error);
-                    alert('An error occurred while deleting the student.');
                 }
             });
         });
+    }
+
+    // Handle editing a student
+    async function handleEditStudent(event, classId) {
+        const row = event.target.closest('tr');
+        const isEditing = row.classList.contains('editing');
+
+        if (isEditing) {
+            const rollNo = row.dataset.rollNo;
+            const updatedData = {};
+            row.querySelectorAll('.editable').forEach(cell => {
+                const field = cell.dataset.field;
+                const input = cell.querySelector('input');
+                updatedData[field] = input ? input.value.trim() : cell.textContent.trim();
+            });
+
+            try {
+                const response = await fetch(`/admin/classes/${classId}/students/${rollNo}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedData)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Student updated successfully!');
+                    row.classList.remove('editing');
+                    row.querySelector('.edit-student').textContent = 'Edit';
+                    fetchStudents(classId);
+                } else {
+                    alert(`Failed to update student: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Error updating student:', error);
+                alert('An error occurred while updating the student.');
+            }
+        } else {
+            row.classList.add('editing');
+            row.querySelectorAll('.editable').forEach(cell => {
+                const value = cell.textContent.trim();
+                cell.innerHTML = `<input type="text" value="${value}" />`;
+            });
+            event.target.textContent = 'Save';
+        }
     }
 
     // Fetch and display courses
@@ -178,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`/admin/classes/${classId}/courses`);
             const data = await response.json();
             const coursesTable = document.querySelector('#courses-table tbody');
-            if (data.success && coursesTable) {
+            if (data.success && data.courses.length > 0) { // Check if courses exist
                 coursesTable.innerHTML = data.courses.map(course => `
                     <tr>
                         <td>${course.course_id}</td>
@@ -191,9 +241,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </tr>
                 `).join('');
                 attachCourseListeners(classId);
-                attachAddCourseListener(classId); // Attach the "Add Course" button listener after courses are loaded
             } else {
-                console.warn('Failed to fetch courses or courses-table element not found.');
+                coursesTable.innerHTML = '<tr><td colspan="4">No courses found.</td></tr>';
             }
         } catch (error) {
             console.error('Error fetching courses:', error);
@@ -201,9 +250,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Attach listeners for editing and deleting courses
     function attachCourseListeners(classId) {
         document.querySelectorAll('.edit-course').forEach(button => {
-            button.addEventListener('click', handleEditCourse);
+            button.addEventListener('click', (event) => handleEditCourse(event, classId));
         });
         document.querySelectorAll('.delete-course').forEach(button => {
             button.addEventListener('click', async (event) => {
@@ -229,12 +279,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    async function handleEditCourse(event) {
+    // Handle editing a course
+    async function handleEditCourse(event, classId) {
         const row = event.target.closest('tr');
         const isEditing = row.classList.contains('editing');
 
         if (isEditing) {
-            const courseId = row.querySelector('.edit-course').dataset.courseId;
+            const courseId = event.target.dataset.courseId;
             const updatedData = {};
             row.querySelectorAll('.editable').forEach(cell => {
                 const field = cell.dataset.field;
@@ -253,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('Course updated successfully!');
                     row.classList.remove('editing');
                     row.querySelector('.edit-course').textContent = 'Edit';
-                    fetchCourses(document.querySelector('.class-tab.active').dataset.classId);
+                    fetchCourses(classId);
                 } else {
                     alert(`Failed to update course: ${result.message}`);
                 }
@@ -495,4 +546,65 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial fetch
     fetchClasses();
+
+    // Add search functionality for students and courses
+    const searchInput = document.getElementById('class-management-search');
+    searchInput.addEventListener('input', (event) => {
+        const searchTerm = event.target.value.toLowerCase();
+        const activeTab = document.querySelector('.tab-button.active').dataset.tab;
+
+        if (activeTab === 'students') {
+            const studentRows = document.querySelectorAll('#students-table tbody tr');
+            studentRows.forEach((row) => {
+                const studentName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                const rollNo = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                if (studentName.includes(searchTerm) || rollNo.includes(searchTerm)) {
+                    row.style.display = ''; // Show the row
+                } else {
+                    row.style.display = 'none'; // Hide the row
+                }
+            });
+        } else if (activeTab === 'courses') {
+            const courseRows = document.querySelectorAll('#courses-table tbody tr');
+            courseRows.forEach((row) => {
+                const courseName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                const courseId = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                if (courseName.includes(searchTerm) || courseId.includes(searchTerm)) {
+                    row.style.display = ''; // Show the row
+                } else {
+                    row.style.display = 'none'; // Hide the row
+                }
+            });
+        }
+    });
+
+    // Handle tab switching
+    detailsTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            detailsTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            tabContents.forEach(content => content.style.display = 'none');
+            document.getElementById(tab.dataset.tab).style.display = 'block';
+
+            // Clear the search input when switching tabs
+            searchInput.value = '';
+            const rows = document.querySelectorAll(`#${tab.dataset.tab}-table tbody tr`);
+            rows.forEach(row => row.style.display = ''); // Reset visibility of all rows
+        });
+    });
+
+    // Search functionality for class list
+    document.getElementById('class-search').addEventListener('input', (event) => {
+        const searchTerm = event.target.value.toLowerCase();
+        const classTabs = document.querySelectorAll('.class-tabs .class-tab');
+
+        classTabs.forEach((tab) => {
+            const className = tab.textContent.toLowerCase();
+            if (className.includes(searchTerm)) {
+                tab.style.display = ''; // Show the tab
+            } else {
+                tab.style.display = 'none'; // Hide the tab
+            }
+        });
+    });
 });

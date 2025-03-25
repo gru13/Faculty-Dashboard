@@ -166,10 +166,19 @@ button {
     cursor: pointer;
     font-size: 0.95rem;
     transition: all 0.2s ease;
+    background: #5562da; /* Default background color */
+    color: white; /* Default text color */
 }
 
 button:hover {
-    transform: translateY(-1px);
+    background: #4549ac; /* Hover background color */
+    transform: translateY(-1px); /* Hover effect */
+}
+
+button:disabled {
+    background: #e2e8f0; /* Disabled background color */
+    color: #9ca3af; /* Disabled text color */
+    cursor: not-allowed; /* Disabled cursor */
 }
 
 .logout-popup {
@@ -354,69 +363,6 @@ button:hover {
     background: #e9ecef;
 }
 
-#course-outcomes-container {
-    margin-top: 16px;
-}
-
-#course-outcomes-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-#course-outcomes-list li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    background-color: #f9fafb;
-}
-
-#course-outcomes-list li button {
-    background: #dc2626;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 4px 8px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
-
-#course-outcomes-list li button:hover {
-    background: #b91c1c;
-}
-
-#modify-course-outcome-form {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-#modify-course-outcome-form textarea {
-    padding: 8px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 1rem;
-    resize: none;
-}
-
-#modify-course-outcome-form button {
-    padding: 8px 16px;
-    background: #5562da;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
-
-#modify-course-outcome-form button:hover {
-    background: #4549ac;
-}
-
 #students-table tfoot {
     position: sticky;
     bottom: 0;
@@ -499,20 +445,23 @@ button:hover {
 }
 
 .modify-class-name-button {
-    padding: 8px 16px;
+    padding: 10px 20px;
     border-radius: 8px;
     background: #007bff;
     color: white;
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 0.95rem;
+    font-size: 1rem;
     margin-bottom: 16px;
     display: inline-block;
+    text-align: center;
 }
 
 .modify-class-name-button:hover {
     background: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 input[type="text"], input[type="email"], input[type="password"], textarea {
@@ -551,7 +500,7 @@ input, textarea {
     display: flex;
     align-items: center; /* Vertically align items */
     justify-content: flex-start; /* Align items horizontally */
-    gap: 12px;
+    gap: 16px;
     margin-bottom: 16px;
     padding: 8px;
     background-color: #f9fafb;
@@ -607,19 +556,23 @@ input, textarea {
 }
 
 .delete-class-button {
-    padding: 8px 16px;
+    padding: 10px 20px;
     border-radius: 8px;
     background: #dc2626;
     color: white;
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 0.95rem;
-    margin-left: 8px; /* Add spacing from the "Edit Class Name" button */
+    font-size: 1rem;
+    margin-left: 16px; /* Add spacing from the "Edit Class Name" button */
+    display: inline-block;
+    text-align: center;
 }
 
 .delete-class-button:hover {
     background: #b91c1c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Add spacing between the edit section and the tabs */

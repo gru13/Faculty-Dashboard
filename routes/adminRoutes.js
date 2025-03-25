@@ -325,6 +325,28 @@ router.post('/classes/:classId/students', async (req, res) => {
     }
 });
 
+// Update a student's details
+router.put('/classes/:classId/students/:rollNo', async (req, res) => {
+    const { classId, rollNo } = req.params;
+    const { roll_no, name } = req.body;
+
+    if (!roll_no || !name) {
+        return res.status(400).json({ success: false, message: 'Roll number and name are required.' });
+    }
+
+    try {
+        // Update the student's details
+        await db.promise().query(
+            'UPDATE students SET roll_no = ?, name = ? WHERE roll_no = ? AND class_id = ?',
+            [roll_no, name, rollNo, classId]
+        );
+        res.json({ success: true, message: 'Student updated successfully.' });
+    } catch (error) {
+        console.error('Error updating student:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
 // Delete a student from a class
 router.delete('/classes/:classId/students/:rollNo', async (req, res) => {
     const { rollNo } = req.params;
@@ -341,7 +363,11 @@ router.delete('/classes/:classId/students/:rollNo', async (req, res) => {
 router.get('/classes/:classId/courses', async (req, res) => {
     const { classId } = req.params;
     try {
-        const [courses] = await db.promise().query('SELECT course_id, course_name, faculty_id FROM courses WHERE class_id = ?', [classId]);
+        // Ensure the query is fetching from the correct table
+        const [courses] = await db.promise().query(
+            'SELECT course_id, course_name, faculty_id FROM courses WHERE class_id = ?',
+            [classId]
+        );
         res.json({ success: true, courses });
     } catch (error) {
         console.error('Error fetching courses:', error);
@@ -422,6 +448,94 @@ router.delete('/classes/:classId/courses/:courseId', async (req, res) => {
         res.json({ success: true, message: 'Course removed successfully.' });
     } catch (error) {
         console.error('Error removing course:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Fetch distinct courses (all-course)
+router.get('/all-course', async (req, res) => {
+    try {
+        console.log('Fetching distinct courses...'); // Debug log
+        const [courses] = await db.promise().query(
+            'SELECT DISTINCT course_id, course_name FROM courses'
+        );
+        console.log('Courses fetched successfully:', courses); // Debug log
+        res.json({ success: true, courses });
+    } catch (error) {
+        console.error('Error fetching distinct courses:', error); // Log the error
+        res.status(500).json({ success: false, message: 'Internal server error while fetching courses.' });
+    }
+});
+
+// Fetch course outcomes
+router.get('/courses/:courseId/outcomes', async (req, res) => {
+    const { courseId } = req.params;
+    try {
+        const [outcomes] = await db.promise().query(
+            'SELECT * FROM course_outcomes WHERE course_id = ?',
+            [courseId]
+        );
+        res.json({ success: true, outcomes });
+    } catch (error) {
+        console.error('Error fetching course outcomes:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Add a course outcome
+router.post('/courses/:courseId/outcomes', async (req, res) => {
+    const { courseId } = req.params;
+    const { outcomeDescription } = req.body;
+
+    if (!outcomeDescription) {
+        return res.status(400).json({ success: false, message: 'Outcome description is required.' });
+    }
+
+    try {
+        await db.promise().query(
+            'INSERT INTO course_outcomes (course_id, outcome_description) VALUES (?, ?)',
+            [courseId, outcomeDescription]
+        );
+        res.json({ success: true, message: 'Course outcome added successfully.' });
+    } catch (error) {
+        console.error('Error adding course outcome:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Update a course outcome
+router.put('/courses/outcomes/:outcomeId', async (req, res) => {
+    const { outcomeId } = req.params;
+    const { outcomeDescription } = req.body;
+
+    if (!outcomeDescription) {
+        return res.status(400).json({ success: false, message: 'Outcome description is required.' });
+    }
+
+    try {
+        await db.promise().query(
+            'UPDATE course_outcomes SET outcome_description = ? WHERE outcome_id = ?',
+            [outcomeDescription, outcomeId]
+        );
+        res.json({ success: true, message: 'Course outcome updated successfully.' });
+    } catch (error) {
+        console.error('Error updating course outcome:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Delete a course outcome
+router.delete('/courses/outcomes/:outcomeId', async (req, res) => {
+    const { outcomeId } = req.params;
+
+    try {
+        await db.promise().query(
+            'DELETE FROM course_outcomes WHERE outcome_id = ?',
+            [outcomeId]
+        );
+        res.json({ success: true, message: 'Course outcome deleted successfully.' });
+    } catch (error) {
+        console.error('Error deleting course outcome:', error);
         res.status(500).json({ success: false, message: 'Internal server error.' });
     }
 });

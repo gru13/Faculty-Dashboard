@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../css/admin.css">
     <link rel="stylesheet" href="../css/course-management.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <link rel="stylesheet" href="../css/admin-courseOutcome.css">
 </head>
 <body>
     <div class="logout-popup" id="logoutPopup">
@@ -43,6 +44,7 @@
             <!-- Faculty List Section -->
             <div class="admin-section">
                 <h2>Faculty List</h2>
+                <input type="text" id="faculty-search" placeholder="Search faculty by name or email..." class="add-input" />
                 <table id="faculty-table">
                     <thead>
                         <tr>
@@ -75,6 +77,7 @@
             <!-- Class Management Section -->
             <div class="admin-section">
                 <h2>Class Management</h2>
+                <input type="text" id="class-search" placeholder="Search classes..." class="add-input" />
                 <div class="class-tabs-container">
                     <div class="class-tabs-wrapper">
                         <div class="class-tabs">
@@ -96,6 +99,10 @@
                     </div>
                     <button id="modify-class-name-button" class="modify-class-name-button">Edit Class Name</button>
                     <button id="delete-class-button" class="delete-class-button">Delete Class</button>
+                    
+                    <!-- Moved search input here -->
+                    <input type="text" id="class-management-search" placeholder="Search students or courses..." class="add-input" />
+
                     <div class="details-tabs">
                         <button class="tab-button active" data-tab="students">Students</button>
                         <button class="tab-button" data-tab="courses">Courses</button>
@@ -147,6 +154,31 @@
                                 </tr>
                             </tfoot>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Outcomes Section -->
+            <div class="admin-section">
+                <h2>Course Outcomes</h2>
+                <div class="course-outcomes-container">
+                    <!-- Left Pane: Course List -->
+                    <div class="course-list-pane">
+                        <input type="text" id="course-search" placeholder="Search courses..." class="add-input" />
+                        <ul id="course-list">
+                            <!-- Courses will be dynamically populated -->
+                        </ul>
+                    </div>
+
+                    <!-- Right Pane: Outcomes List -->
+                    <div class="outcomes-list-pane">
+                        <ul id="course-outcomes-list">
+                            <!-- Outcomes will be dynamically populated -->
+                        </ul>
+                        <form id="add-outcome-form">
+                            <textarea id="new-outcome-description" placeholder="Enter course outcome"></textarea>
+                            <button type="submit" class="add-faculty">Add Outcome</button>
+                        </form>
                     </div>
                 </div>
             </div>

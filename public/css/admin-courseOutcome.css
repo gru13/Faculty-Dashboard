@@ -1,0 +1,170 @@
+.course-outcomes-container {
+    display: grid;
+    grid-template-columns: 2fr 8fr;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.course-list-pane {
+    background: #f9fafb;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    max-height: 500px;
+}
+
+.course-list-pane input {
+    margin-bottom: 8px;
+}
+
+#course-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#course-list li {
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#course-list li:hover {
+    background-color: #f1f5f9;
+}
+
+#course-list li.active {
+    background-color: #5562da;
+    color: white;
+}
+
+.outcomes-list-pane {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+#course-outcomes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#course-outcomes-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background-color: #f9fafb;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+#course-outcomes-list li:hover {
+    background-color: #f1f5f9;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#course-outcomes-list li textarea.edit-textarea {
+    flex-grow: 1;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #f9fafb;
+    color: #1e293b;
+    resize: none;
+    min-height: 120px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+#course-outcomes-list li textarea.edit-textarea:focus {
+    border-color: #5562da;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(85, 98, 218, 0.2);
+}
+
+.outcome-actions {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.outcome-actions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    background: #5562da;
+    color: white;
+}
+
+.outcome-actions button:hover {
+    background: #4549ac;
+    transform: translateY(-1px);
+}
+
+#add-outcome-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#add-outcome-form textarea {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    resize: none;
+    background-color: #f9fafb;
+    color: #1e293b;
+    min-height: 100px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#add-outcome-form textarea:focus {
+    border-color: #5562da;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(85, 98, 218, 0.2);
+}
+
+#add-outcome-form button {
+    padding: 10px 20px;
+    background: #5562da;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+#add-outcome-form button:hover {
+    background: #4549ac;
+    transform: translateY(-2px);
+}

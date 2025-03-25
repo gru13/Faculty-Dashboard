@@ -46,13 +46,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetch and display faculty list
     async function fetchFacultyList() {
+        console.log('fetchFacultyList function called'); // Debug log to verify function execution
         try {
             const response = await fetch('/admin/faculty');
+            console.log('Response received from /admin/faculty:', response); // Debug log for response
             if (!response.ok) {
                 throw new Error('Failed to fetch faculty list');
             }
             const result = await response.json();
+            console.log('Parsed JSON result:', result); // Debug log for parsed JSON
             if (result.success) {
+                console.log('Fetched Faculty List:', result.faculty); // Log the faculty list
                 const facultyTable = document.getElementById('faculty-table').querySelector('tbody');
                 facultyTable.innerHTML = result.faculty.map(faculty => `
                     <tr data-id="${faculty.faculty_id}">
@@ -76,10 +80,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     button.addEventListener('click', handleDeleteFaculty);
                 });
             } else {
+                console.warn('Failed to load faculty list:', result.message); // Debug log for failure
                 alert('Failed to load faculty list.');
             }
         } catch (error) {
-            console.error('Error fetching faculty list:', error);
+            console.error('Error fetching faculty list:', error); // Debug log for errors
             alert('Error fetching faculty list.');
         }
     }
@@ -217,4 +222,279 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial fetch of classes
     fetchClasses();
+
+    async function fetchCourseOutcomes(courseId) {
+        try {
+            const response = await fetch(`/admin/courses/${courseId}/outcomes`);
+            const result = await response.json();
+            const outcomesList = document.getElementById('course-outcomes-list');
+            if (result.success) {
+                if (result.outcomes.length > 0) {
+                    outcomesList.innerHTML = result.outcomes.map(outcome => `
+                        <li data-id="${outcome.outcome_id}">
+                            <span>${outcome.outcome_description}</span>
+                            <div class="outcome-actions">
+                                <button class="edit-outcome">Edit</button>
+                                <button class="delete-outcome">Delete</button>
+                            </div>
+                        </li>
+                    `).join('');
+                    attachOutcomeListeners(courseId);
+                } else {
+                    outcomesList.innerHTML = '<li>No course outcomes added.</li>';
+                }
+            } else {
+                alert('Failed to fetch course outcomes.');
+            }
+        } catch (error) {
+            console.error('Error fetching course outcomes:', error);
+        }
+    }
+
+    function attachOutcomeListeners(courseId) {
+        document.querySelectorAll('.edit-outcome').forEach(button => {
+            button.addEventListener('click', handleEditOutcome);
+        });
+
+        document.querySelectorAll('.delete-outcome').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const outcomeId = event.target.closest('li').dataset.id;
+                if (confirm('Are you sure you want to delete this outcome?')) {
+                    try {
+                        const response = await fetch(`/admin/courses/outcomes/${outcomeId}`, { method: 'DELETE' });
+                        const result = await response.json();
+                        if (result.success) {
+                            fetchCourseOutcomes(courseId);
+                        } else {
+                            alert('Failed to delete outcome.');
+                        }
+                    } catch (error) {
+                        console.error('Error deleting outcome:', error);
+                    }
+                }
+            });
+        });
+    }
+
+    document.getElementById('add-outcome-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        // Get the selected course ID from the active course in the course list
+        const activeCourse = document.querySelector('#course-list li.active');
+        const courseId = activeCourse ? activeCourse.dataset.courseId : null;
+
+        if (!courseId) {
+            alert('Please select a course before adding an outcome.');
+            return;
+        }
+
+        const description = document.getElementById('new-outcome-description').value.trim();
+
+        if (!description) {
+            alert('Outcome description cannot be empty.');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/admin/courses/${courseId}/outcomes`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ outcomeDescription: description })
+            });
+            const result = await response.json();
+            if (result.success) {
+                fetchCourseOutcomes(courseId); // Refresh the outcomes list for the selected course
+                document.getElementById('new-outcome-description').value = '';
+            } else {
+                alert('Failed to add outcome.');
+            }
+        } catch (error) {
+            console.error('Error adding outcome:', error);
+        }
+    });
+
+    function handleEditOutcome(event) {
+        const li = event.target.closest('li');
+        const isEditing = li.classList.contains('editing');
+
+        if (isEditing) {
+            // Save changes
+            handleSaveOutcome(li);
+        } else {
+            // Enable editing
+            li.classList.add('editing');
+            const outcomeDescription = li.querySelector('span').textContent.trim();
+            li.innerHTML = `
+                <textarea class="edit-textarea">${outcomeDescription}</textarea>
+                <div class="outcome-actions">
+                    <button class="save-outcome">Save</button>
+                    <button class="cancel-edit">Cancel</button>
+                </div>
+            `;
+            attachEditOutcomeListeners(li);
+        }
+    }
+
+    function attachEditOutcomeListeners(li) {
+        li.querySelector('.save-outcome').addEventListener('click', () => handleSaveOutcome(li));
+        li.querySelector('.cancel-edit').addEventListener('click', () => handleCancelEdit(li));
+    }
+
+    function handleCancelEdit(li) {
+        const outcomeId = li.dataset.id;
+        const originalDescription = li.dataset.originalDescription;
+        li.classList.remove('editing');
+        li.innerHTML = `
+            <span>${originalDescription}</span>
+            <div class="outcome-actions">
+                <button class="edit-outcome">Edit</button>
+                <button class="delete-outcome">Delete</button>
+            </div>
+        `;
+        attachOutcomeListeners(outcomeId);
+    }
+
+    async function handleSaveOutcome(li) {
+        const outcomeId = li.dataset.id;
+        const textarea = li.querySelector('textarea');
+        const updatedDescription = textarea.value.trim();
+
+        if (!updatedDescription) {
+            alert('Outcome description cannot be empty.');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/admin/courses/outcomes/${outcomeId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ outcomeDescription: updatedDescription })
+            });
+            const result = await response.json();
+            if (result.success) {
+                alert('Outcome updated successfully!');
+                li.classList.remove('editing');
+                li.innerHTML = `
+                    <span>${updatedDescription}</span>
+                    <div class="outcome-actions">
+                        <button class="edit-outcome">Edit</button>
+                        <button class="delete-outcome">Delete</button>
+                    </div>
+                `;
+                attachOutcomeListeners(outcomeId);
+            } else {
+                alert('Failed to update outcome: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error saving outcome:', error);
+            alert('Failed to save outcome.');
+        }
+    }
+
+    async function fetchAllCourses() {
+        try {
+            console.log('Fetching all courses...'); // Debug log
+            const response = await fetch('/admin/all-course'); // Ensure the URL matches the backend route
+            if (!response.ok) {
+                throw new Error(`Failed to fetch courses. Status: ${response.status}`);
+            }
+            const result = await response.json();
+            console.log('Fetched courses response:', result); // Debug log
+            if (result.success) {
+                const courseList = document.getElementById('course-list');
+                courseList.innerHTML = result.courses.map(course => `
+                    <li data-course-id="${course.course_id}">
+                        ${course.course_name} (ID: ${course.course_id})
+                    </li>
+                `).join('');
+
+                // Add click listeners to course list items
+                document.querySelectorAll('#course-list li').forEach(item => {
+                    item.addEventListener('click', () => {
+                        document.querySelectorAll('#course-list li').forEach(li => li.classList.remove('active'));
+                        item.classList.add('active');
+                        fetchCourseOutcomes(item.dataset.courseId);
+                    });
+                });
+
+                // Automatically select the first course in the list and load its outcomes
+                const firstCourse = courseList.querySelector('li');
+                if (firstCourse) {
+                    firstCourse.classList.add('active');
+                    fetchCourseOutcomes(firstCourse.dataset.courseId);
+                }
+            } else {
+                console.warn('Failed to fetch courses:', result.message); // Debug log
+                alert('Failed to fetch courses: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error fetching all courses:', error); // Debug log
+            alert('An error occurred while fetching the course list.');
+        }
+    }
+
+    // Call fetchAllCourses when the page loads
+    fetchAllCourses();
+    
+    function autoExpandTextarea(textarea) {
+        textarea.style.height = 'auto'; // Reset height to calculate the new height
+        textarea.style.height = `${textarea.scrollHeight}px`; // Set height to fit content
+    }
+
+    // Attach the auto-expand logic to all textareas with the class 'edit-textarea'
+    document.addEventListener('input', (event) => {
+        if (event.target.classList.contains('edit-textarea')) {
+            autoExpandTextarea(event.target);
+        }
+    });
+
+    // Ensure the textarea is expanded when it is first loaded with content
+    document.querySelectorAll('.edit-textarea').forEach((textarea) => {
+        autoExpandTextarea(textarea);
+    });
+
+    document.getElementById('course-search').addEventListener('input', (event) => {
+        const searchTerm = event.target.value.toLowerCase();
+        const courseItems = document.querySelectorAll('#course-list li');
+
+        courseItems.forEach((item) => {
+            const courseName = item.textContent.toLowerCase();
+            if (courseName.includes(searchTerm)) {
+                item.style.display = ''; // Show the item
+            } else {
+                item.style.display = 'none'; // Hide the item
+            }
+        });
+    });
+
+    // Search functionality for faculty list
+    document.getElementById('faculty-search').addEventListener('input', (event) => {
+        const searchTerm = event.target.value.toLowerCase();
+        const facultyRows = document.querySelectorAll('#faculty-table tbody tr');
+
+        facultyRows.forEach((row) => {
+            const facultyName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const facultyEmail = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            if (facultyName.includes(searchTerm) || facultyEmail.includes(searchTerm)) {
+                row.style.display = ''; // Show the row
+            } else {
+                row.style.display = 'none'; // Hide the row
+            }
+        });
+    });
+
+    // Search functionality for class list
+    document.getElementById('class-search').addEventListener('input', (event) => {
+        const searchTerm = event.target.value.toLowerCase();
+        const classTabs = document.querySelectorAll('.class-tabs .class-tab');
+
+        classTabs.forEach((tab) => {
+            const className = tab.textContent.toLowerCase();
+            if (className.includes(searchTerm)) {
+                tab.style.display = ''; // Show the tab
+            } else {
+                tab.style.display = 'none'; // Hide the tab
+            }
+        });
+    });
 });
