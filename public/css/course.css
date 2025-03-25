@@ -452,7 +452,28 @@ body {
     padding: 12px 24px;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent;
+}
+
+.class-tabs .tab.active {
+    background: linear-gradient(145deg, #f0f4ff, #ffffff);
+    border: 2px solid #5562da;
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 16px rgba(85, 98, 218, 0.15),
+        0 0 0 2px rgba(85, 98, 218, 0.1);
+}
+
+.class-tabs .tab.active span {
+    color: #5562da;
+    font-weight: 500;
+}
+
+.class-tabs .tab:hover:not(.active) {
+    background: #f1f5f9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(85, 98, 218, 0.1);
 }
 
 .class-tabs .tab span {
@@ -460,13 +481,6 @@ body {
     color: #64748b;
 }
 
-.class-tabs .tab.active {
-    background: #5562da;
-}
-
-.class-tabs .tab.active span {
-    color: white;
-}
 
 .class-tabs .tab:hover:not(.active) {
     background: #f1f5f9;
