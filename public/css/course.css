@@ -590,6 +590,95 @@ body {
     color: #1e293b;
 }
 
+/* Add after the deadline-box styles */
+.outcomes-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.outcomes-box {
+    flex: 1;
+    animation-delay: 0.4s;
+}
+
+.outcomes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: calc(100px * 3);
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.outcome-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.outcome-item:hover {
+    background: #f1f5f9;
+    transform: translateX(4px);
+}
+
+.outcome-info h4 {
+    font-size: 0.95rem;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+
+.outcome-info p {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.outcome-item .material-symbols-rounded {
+    color: #64748b;
+    font-size: 24px;
+}
+
+/* Add these styles after the box-header styles */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.completion-ratio {
+    font-size: 0.875rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.completion-ratio .completed {
+    color: #22c55e;
+    font-weight: 500;
+}
+
+.completion-ratio .total {
+    color: #94a3b8;
+}
+
+/* .outcome-item.completed {
+    border-left: 3px solid #22c55e;
+} */
+
+.outcome-item.completed .material-symbols-rounded {
+    color: #22c55e;
+}
+
+.outcome-item.completed h4 {
+    color: #166534;
+}
+
 /* Assignment Item Styles */
 .assignment-item {
     display: flex;
