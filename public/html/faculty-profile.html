@@ -19,28 +19,25 @@
     </div>
     <div class="container">
         <!-- Sidebar -->
-        <!-- Replace the existing sidebar div with this -->
         <div class="sidebar">
-            <!-- Top Section -->
-            <div class="sidebar-section" >
-                <button class="sidebar-icon" onclick="window.location.href='/profile'">
+            <div class="sidebar-section">
+                <button class="sidebar-icon" data-tooltip="Profile" onclick="window.location.href='/profile'">
                     <span class="material-symbols-rounded">person</span>
                 </button>
             </div>
-
-            <!-- Middle Section -->
             <div class="sidebar-section">
-                <button class="sidebar-icon" onclick="window.location.href='/dashboard'">
+                <button class="sidebar-icon" data-tooltip="Dashboard" onclick="window.location.href='/dashboard'">
                     <span class="material-symbols-rounded">dashboard</span>
                 </button>
-                <button class="sidebar-icon" onclick="window.location.href='/profile'">
-                    <span class="material-symbols-rounded" >person</span>
+                <button class="sidebar-icon" data-tooltip="Attendance" onclick="window.location.href='/attendance'">
+                    <span class="material-symbols-rounded">patient_list</span>
+                </button>
+                <button class="sidebar-icon rainbow" data-tooltip="AIARA" onclick="window.location.href='/aiara'">
+                    <span class="material-symbols-rounded">brightness_empty</span>
                 </button>
             </div>
-
-            <!-- Bottom Section -->
             <div class="sidebar-section">
-                <button class="sidebar-icon logout">
+                <button class="sidebar-icon logout" data-tooltip="Log Out">
                     <span class="material-symbols-rounded">logout</span>
                 </button>
             </div>
