@@ -26,6 +26,8 @@ body {
     gap: 24px;
     padding: 24px;
     height: calc(100vh - 48px);
+    position: relative;
+    z-index: 1;
 }
 
 /* Sidebar Styles */
@@ -39,7 +41,10 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    position: relative;
+    z-index: 100;
 }   
+ 
 
 .sidebar-section {
     display: flex;
@@ -61,6 +66,7 @@ body {
     border: none;
     outline: none;
     color: #e5e7eb;
+    position: relative;
 }
 
 .sidebar-icon:hover {
@@ -74,6 +80,106 @@ body {
     background: #ffffff;
     color: #dc2626;
     box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.sidebar-icon.rainbow {
+    background: linear-gradient(#2c2c2c, #2c2c2c), 
+                linear-gradient(#2c2c2c 50%, rgba(44, 44, 44, 0.6) 80%, rgba(44, 44, 44, 0)),  
+                linear-gradient(90deg, 
+                    #FF6D1B, #FFEE55, #5BFF89, #4D8AFF, #6B5FFF, #FF64F9, #FF6565
+                );
+    background-origin: border-box;
+    background-clip: padding-box, border-box, border-box;
+    background-size: 200%;
+    animation: animateIcon 2s infinite linear;
+    border: 2px solid transparent;
+    position: relative;
+}
+
+.sidebar-icon.rainbow::before {
+    content: '';
+    background: linear-gradient(90deg, 
+        #FF6D1B, #FFEE55, #5BFF89, #4D8AFF, #6B5FFF, #FF64F9, #FF6565
+    );
+    height: 30%;
+    width: 60%;
+    position: absolute;
+    bottom: -20%;
+    z-index: -5;
+    background-size: 200%;
+    animation: animateIcon 2s infinite linear;
+    filter: blur(12px);
+    border-radius: 12px;
+}
+
+.sidebar-icon.rainbow:hover, 
+.sidebar-icon.rainbow:hover::before {
+    animation: animateIcon 0.5s infinite linear;
+}
+
+.sidebar-icon.rainbow .material-symbols-rounded {
+    background: linear-gradient(90deg, 
+        #FF6D1B, #FFEE55, #5BFF89, #4D8AFF, #6B5FFF, #FF64F9, #FF6565
+    );
+    background-size: 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: animateIcon 2s infinite linear;
+}
+
+/* Add tooltip styles with proper z-index */
+.sidebar-icon::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%) scale(0.95);
+    background: #1a1a1a;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.sidebar-icon::before {
+    content: '';
+    position: absolute;
+    left: calc(100% + 4px);
+    top: 50%;
+    transform: translateY(-50%) scale(0.95);
+    border: 6px solid transparent;
+    border-right-color: #1a1a1a;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 1000;
+}
+
+.sidebar-icon:hover::after,
+.sidebar-icon:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) scale(1);
+}
+
+/* Update logout tooltip color */
+.sidebar-icon.logout::after {
+    background: #dc2626;
+}
+
+.sidebar-icon.logout::before {
+    border-right-color: #dc2626;
+}
+
+@keyframes animateIcon {
+    0% { background-position: 0 }
+    100% { background-position: 200% }
 }
 
 /* Main Content Styles - Updated */
@@ -116,6 +222,8 @@ body {
     animation: fadeIn 0.6s ease-out forwards;
     opacity: 0;
     margin: 0;
+    position: relative;
+    z-index: 2;
 }
 
 /* Updated Box Styles */
@@ -147,7 +255,7 @@ body {
     min-height: 320px;
     animation-delay: 0.3s;
     position: relative;
-    
+    z-index: 3;    
 }
 
 .text-gray {
@@ -169,6 +277,7 @@ body {
     z-index: 1000;
     opacity: 0;
     pointer-events: none;
+    z-index: 2000;
     transition: all 0.3s ease;
 }
 
@@ -506,6 +615,7 @@ body {
 .calendar-box { /* Add this to contain the popup */
     flex: 1;
     animation-delay: 0.4s;
+    z-index: 3;
 }
 
 .calendar-grid {
