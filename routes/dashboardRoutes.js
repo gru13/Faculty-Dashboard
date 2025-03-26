@@ -165,6 +165,11 @@ router.get('/api/timetable', authenticate, async (req, res) => {
                 const slotTimings = {
                     1: { start_time: "09:00", end_time: "10:00" },
                     2: { start_time: "10:00", end_time: "11:00" },
+                    3: { start_time: "11:00", end_time: "12:00" },
+                    4: { start_time: "12:00", end_time: "13:00" },
+                    5: { start_time: "13:00", end_time: "14:00" },
+                    6: { start_time: "14:00", end_time: "15:00" },
+                    7: { start_time: "15:00", end_time: "16:00" },
                     // ...existing slot timings...
                 };
 

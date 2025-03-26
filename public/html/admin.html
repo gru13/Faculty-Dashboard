@@ -182,6 +182,46 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Time Table Management Section -->
+            <div class="admin-section">
+                <h2>Time Table Management</h2>
+                <div class="timetable-form">
+                    <select id="timetable-day" class="add-input">
+                        <option value="" disabled selected>Select Day</option>
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                        <option value="Sunday">Sunday</option>
+                    </select>
+                    <select id="timetable-slot" class="add-input">
+                        <option value="" disabled selected>Select Slot</option>
+                        <option value="1">Slot 1</option>
+                        <option value="2">Slot 2</option>
+                        <option value="3">Slot 3</option>
+                        <option value="4">Slot 4</option>
+                        <option value="5">Slot 5</option>
+                        <option value="6">Slot 6</option>
+                        <option value="7">Slot 7</option>
+                    </select>
+                    <select id="timetable-course" class="add-input">
+                        <option value="" disabled selected>Select Course</option>
+                        <!-- Courses will be dynamically populated -->
+                    </select>
+                    <select id="timetable-faculty" class="add-input" disabled>
+                        <option value="" disabled selected>Select Faculty</option>
+                        <!-- Faculties will be dynamically populated -->
+                    </select>
+                    <select id="timetable-class" class="add-input" disabled>
+                        <option value="" disabled selected>Select Class</option>
+                        <!-- Classes will be dynamically populated -->
+                    </select>
+                    <button id="add-timetable-entry" class="add-faculty">Add to Timetable</button>
+                </div>
+            </div>
         </div>
     </div>
 

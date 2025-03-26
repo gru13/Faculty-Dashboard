@@ -205,10 +205,7 @@ async function fetchTimetable() {
         }
 
         const data = await response.json();
-        return processTimetable(data.timetable.map(entry => ({
-            ...entry,
-            displayDay: entry.day // Add day to display
-        })));
+        return processTimetable(data.timetable);
     } catch (error) {
         console.error('Error fetching timetable:', error);
         return [];
@@ -704,4 +701,18 @@ function getGreeting(hour) {
 }
 
 // Initial calendar generation
+
+function getSlotTime(slot) {
+    const slotTimings = {
+        1: { start_time: "09:00", end_time: "10:00" },
+        2: { start_time: "10:00", end_time: "11:00" },
+        3: { start_time: "11:00", end_time: "12:00" },
+        4: { start_time: "12:00", end_time: "01:00" },
+        5: { start_time: "02:00", end_time: "03:00" },
+        6: { start_time: "03:00", end_time: "04:00" },
+        7: { start_time: "04:00", end_time: "05:00" },
+        8: { start_time: "05:00", end_time: "06:00" }
+    };
+    return slotTimings[slot] || { start_time: "Unknown", end_time: "Unknown" };
+}
 

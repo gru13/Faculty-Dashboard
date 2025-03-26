@@ -580,3 +580,34 @@ input, textarea {
     margin-top: 16px;
 }
 
+.timetable-form {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    align-items: center;
+}
+
+#timetable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+#timetable th, #timetable td {
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+#timetable th {
+    background: #f9fafb;
+    font-weight: bold;
+}
+
+#timetable tbody tr:nth-child(odd) {
+    background: #f9f9f9;
+}
+
+#timetable tbody tr:nth-child(even) {
+    background: #ffffff;
+}
+

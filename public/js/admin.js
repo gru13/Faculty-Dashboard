@@ -497,4 +497,102 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    async function populateDropdowns() {
+        try {
+            const [coursesResponse, classesResponse] = await Promise.all([
+                fetch('/admin/courses'),
+                fetch('/admin/classes')
+            ]);
+            const courses = await coursesResponse.json();
+            const classes = await classesResponse.json();
+
+            if (courses.success) {
+                const courseDropdown = document.getElementById('timetable-course');
+                courseDropdown.innerHTML = '<option value="" disabled selected>Select Course</option>';
+                courses.courses.forEach(course => {
+                    courseDropdown.innerHTML += `<option value="${course.course_id}">${course.course_name}</option>`;
+                });
+            }
+
+            if (classes.success) {
+                const classDropdown = document.getElementById('timetable-class');
+                classDropdown.innerHTML = '<option value="" disabled selected>Select Class</option>';
+                classes.classes.forEach(cls => {
+                    classDropdown.innerHTML += `<option value="${cls.class_id}">${cls.class_name}</option>`;
+                });
+            }
+        } catch (error) {
+            console.error('Error populating dropdowns:', error);
+        }
+    }
+
+    document.getElementById('timetable-course').addEventListener('change', async (event) => {
+        const courseId = event.target.value;
+
+        // Fetch faculties for the selected course
+        try {
+            const facultyResponse = await fetch(`/admin/faculties/${courseId}`);
+            const facultyResult = await facultyResponse.json();
+            const facultyDropdown = document.getElementById('timetable-faculty');
+            facultyDropdown.disabled = false;
+            facultyDropdown.innerHTML = '<option value="" disabled selected>Select Faculty</option>';
+            if (facultyResult.success) {
+                facultyResult.faculties.forEach(faculty => {
+                    facultyDropdown.innerHTML += `<option value="${faculty.faculty_id}">${faculty.name}</option>`;
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching faculties:', error);
+        }
+
+        // Fetch classes for the selected course
+        try {
+            const classResponse = await fetch(`/admin/classes/${courseId}`);
+            const classResult = await classResponse.json();
+            const classDropdown = document.getElementById('timetable-class');
+            classDropdown.disabled = false;
+            classDropdown.innerHTML = '<option value="" disabled selected>Select Class</option>';
+            if (classResult.success) {
+                classResult.classes.forEach(cls => {
+                    classDropdown.innerHTML += `<option value="${cls.class_id}">${cls.class_name}</option>`;
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching classes:', error);
+        }
+    });
+
+    document.getElementById('add-timetable-entry').addEventListener('click', async () => {
+        const day = document.getElementById('timetable-day').value;
+        const slot = document.getElementById('timetable-slot').value;
+        const courseId = document.getElementById('timetable-course').value;
+        const facultyId = document.getElementById('timetable-faculty').value;
+        const classId = document.getElementById('timetable-class').value;
+
+        if (!day || !slot || !courseId || !facultyId || !classId) {
+            alert('Please fill all fields.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/admin/timetable', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ day, slot, courseId, facultyId, classId })
+            });
+            const result = await response.json();
+            if (result.success) {
+                alert(result.message);
+                fetchTimetable();
+            } else {
+                alert('Failed to add timetable entry.');
+            }
+        } catch (error) {
+            console.error('Error adding timetable entry:', error);
+        }
+    });
+
+    // Initial load
+    populateDropdowns();
 });

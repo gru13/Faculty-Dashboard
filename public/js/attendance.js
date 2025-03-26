@@ -82,7 +82,7 @@ async function populateStudentsGrid(classId) {
                   .map(
                       (student) => `
             <div class="student-tile" data-roll="${student.roll_no}" title="${student.name}">
-                ${student.roll_no} - ${student.name} <!-- Display both roll number and name -->
+                ${student.roll_no}<!-- Display both roll number and name -->
             </div>
         `
                   )

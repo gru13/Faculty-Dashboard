@@ -540,4 +540,87 @@ router.delete('/courses/outcomes/:outcomeId', async (req, res) => {
     }
 });
 
+// Fetch timetable data
+router.get('/timetable', async (req, res) => {
+    try {
+        const [timetable] = await db.promise().query(`
+            SELECT day, slot, course_name, class_name 
+            FROM timetable 
+            JOIN courses ON timetable.course_id = courses.course_id 
+            JOIN class_list ON timetable.class_id = class_list.class_id
+        `);
+        res.json({ success: true, timetable });
+    } catch (error) {
+        console.error('Error fetching timetable:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Add timetable entry
+router.post('/timetable', async (req, res) => {
+    const { day, slot, courseId, facultyId, classId } = req.body;
+    try {
+        await db.promise().query(
+            'INSERT INTO timetable (day, slot, course_id, faculty_id, class_id) VALUES (?, ?, ?, ?, ?)',
+            [day, slot, courseId, facultyId, classId]
+        );
+        res.json({ success: true, message: 'Timetable entry added successfully.' });
+    } catch (error) {
+        console.error('Error adding timetable entry:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Fetch faculties for a course
+router.get('/faculties/:courseId', async (req, res) => {
+    const { courseId } = req.params;
+    try {
+        const [faculties] = await db.promise().query(
+            'SELECT faculty_id, name FROM Faculty WHERE faculty_id IN (SELECT faculty_id FROM courses WHERE course_id = ?)',
+            [courseId]
+        );
+        res.json({ success: true, faculties });
+    } catch (error) {
+        console.error('Error fetching faculties:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Fetch all courses
+router.get('/courses', async (req, res) => {
+    try {
+        const [courses] = await db.promise().query('SELECT distinct course_id, course_name FROM courses');
+        res.json({ success: true, courses });
+    } catch (error) {
+        console.error('Error fetching courses:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Fetch all classes
+router.get('/classes', async (req, res) => {
+    try {
+        const [classes] = await db.promise().query('SELECT class_id, class_name FROM class_list');
+        res.json({ success: true, classes });
+    } catch (error) {
+        console.error('Error fetching classes:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+// Fetch classes for a specific course
+router.get('/classes/:courseId', async (req, res) => {
+    const { courseId } = req.params;
+    try {
+        const [classes] = await db.promise().query(
+            'SELECT DISTINCT class_list.class_id, class_list.class_name FROM class_list JOIN courses ON class_list.class_id = courses.class_id WHERE courses.course_id = ?',
+            [courseId]
+        );
+        res.json({ success: true, classes });
+    } catch (error) {
+        console.error('Error fetching classes for course:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
 module.exports = router;
