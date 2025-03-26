@@ -49,7 +49,7 @@ router.get('/api/courses', authenticate, async (req, res) => {
                     department: 'CSE'
                 }));
         
-                console.log("Formatted courses:", formattedData);
+                // console.log("Formatted courses:", formattedData);
                 res.json({'courses':formattedData}); // ✅ Fix: Return as an array
             }
         );
@@ -88,7 +88,7 @@ router.get('/api/calendar/agenda', authenticate, async (req, res) => {
                 let completedQueries = 0;
 
                 dateResults.forEach(({ date }) => {
-                    console.log(date)
+                    // console.log(date)
                     db.query(
                         'SELECT work_description, course_id FROM academic_calendar WHERE faculty_id = ? AND date = ?',
                         [faculty_id, date],
@@ -117,7 +117,7 @@ router.get('/api/calendar/agenda', authenticate, async (req, res) => {
 
                             // Once all queries are complete, send response
                             if (completedQueries === dateResults.length) {
-                                console.log("✅ Formatted Agenda Data:", agendaData);
+                                // console.log("✅ Formatted Agenda Data:", agendaData);
                                 res.status(200).json({ agendaData });
                             }
                         }
@@ -184,7 +184,7 @@ router.get('/api/timetable', authenticate, async (req, res) => {
                     };
                 });
         
-                console.log("✅ Fixed Timetable:", formattedTimetable);
+                // console.log("✅ Fixed Timetable:", formattedTimetable);
                 res.status(200).json({ timetable: formattedTimetable });
             }
         );
@@ -297,7 +297,7 @@ router.get('/api/notifications', authenticate, async (req, res) => {
                 link: item.link || ''
             }));
 
-            console.log("Formatted notifications:", formattedNotifications);
+            // console.log("Formatted notifications:", formattedNotifications);
             res.json({ notifications: formattedNotifications });
         });
 

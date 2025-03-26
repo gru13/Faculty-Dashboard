@@ -34,20 +34,22 @@ const pageRoutes = require("./routes/pageRoutes");
 const facultyRoutes = require("./routes/facultyRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const courseRoutes = require("./routes/courseRoutes");
-const assignmentRoutes = require("./routes/assignmentRoutes"); // New assignment routes
-const assignmentSubmissionRoutes = require("./routes/assignmentSubmissionRoutes"); // New assignment submission routes
-const adminRoutes = require('./routes/adminRoutes');
+const attendanceRoutes = require("./routes/attendanceRoutes"); // Corrected import
+const assignmentRoutes = require("./routes/assignmentRoutes");
+const assignmentSubmissionRoutes = require("./routes/assignmentSubmissionRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 // ✅ Use Routes
 app.use("/", facultyRoutes);
 app.use("/", pageRoutes);
-app.use("/", authRoutes);  // Now `/login` & `/register` work directly
-app.use("/", otpRoutes);   // Now `/forgot-password` works directly
-app.use("/", dashboardRoutes);   
-app.use("/", courseRoutes);   
-app.use("/", assignmentRoutes); // Use the new assignment routes
-app.use("/", assignmentSubmissionRoutes); // Use the new assignment submission routes
-app.use('/admin', adminRoutes);
+app.use("/", authRoutes);
+app.use("/", otpRoutes);
+app.use("/", dashboardRoutes);
+app.use("/", courseRoutes);
+app.use("/", attendanceRoutes); // Use the new attendance routes
+app.use("/", assignmentRoutes);
+app.use("/", assignmentSubmissionRoutes);
+app.use("/admin", adminRoutes);
 
 // ✅ Start Server
 app.listen(PORT, () => {

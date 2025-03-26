@@ -5,7 +5,7 @@ const router = express.Router();
 
 // 📌 Register Route
 router.post("/register", async (req, res) => {
-    console.log("📌 Received Register Request:", req.body);
+    // console.log("📌 Received Register Request:", req.body);
     const { email_id, password, role, name, mobile_no, degree, profile_pic, department } = req.body;
 
     if (!email_id || !password || !role) {
@@ -70,7 +70,7 @@ router.post("/login", async (req, res) => {
         }
 
         const user = results[0];
-        console.log(user);
+        // console.log(user);
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(401).json({ message: "Invalid email or password" });
@@ -83,7 +83,7 @@ router.post("/login", async (req, res) => {
 
 // 📌 Logout Route
 router.post("/logout", (req, res) => {
-    console.log("/logout is called");
+    // console.log("/logout is called");
 
     if (!req.session) {
         return res.status(400).json({ success: false, message: "No active session" });
@@ -95,7 +95,7 @@ router.post("/logout", (req, res) => {
             return res.status(500).json({ success: false, message: "Failed to log out" });
         }
 
-        console.log("✅ Session destroyed successfully");
+        // console.log("✅ Session destroyed successfully");
         res.clearCookie("connect.sid");  // Ensure session cookie is removed
         return res.json({ success: true, message: "Logged out successfully", redirect: "/" });
     });

@@ -207,7 +207,7 @@ router.post("/assignment/grade", async (req, res) => {
     }
 
     try {
-        console.log("Grading submission:", { submissionId, rollNo, grade }); // Add logging
+        // console.log("Grading submission:", { submissionId, rollNo, grade }); // Add logging
 
         // Fetch the course_id and class_id for the given submission
         const [assignment] = await db.promise().query(`
@@ -223,7 +223,7 @@ router.post("/assignment/grade", async (req, res) => {
         }
 
         const { course_id, class_id, assignment_id } = assignment[0];
-        console.log("Fetched course_id:", course_id, "class_id:", class_id, "assignment_id:", assignment_id); // Add logging
+        // console.log("Fetched course_id:", course_id, "class_id:", class_id, "assignment_id:", assignment_id); // Add logging
 
         await db.promise().query(`
             INSERT INTO grades (submission_id, roll_no, class_id, course_id, assignment_id, grade)

@@ -43,4 +43,11 @@ router.get("/profile", (req, res) => {
     res.sendFile(path.join(__dirname, "../public/html/faculty-profile.html"));
 });
 
+router.get("/attendance", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/");
+    }
+    res.sendFile(path.join(__dirname, "../public/html/attendance.html"));
+});
+
 module.exports = router;
