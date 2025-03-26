@@ -950,3 +950,77 @@ input:focus, textarea:focus {
     color: #5562da;
     font-weight: 500;
 }
+
+
+/* Add after the course-info-box styles */
+
+.completion-box {
+    max-height: 180px;
+}
+
+
+.completion-stats {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    /* padding: 12px; */
+}
+
+.completion-circle {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+}
+
+.completion-percentage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #5562da;
+}
+
+.completion-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+.stat-row .label {
+    color: #64748b;
+}
+
+.stat-row .value {
+    color: #1e293b;
+    font-weight: 500;
+}
+
+.stat-row:hover {
+    background: #f1f5f9;
+    transform: translateX(2px);
+}
+
+/* Add animation for the progress circle */
+@keyframes progress {
+    from {
+        stroke-dasharray: 0, 100;
+    }
+}
+
+.completion-circle path:last-child {
+    animation: progress 1s ease-out forwards;
+}
