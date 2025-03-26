@@ -48,7 +48,7 @@ function hideAttendanceBoxes() {
 
 async function fetchClassStudents(classId) {
     try {
-        const response = await fetch("/api/students", {
+        const response = await fetch("/api/attendance/students", { // Updated endpoint
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ classId }),
@@ -94,7 +94,6 @@ async function showAttendanceBoxes() {
 
     const courseCode = selectedCourse.querySelector(".course-code").textContent;
     const classId = activeTab.dataset.classId;
-    const outcomes = await fetchCourseOutcomes(courseCode);
 
     const attendanceForm = document.querySelector(".attendance-form");
     attendanceForm.innerHTML = `
@@ -111,23 +110,6 @@ async function showAttendanceBoxes() {
                     )
                     .join("")}
             </div>
-        </div>
-
-        <div class="form-group">
-            <label>Course Outcome</label>
-            <select id="courseOutcome">
-                <option value="">Select outcome covered</option>
-                ${outcomes
-                    .map(
-                        (outcome) => `
-                    <option value="${outcome.id}" ${outcome.completed ? "disabled" : ""}>
-                        ${outcome.id}: ${outcome.description}
-                        ${outcome.completed ? "(Completed)" : ""}
-                    </option>
-                `
-                    )
-                    .join("")}
-            </select>
         </div>
 
         <div class="attendance-grid">
@@ -194,7 +176,7 @@ function updateAttendanceList(students) {
 
     attendanceList.innerHTML = students
         .map(
-            ({ rollNo, name, attended, total, percentage }) => `
+            ({ rollNo, name, attended, total, percentage }) => ` // Updated to use rollNo
         <div class="attendance-item" data-student='${JSON.stringify({
             rollNo,
             name,
@@ -203,7 +185,7 @@ function updateAttendanceList(students) {
             percentage,
         })}'>
             <div class="student-info">
-                <span class="roll-no">${rollNo}</span>
+                <span class="roll-no">${rollNo}</span> <!-- Display roll number -->
                 <span class="student-name">${name}</span>
             </div>
             <div class="attendance-stats">
@@ -545,18 +527,18 @@ async function loadAttendanceData(classId) {
 {
     "date": "2025-03-23",  // Current date in YYYY-MM-DD format
     "hours": [1, 2, 3],    // Array of selected hour numbers
-    "courseOutcome": "CO2", // Selected course outcome ID
     "absentStudents": [    // Array of roll numbers of absent students
         "CSE001",
         "CSE002"
-    ]
+    ],
+    "classId": "CSE101",   // Class ID
+    "courseId": "CS101"    // Course ID
 }
 */
 
 // ✅ Submit attendance handler
 document.querySelector(".submit-attendance").addEventListener("click", async function () {
     const selectedHours = getSelectedHours();
-    const courseOutcome = document.getElementById("courseOutcome").value;
     const selectedClass = document.querySelector(".tab.active");
     const selectedCourse = document.querySelector(".course-box.active");
 
@@ -571,11 +553,6 @@ document.querySelector(".submit-attendance").addEventListener("click", async fun
         return;
     }
 
-    if (!courseOutcome) {
-        alert("Please select a course outcome.");
-        return;
-    }
-
     // ✅ Get absent students list
     const absentStudents = getAbsentStudents();
 
@@ -583,8 +560,9 @@ document.querySelector(".submit-attendance").addEventListener("click", async fun
     const attendanceData = {
         date: getCurrentDate(),
         hours: selectedHours,
-        courseOutcome,
         absentStudents,
+        classId: selectedClass.dataset.classId,
+        courseId: selectedCourse.querySelector(".course-code").textContent,
     };
 
     try {
