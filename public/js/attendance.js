@@ -70,7 +70,7 @@ async function fetchClassStudents(classId) {
 async function populateStudentsGrid(classId) {
     const students = await fetchClassStudents(classId);
     const grid = document.querySelector(".students-grid");
-
+    console.log(students+"Hello");
     if (!grid) {
         console.error("Students grid container not found.");
         return;
@@ -141,6 +141,7 @@ async function showAttendanceBoxes() {
 
     // Populate students grid dynamically
     try {
+        console.log("hey");
         await populateStudentsGrid(classId);
     } catch (error) {
         console.error("Error populating students grid:", error);
@@ -573,10 +574,7 @@ function hideAttendanceBoxes() {
     document.querySelectorAll(".attendance-box").forEach((box) => (box.style.display = "none"));
 }
 
-// ✅ Show attendance boxes when class is selected
-function showAttendanceBoxes() {
-    document.querySelectorAll(".attendance-box").forEach((box) => (box.style.display = "block"));
-}
+
 
 // ✅ Load attendance data for the selected class
 async function loadAttendanceData(classId) {
