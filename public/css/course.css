@@ -388,29 +388,33 @@ body {
 }
 
 /* Scrollbar styling */
-.courses-grid::-webkit-scrollbar,
-.timetable-list::-webkit-scrollbar,
-.notifications-list::-webkit-scrollbar {
+.students-list::-webkit-scrollbar,
+.deadlines-list::-webkit-scrollbar,
+.assignments-list::-webkit-scrollbar,
+.outcomes-list::-webkit-scrollbar {
     width: 6px;
 }
 
-.courses-grid::-webkit-scrollbar-track,
-.timetable-list::-webkit-scrollbar-track,
-.notifications-list::-webkit-scrollbar-track{
+.students-list::-webkit-scrollbar-track,
+.deadlines-list::-webkit-scrollbar-track,
+.assignments-list::-webkit-scrollbar-track,
+.outcomes-list::-webkit-scrollbar-track {
     background: #f1f5f9;
     border-radius: 4px;
 }
 
-.courses-grid::-webkit-scrollbar-thumb,
-.timetable-list::-webkit-scrollbar-thumb,
-.notifications-list::-webkit-scrollbar-thumb{
+.students-list::-webkit-scrollbar-thumb,
+.deadlines-list::-webkit-scrollbar-thumb,
+.assignments-list::-webkit-scrollbar-thumb,
+.outcomes-list::-webkit-scrollbar-thumb {
     background: #cbd5e1;
     border-radius: 4px;
 }
 
-.courses-grid::-webkit-scrollbar-thumb:hover,
-.timetable-list::-webkit-scrollbar-thumb:hover,
-.notifications-list::-webkit-scrollbar-thumb:hover {
+.students-list::-webkit-scrollbar-thumb:hover,
+.deadlines-list::-webkit-scrollbar-thumb:hover,
+.assignments-list::-webkit-scrollbar-thumb:hover,
+.outcomes-list::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
 }
 
