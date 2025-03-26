@@ -59,9 +59,9 @@ router.get("/api/attendance/:classId", (req, res) => {
 
 // Submit or update attendance for a class
 router.post("/api/attendance/update", (req, res) => {
-    const { date, hours, absentStudents, classId, courseId } = req.body;
+    const { date, hours, absentStudents, classId, courseId, courseOutcome } = req.body;
 
-    if (!date || !hours || !classId || !courseId) {
+    if (!date || !hours || !classId || !courseId || !courseOutcome) {
         return res.status(400).json({ success: false, message: "Missing required fields" });
     }
 
@@ -96,7 +96,20 @@ router.post("/api/attendance/update", (req, res) => {
                 return res.status(500).json({ success: false, message: "Internal server error" });
             }
 
-            res.json({ success: true, message: "Attendance updated successfully" });
+            // Mark course outcome as completed
+            const outcomeQuery = `
+                INSERT INTO completed_outcomes (class_id, outcome_id, completion_date)
+                VALUES (?, ?, ?)
+                ON DUPLICATE KEY UPDATE completion_date = VALUES(completion_date)
+            `;
+            db.query(outcomeQuery, [classId, courseOutcome, date], (err) => {
+                if (err) {
+                    console.error("Error updating course outcome:", err);
+                    return res.status(500).json({ success: false, message: "Internal server error" });
+                }
+
+                res.json({ success: true, message: "Attendance and course outcome updated successfully" });
+            });
         });
     });
 });

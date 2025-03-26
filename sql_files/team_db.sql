@@ -133,9 +133,9 @@ CREATE TABLE completed_outcomes (
     completion_id INT AUTO_INCREMENT PRIMARY KEY,
     class_id INT NOT NULL,
     outcome_id INT NOT NULL,
-    completion_date DATE NOT NULL
+    completion_date DATE NOT NULL,
+    UNIQUE (class_id, outcome_id)
 );
-
 
 CREATE TABLE RecentUpdates (
     id INT AUTO_INCREMENT PRIMARY KEY,

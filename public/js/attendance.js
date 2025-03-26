@@ -106,6 +106,7 @@ async function showAttendanceBoxes() {
 
     const courseCode = selectedCourse.querySelector(".course-code").textContent;
     const classId = activeTab.dataset.classId;
+    const outcomes = await fetchCourseOutcomes(courseCode);
 
     const attendanceForm = document.querySelector(".attendance-form");
     attendanceForm.innerHTML = `
@@ -122,6 +123,22 @@ async function showAttendanceBoxes() {
                     )
                     .join("")}
             </div>
+        </div>
+
+        <div class="form-group">
+            <label>Course Outcome</label>
+            <select id="courseOutcome">
+                <option value="">Select outcome covered</option>
+                ${outcomes
+                    .map(
+                        (outcome) => `
+                    <option value="${outcome.outcome_id}" ${outcome.completed ? "disabled" : ""}>
+                        ${outcome.outcome_id}: ${outcome.outcome_description} ${outcome.completed ? "(Completed)" : ""}
+                    </option>
+                `
+                    )
+                    .join("")}
+            </select>
         </div>
 
         <div class="attendance-grid">
@@ -156,9 +173,15 @@ async function showAttendanceBoxes() {
 async function handleAttendanceSubmission(classId, courseCode) {
     const selectedHours = getSelectedHours();
     const absentStudents = getAbsentStudents();
+    const courseOutcome = document.getElementById("courseOutcome").value;
 
     if (selectedHours.length === 0) {
         alert("Please select at least one hour.");
+        return;
+    }
+
+    if (!courseOutcome) {
+        alert("Please select a course outcome.");
         return;
     }
 
@@ -168,6 +191,7 @@ async function handleAttendanceSubmission(classId, courseCode) {
         absentStudents,
         classId,
         courseId: courseCode,
+        courseOutcome,
     };
 
     try {
@@ -183,26 +207,19 @@ async function handleAttendanceSubmission(classId, courseCode) {
     }
 }
 
-function getSelectedHours() {
-    return Array.from(document.querySelectorAll(".hour-box.selected"))
-        .map((box) => parseInt(box.dataset.hour))
-        .sort((a, b) => a - b);
-}
+async function fetchCourseOutcomes(courseCode) {
+    try {
+        const response = await fetch(`/api/courses/${courseCode}/outcomes`);
+        if (!response.ok) {
+            throw new Error("Failed to fetch course outcomes");
+        }
 
-function getAbsentStudents() {
-    return Array.from(document.querySelectorAll(".student-tile.absent")).map(
-        (tile) => tile.dataset.roll
-    );
-}
-
-async function submitAttendance(attendanceData) {
-    return await fetch("/api/attendance/update", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(attendanceData),
-    });
+        const { outcomes } = await response.json();
+        return outcomes;
+    } catch (error) {
+        console.error("Error fetching course outcomes:", error);
+        return [];
+    }
 }
 
 // Utility to get ordinal suffix for hour numbers
