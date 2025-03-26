@@ -129,20 +129,23 @@ function switchClass(classId, data) {
     const courseId = activeClass ? activeClass.course_id : null;
     console.log(`Switching to classId: ${classId}, courseId: ${courseId}`); // Debugging log
 
-    fetchCourseOutcomes(courseId, classId)
+     fetchCourseOutcomes(data.course_id, classId)
         .then(outcomes => {
             updateOutcomesList(outcomes);
+            // Update completion stats again after outcomes are loaded
+            updateCompletionStats(classId);
         })
         .catch(error => {
             console.error('Error updating outcomes:', error);
-            // Show empty state on error
             updateOutcomesList([]);
+            updateCompletionStats(classId);
         });
     
     // Update UI
     updateStudentsList(classStudents);
     updateAssignmentsList(classAssignments);
     updateDeadlinesList(classAssignments);
+    updateCompletionStats(classId);
 }
 
 
@@ -360,3 +363,81 @@ function updateCompletionRatio() {
     }
 }
 
+function updateCompletionRatio() {
+    const totalOutcomes = document.querySelectorAll('.outcome-item').length;
+    const completedOutcomes = document.querySelectorAll('.outcome-item.completed').length;
+    
+    const completedSpan = document.querySelector('.completion-ratio .completed');
+    const totalSpan = document.querySelector('.completion-ratio .total');
+    
+    if (completedSpan && totalSpan) {
+        completedSpan.textContent = completedOutcomes;
+        totalSpan.textContent = totalOutcomes;
+    }
+}
+
+function updateCompletionStats(classId) {
+    // Calculate outcomes percentage
+    const totalOutcomes = document.querySelectorAll('.outcome-item').length;
+    const completedOutcomes = document.querySelectorAll('.outcome-item.completed').length;
+    const completionPercentage = Math.round((completedOutcomes / totalOutcomes) * 100) || 0;
+
+    // Count assignments
+    const assignmentsCount = document.querySelectorAll('.assignment-item').length;
+
+    // Update completion box
+    const completionCircle = document.querySelector('.completion-circle path:last-child');
+    const percentageDisplay = document.querySelector('.completion-percentage');
+    if (completionCircle && percentageDisplay) {
+        completionCircle.setAttribute('stroke-dasharray', `${completionPercentage}, 100`);
+        percentageDisplay.textContent = `${completionPercentage}%`;
+    }
+
+    // Update stats rows
+    const completionDetails = document.querySelector('.completion-details');
+    completionDetails.innerHTML = `
+        <div class="stat-row">
+            <span class="label">Assignments posted</span>
+            <span class="value">${assignmentsCount}</span>
+        </div>
+        <div class="stat-row loading-classes">
+            <span class="label">Total classes</span>
+            <span class="value">Loading...</span>
+        </div>
+    `;
+
+    // Fetch total classes from backend
+    fetchTotalClasses(classId);
+}
+
+// Add function to fetch total classes
+async function fetchTotalClasses(classId) {
+    try {
+        const response = await fetch(`/api/class/${classId}/total-classes`);
+        const data = await response.json();
+        
+        /* Expected response format:
+        {
+            "success": true,
+            "total_classes": 30
+        }
+        */
+        
+        const classesRow = document.querySelector('.loading-classes');
+        if (classesRow && data.success) {
+            classesRow.innerHTML = `
+                <span class="label">Total classes</span>
+                <span class="value">${data.total_classes}</span>
+            `;
+        }
+    } catch (error) {
+        console.error('Error fetching total classes:', error);
+        const classesRow = document.querySelector('.loading-classes');
+        if (classesRow) {
+            classesRow.innerHTML = `
+                <span class="label">Total classes</span>
+                <span class="value">--</span>
+            `;
+        }
+    }
+}
