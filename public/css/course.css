@@ -26,6 +26,8 @@ body {
     gap: 24px;
     padding: 24px;
     height: calc(100vh - 48px);
+    position: relative;
+    z-index: 1;
 }
 
 /* Sidebar Styles */
@@ -194,6 +196,8 @@ body {
     flex-direction: column;
     gap: 16px;
     height: calc(100vh - 64px);
+    z-index: 1;
+    position: relative;
     /* overflow-y: auto; */
 }
 
@@ -418,12 +422,6 @@ body {
     background: #94a3b8;
 }
 
-.timetable-list {
-    max-height: calc(110px * 3);
-    overflow-y: auto;
-    padding-right: 8px;
-}
-
 /* Replace the empty state styles with a dedicated empty state class */
 .empty-state {
     display: flex;
@@ -546,7 +544,7 @@ body {
 
 /* Deadlines List Styles */
 .deadlines-list {
-    max-height: calc(100px * 3);
+    height: calc(100vh - 635px);
     overflow-y: auto;
     padding-right: 8px;
 }
@@ -567,6 +565,96 @@ body {
     min-width: 110px;
     color: #64748b;
 }
+
+/* Add after the deadline-box styles */
+.outcomes-row {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 16px;
+    max-height: calc(100vh - 48px);    /* margin-top: 16px; */
+}
+
+.outcomes-box {
+    flex: 1;
+    animation-delay: 0.4s;
+}
+
+.outcomes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: calc(100vh - 635px);
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.outcome-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.outcome-item:hover {
+    background: #f1f5f9;
+    transform: translateX(2px);
+}
+
+.outcome-info h4 {
+    font-size: 0.95rem;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+
+.outcome-info p {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.outcome-item .material-symbols-rounded {
+    color: #64748b;
+    font-size: 24px;
+}
+
+/* .outcome-item.completed {
+    border-left: 2px solid #22c55e;
+} */
+
+.outcome-item.completed .material-symbols-rounded {
+    color: #22c55e;
+}
+
+.outcome-item.completed h4 {
+    color: #166534;
+}
+
+/* Add these styles after the box-header styles */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.completion-ratio {
+    font-size: 0.875rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.completion-ratio .completed {
+    color: #22c55e;
+    /* font-weight: 500; */
+}
+
+.completion-ratio .total {
+    color: #94a3b8;
+}
+
 
 /* Student Item Styles */
 .student-item {
@@ -592,96 +680,6 @@ body {
 .student-item .student-name {
     font-size: 0.95rem;
     color: #1e293b;
-}
-
-/* Add after the deadline-box styles */
-.outcomes-row {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    height: calc(100vh - 48px);
-    gap: 16px;
-    /* margin-top: 16px; */
-}
-
-.outcomes-box {
-    flex: 1;
-    animation-delay: 0.4s;
-}
-
-.outcomes-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-height: calc(100px * 3);
-    overflow-y: auto;
-    padding-right: 8px;
-}
-
-.outcome-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
-    background: #f8fafc;
-    border-radius: 12px;
-    transition: all 0.2s ease;
-}
-
-.outcome-item:hover {
-    background: #f1f5f9;
-    transform: translateX(4px);
-}
-
-.outcome-info h4 {
-    font-size: 0.95rem;
-    color: #1e293b;
-    margin-bottom: 4px;
-}
-
-.outcome-info p {
-    font-size: 0.875rem;
-    color: #64748b;
-}
-
-.outcome-item .material-symbols-rounded {
-    color: #64748b;
-    font-size: 24px;
-}
-
-/* Add these styles after the box-header styles */
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.completion-ratio {
-    font-size: 0.875rem;
-    color: #64748b;
-    display: flex;
-    align-items: center;
-    gap: 2px;
-}
-
-.completion-ratio .completed {
-    color: #22c55e;
-    font-weight: 500;
-}
-
-.completion-ratio .total {
-    color: #94a3b8;
-}
-
-/* .outcome-item.completed {
-    border-left: 3px solid #22c55e;
-} */
-
-.outcome-item.completed .material-symbols-rounded {
-    color: #22c55e;
-}
-
-.outcome-item.completed h4 {
-    color: #166534;
 }
 
 /* Assignment Item Styles */
@@ -808,6 +806,7 @@ body {
 .form-box {
     padding: 24px;
     min-height: 700px;
+    /* height: calc(100vh - 48px); */
 }
 
 .assignment-form {
