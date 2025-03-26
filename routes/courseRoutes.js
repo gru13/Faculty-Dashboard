@@ -71,6 +71,62 @@ router.get("/course/data", async (req, res) => {
     }
 });
 
+// 📌 API to fetch course outcomes
+router.get("/course/outcomes", async (req, res) => {
+    const { course_id, class_id } = req.query;
+    if (!course_id || !class_id) {
+        return res.status(400).json({ success: false, message: "Course ID and Class ID are required." });
+    }
+
+    try {
+        const query = `
+            SELECT co.outcome_id AS id, co.outcome_description AS title, 
+                   CASE WHEN coo.completion_id IS NOT NULL THEN TRUE ELSE FALSE END AS completed
+            FROM course_outcomes co
+            LEFT JOIN completed_outcomes coo 
+            ON co.outcome_id = coo.outcome_id AND coo.class_id = ?
+            WHERE co.course_id = ?;
+        `;
+        const [outcomes] = await db.promise().query(query, [class_id, course_id]);
+        res.json({ success: true, outcomes });
+    } catch (error) {
+        console.error("Error fetching course outcomes:", error);
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
+});
+
+// 📌 API to update course outcome completion status
+router.post("/course/outcomes/update", async (req, res) => {
+    const { outcomeId, classId, completed } = req.body;
+
+    if (!outcomeId || !classId || completed === undefined) {
+        return res.status(400).json({ success: false, message: "Outcome ID, Class ID, and completion status are required." });
+    }
+
+    try {
+        if (completed) {
+            // Mark as completed
+            const query = `
+                INSERT INTO completed_outcomes (class_id, outcome_id, completion_date)
+                VALUES (?, ?, CURDATE())
+                ON DUPLICATE KEY UPDATE completion_date = CURDATE();
+            `;
+            await db.promise().query(query, [classId, outcomeId]);
+        } else {
+            // Mark as incomplete
+            const query = `
+                DELETE FROM completed_outcomes
+                WHERE class_id = ? AND outcome_id = ?;
+            `;
+            await db.promise().query(query, [classId, outcomeId]);
+        }
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Error updating course outcome:", error);
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
+});
 
 // 📌 Add Assignment Route
 router.post("/course/add-assignment", upload, async (req, res) => {
@@ -109,7 +165,6 @@ router.post("/course/add-assignment", upload, async (req, res) => {
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 });
-
 
 // 📌 Delete Assignment Route
 router.delete("/course/delete-assignment/:assignmentId", async (req, res) => {
