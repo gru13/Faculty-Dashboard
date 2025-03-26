@@ -67,7 +67,7 @@ router.post("/update-profile-picture", upload.single("profile_pic"), (req, res) 
 
         // Update database
         const query = "UPDATE Faculty SET profile_pic=? WHERE faculty_id=?";
-        db.query(query, [profile_pic, faculty_id], (err, result) => {
+        db.query(query, [profile_pic, faculty_id], async (err, result) => {
             if (err) {
                 console.error("❌ Database Error:", err);
                 return res.status(500).json({ success: false, message: "Database error" });
@@ -75,6 +75,16 @@ router.post("/update-profile-picture", upload.single("profile_pic"), (req, res) 
 
             // Update session
             req.session.user.profile_pic = profile_pic;
+
+            // Log the update in RecentUpdates
+            try {
+                await db.promise().query(
+                    'INSERT INTO RecentUpdates (faculty_id, action, details, timestamp) VALUES (?, ?, ?, NOW())',
+                    [faculty_id, 'Profile Picture Update', 'Updated profile picture']
+                );
+            } catch (error) {
+                console.error("Error logging recent update:", error);
+            }
 
             console.log("✅ Profile Picture Updated:", profile_pic);
             res.json({ success: true, profile_pic });
@@ -102,7 +112,7 @@ router.post("/update-profile", (req, res) => {
 
     const updateQuery = `UPDATE Faculty SET name = ?, mobile_no = ?, degree = ?, department = ? WHERE faculty_id = ?`;
 
-    db.query(updateQuery, [name, mobile_no, degree || "", department, facultyId], (err, result) => {
+    db.query(updateQuery, [name, mobile_no, degree || "", department, facultyId], async (err, result) => {
         if (err) {
             console.error("❌ Database Error:", err);
             return res.status(500).json({ message: "Database error" });
@@ -114,10 +124,54 @@ router.post("/update-profile", (req, res) => {
 
         req.session.user = { ...req.session.user, name, mobile_no, degree: degree || "", department };
 
+        // Log the update in RecentUpdates
+        try {
+            await db.promise().query(
+                'INSERT INTO RecentUpdates (faculty_id, action, details, timestamp) VALUES (?, ?, ?, NOW())',
+                [facultyId, 'Profile Update', `Updated profile details: Name, Mobile, Department`]
+            );
+        } catch (error) {
+            console.error("Error logging recent update:", error);
+        }
+
         return res.status(200).json({ message: "Profile updated successfully", user: req.session.user });
     });
 });
 
+// Log a recent update
+router.post('/recent-updates', async (req, res) => {
+    const { facultyId, action, details } = req.body;
 
+    if (!facultyId || !action || !details) {
+        return res.status(400).json({ success: false, message: 'Missing required fields' });
+    }
+
+    try {
+        await db.promise().query(
+            'INSERT INTO RecentUpdates (faculty_id, action, details, timestamp) VALUES (?, ?, ?, NOW())',
+            [facultyId, action, details]
+        );
+        res.json({ success: true, message: 'Update logged successfully' });
+    } catch (error) {
+        console.error('Error logging update:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+
+// Fetch recent updates
+router.get('/recent-updates/:facultyId', async (req, res) => {
+    const { facultyId } = req.params;
+
+    try {
+        const [updates] = await db.promise().query(
+            'SELECT action, details, timestamp FROM RecentUpdates WHERE faculty_id = ? ORDER BY timestamp DESC LIMIT 10',
+            [facultyId]
+        );
+        res.json({ success: true, updates });
+    } catch (error) {
+        console.error('Error fetching updates:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
 
 module.exports = router;

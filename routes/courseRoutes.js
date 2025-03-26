@@ -154,6 +154,12 @@ router.post("/course/add-assignment", upload, async (req, res) => {
             [assignmentDocUrl, submissionLink, assignmentId]
         );
 
+        // Log the action in RecentUpdates
+        await db.promise().query(
+            'INSERT INTO RecentUpdates (faculty_id, action, details, timestamp) VALUES (?, ?, ?, NOW())',
+            [facultyId, 'Assignment Added', `Added assignment "${title}" to course ${courseId}, class ${classId}`]
+        );
+
         // Move the file to the correct location with the correct filename
         const oldPath = path.join(uploadDir, facultyId, file.filename);
         const newPath = path.join(uploadDir, facultyId, `${assignmentId}${path.extname(file.originalname)}`);
@@ -172,17 +178,26 @@ router.delete("/course/delete-assignment/:assignmentId", async (req, res) => {
     const facultyId = req.session.user.faculty_id.toString();
 
     try {
-        // Get the assignment document URL
-        const [assignment] = await db.promise().query("SELECT assignment_doc_url FROM assignments WHERE assignment_id = ?", [assignmentId]);
+        // Get the assignment details
+        const [assignment] = await db.promise().query(
+            "SELECT title, assignment_doc_url, course_id, class_id FROM assignments WHERE assignment_id = ?",
+            [assignmentId]
+        );
         if (assignment.length === 0) {
             return res.status(404).json({ success: false, message: "Assignment not found" });
         }
 
-        const assignmentDocUrl = assignment[0].assignment_doc_url;
-        const filePath = path.join(__dirname, "../public", assignmentDocUrl);
+        const { title, assignment_doc_url, course_id, class_id } = assignment[0];
+        const filePath = path.join(__dirname, "../public", assignment_doc_url);
 
         // Delete the assignment record from the database
         await db.promise().query("DELETE FROM assignments WHERE assignment_id = ?", [assignmentId]);
+
+        // Log the deletion in RecentUpdates
+        await db.promise().query(
+            'INSERT INTO RecentUpdates (faculty_id, action, details, timestamp) VALUES (?, ?, ?, NOW())',
+            [facultyId, 'Assignment Deleted', `Deleted assignment "${title}" from course ${course_id}, class ${class_id}`]
+        );
 
         // Delete the assignment file from the filesystem
         if (fs.existsSync(filePath)) {

@@ -136,6 +136,17 @@ CREATE TABLE completed_outcomes (
     completion_date DATE NOT NULL
 );
 
+
+CREATE TABLE RecentUpdates (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    faculty_id INT NOT NULL,
+    action VARCHAR(255) NOT NULL,
+    details TEXT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (faculty_id) REFERENCES Faculty(faculty_id)
+);
+
+
 -- Insert Data into Login Table
 INSERT INTO Login (email_id, password, role) VALUES
 ('faculty1@example.com', '$2b$10$PeB5G.W1H0fQIjfJR.AkA.lkrUgX/UMcx/Y72yS0QI7m4CgcPUn/i', 'faculty'),
@@ -398,3 +409,12 @@ INSERT INTO academic_calendar (date, class_id, work_description, course_id, facu
 ('2025-02-25', 110, 'Final Exam', 213, 1),
 ('2025-03-01', 112, 'Quiz', 219, 4),
 ('2025-03-05', 114, 'Lab Experiment', 223, 5);
+
+INSERT INTO RecentUpdates (faculty_id, action, details, timestamp)
+VALUES
+    (1, 'Profile Update', 'Updated name and department', NOW()),
+    (1, 'Profile Picture Update', 'Uploaded a new profile picture', NOW() - INTERVAL 1 DAY),
+    (2, 'Course Assignment', 'Assigned to Machine Learning course', NOW() - INTERVAL 2 DAY),
+    (3, 'Attendance Update', 'Marked attendance for AI22 class', NOW() - INTERVAL 3 DAY),
+    (1, 'Skill Addition', 'Added React to skills list', NOW() - INTERVAL 4 DAY),
+    (2, 'Profile Update', 'Updated mobile number', NOW() - INTERVAL 5 DAY);

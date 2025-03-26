@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             profileImg.src = data.user.profile_pic ? data.user.profile_pic : "/uploads/default.jpg";
             document.getElementById("profilePreview").style.display = "block";  
 
+            fetchRecentActivity(data.user.faculty_id); // Fetch recent activity for the recent-box
         } else {
             console.error("Error fetching faculty profile:", data.message);
         }
@@ -280,3 +281,40 @@ function showImageError(message) {
         }, 300); // Match transition duration
     }, 3000);
 }
+
+async function fetchRecentActivity(facultyId) {
+    try {
+        const response = await fetch(`/recent-updates/${facultyId}`);
+        const data = await response.json();
+
+        if (data.success) {
+            const recentBox = document.querySelector('.recent-box');
+            if (data.updates.length > 0) {
+                recentBox.innerHTML = `
+                    <h3>Recent Activity</h3>
+                    <ul class="recent-activity-list">
+                        ${data.updates.map(update => `
+                            <li>
+                                <p>${update.action}: ${update.details}</p>
+                                <small>${new Date(update.timestamp).toLocaleString()}</small>
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+            } else {
+                recentBox.innerHTML = `
+                    <h3>Recent Activity</h3>
+                    <p class="text-gray">No recent activity</p>
+                `;
+            }
+        } else {
+            console.error('Failed to fetch recent activity:', data.message);
+        }
+    } catch (error) {
+        console.error('Error fetching recent activity:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetchRecentUpdates(); // Fetch updates on page load
+});
