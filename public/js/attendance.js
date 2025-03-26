@@ -48,14 +48,19 @@ function hideAttendanceBoxes() {
 
 async function fetchClassStudents(classId) {
     try {
-        const response = await fetch("/api/attendance/students", { // Updated endpoint
+        const response = await fetch("/api/attendance/students", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ classId }),
         });
 
         const data = await response.json();
-        return data.success ? data.students : [];
+        if (!data.success) {
+            console.error("Failed to fetch students:", data.message);
+            return [];
+        }
+
+        return data.students; // Ensure the returned data is used correctly
     } catch (error) {
         console.error("Error fetching students:", error);
         return [];
@@ -66,13 +71,18 @@ async function populateStudentsGrid(classId) {
     const students = await fetchClassStudents(classId);
     const grid = document.querySelector(".students-grid");
 
+    if (!grid) {
+        console.error("Students grid container not found.");
+        return;
+    }
+
     grid.innerHTML =
         students.length > 0
             ? students
                   .map(
                       (student) => `
             <div class="student-tile" data-roll="${student.roll_no}" title="${student.name}">
-                ${student.roll_no}
+                ${student.roll_no} - ${student.name} <!-- Display both roll number and name -->
             </div>
         `
                   )
@@ -85,12 +95,14 @@ async function populateStudentsGrid(classId) {
     });
 }
 
-
 async function showAttendanceBoxes() {
     const selectedCourse = document.querySelector(".course-box.active");
     const activeTab = document.querySelector(".class-tabs .tab.active");
 
-    if (!selectedCourse || !activeTab) return;
+    if (!selectedCourse || !activeTab) {
+        console.error("No course or class selected.");
+        return;
+    }
 
     const courseCode = selectedCourse.querySelector(".course-code").textContent;
     const classId = activeTab.dataset.classId;
@@ -114,7 +126,7 @@ async function showAttendanceBoxes() {
 
         <div class="attendance-grid">
             <div class="grid-header">Click to mark absent</div>
-            <div class="students-grid"></div>
+            <div class="students-grid"></div> <!-- Ensure this is the correct container -->
         </div>
 
         <button class="submit-attendance">
@@ -128,7 +140,68 @@ async function showAttendanceBoxes() {
     });
 
     // Populate students grid dynamically
-    await populateStudentsGrid(classId);
+    try {
+        await populateStudentsGrid(classId);
+    } catch (error) {
+        console.error("Error populating students grid:", error);
+    }
+
+    // Add click handler for the submit button
+    document.querySelector(".submit-attendance").addEventListener("click", async () => {
+        await handleAttendanceSubmission(classId, courseCode);
+    });
+}
+
+async function handleAttendanceSubmission(classId, courseCode) {
+    const selectedHours = getSelectedHours();
+    const absentStudents = getAbsentStudents();
+
+    if (selectedHours.length === 0) {
+        alert("Please select at least one hour.");
+        return;
+    }
+
+    const attendanceData = {
+        date: getCurrentDate(),
+        hours: selectedHours,
+        absentStudents,
+        classId,
+        courseId: courseCode,
+    };
+
+    try {
+        const response = await submitAttendance(attendanceData);
+        if (response.ok) {
+            alert("Attendance updated successfully.");
+        } else {
+            throw new Error("Failed to update attendance.");
+        }
+    } catch (error) {
+        console.error("Error updating attendance:", error);
+        alert("An error occurred while updating attendance.");
+    }
+}
+
+function getSelectedHours() {
+    return Array.from(document.querySelectorAll(".hour-box.selected"))
+        .map((box) => parseInt(box.dataset.hour))
+        .sort((a, b) => a - b);
+}
+
+function getAbsentStudents() {
+    return Array.from(document.querySelectorAll(".student-tile.absent")).map(
+        (tile) => tile.dataset.roll
+    );
+}
+
+async function submitAttendance(attendanceData) {
+    return await fetch("/api/attendance/update", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(attendanceData),
+    });
 }
 
 // Utility to get ordinal suffix for hour numbers
@@ -138,7 +211,6 @@ function getHourSuffix(hour) {
     if (hour === 3) return "rd";
     return "th";
 }
-
 
 function updateCourseInfo(courseName, courseCode) {
     const header = document.querySelector(".course-info-header");
@@ -169,14 +241,13 @@ async function loadAttendanceData(classId) {
     }
 }
 
-
 // ✅ Update the attendance list dynamically
 function updateAttendanceList(students) {
     const attendanceList = document.querySelector(".attendance-list");
 
     attendanceList.innerHTML = students
         .map(
-            ({ rollNo, name, attended, total, percentage }) => ` // Updated to use rollNo
+            ({ rollNo, name, attended, total, percentage }) => `
         <div class="attendance-item" data-student='${JSON.stringify({
             rollNo,
             name,

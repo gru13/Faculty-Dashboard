@@ -126,4 +126,23 @@ router.get("/api/attendance/absences/:rollNo", (req, res) => {
     });
 });
 
+// Fetch course outcomes for a given course
+router.get("/api/courses/:courseId/outcomes", (req, res) => {
+    const { courseId } = req.params;
+
+    if (!courseId) {
+        return res.status(400).json({ success: false, message: "Course ID is required" });
+    }
+
+    const query = "SELECT outcome_id, outcome_description FROM course_outcomes WHERE course_id = ?";
+    db.query(query, [courseId], (err, results) => {
+        if (err) {
+            console.error("Error fetching course outcomes:", err);
+            return res.status(500).json({ success: false, message: "Internal server error" });
+        }
+
+        res.json({ success: true, outcomes: results });
+    });
+});
+
 module.exports = router;
