@@ -205,7 +205,10 @@ async function fetchTimetable() {
         }
 
         const data = await response.json();
-        return processTimetable(data.timetable);
+        return processTimetable(data.timetable.map(entry => ({
+            ...entry,
+            displayDay: entry.day // Add day to display
+        })));
     } catch (error) {
         console.error('Error fetching timetable:', error);
         return [];

@@ -1,4 +1,3 @@
-
 document.querySelector('.sidebar-icon.logout').addEventListener('click', () => {
     const logoutPopup = document.getElementById('logoutPopup');
     requestAnimationFrame(() => {
@@ -399,21 +398,20 @@ async function updateNotifications() {
 async function updateTimetable() {
     const timetableList = document.querySelector('.timetable-list');
     const timetable = await fetchTimetable();
-    
-    // Clear existing timetable
+
     timetableList.innerHTML = '';
-    
+
     if (timetable.length === 0) {
         updateEmptyState();
         return;
     }
 
-    // Add classes to the list
     timetable.forEach(entry => {
         const timetableItem = document.createElement('div');
         timetableItem.className = `timetable-item${entry.isFinished ? ' finished' : ''}`;
-        
+
         timetableItem.innerHTML = `
+            <span class="class-day">${entry.displayDay}</span> <!-- Display day -->
             <span class="class-time">${entry.displayTime}</span>
             <div class="class-info">
                 <h4>${entry.title}</h4>

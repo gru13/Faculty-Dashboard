@@ -105,7 +105,7 @@ CREATE TABLE PasswordReset (
 
 -- Timetable Table
 CREATE TABLE timetable (
-    date DATE NOT NULL,
+    day VARCHAR(10) NOT NULL, -- Changed from date to day
     slot INT CHECK (slot BETWEEN 1 AND 7) NOT NULL,
     faculty_id INT NOT NULL,
     course_id INT NOT NULL,
@@ -383,19 +383,49 @@ INSERT INTO PasswordReset (email_id, otp) VALUES
 ('faculty5@example.com', '778899');
 
 -- Insert Data into Timetable Table
-INSERT INTO timetable (date, slot, faculty_id, course_id, class_id) VALUES
-('2025-02-01', 1, 1, 201, 101),
-('2025-02-01', 2, 1, 202, 101),
-('2025-02-01', 3, 2, 205, 105),
-('2025-02-01', 4, 3, 209, 103),
-('2025-02-01', 5, 4, 219, 111),
-('2025-02-01', 6, 5, 223, 113),
-('2025-02-02', 1, 1, 202, 102),
-('2025-02-02', 2, 1, 203, 103),
-('2025-02-02', 3, 2, 206, 106),
-('2025-02-02', 4, 3, 210, 104),
-('2025-02-02', 5, 4, 220, 112),
-('2025-02-02', 6, 5, 224, 114);
+INSERT INTO timetable (day, slot, faculty_id, course_id, class_id) VALUES
+-- Monday
+('Monday', 1, 1, 201, 101),
+('Monday', 2, 1, 202, 101),
+('Monday', 3, 2, 205, 105),
+('Monday', 4, 3, 209, 103),
+('Monday', 5, 4, 219, 111),
+('Monday', 6, 5, 223, 113),
+-- Tuesday
+('Tuesday', 1, 1, 202, 102),
+('Tuesday', 2, 1, 203, 103),
+('Tuesday', 3, 2, 206, 106),
+('Tuesday', 4, 3, 210, 104),
+('Tuesday', 5, 4, 220, 112),
+('Tuesday', 6, 5, 224, 114),
+-- Wednesday
+('Wednesday', 1, 1, 201, 101),
+('Wednesday', 2, 1, 202, 101),
+('Wednesday', 3, 2, 205, 105),
+('Wednesday', 4, 3, 209, 103),
+('Wednesday', 5, 4, 219, 111),
+('Wednesday', 6, 5, 223, 113),
+-- Thursday
+('Thursday', 1, 1, 202, 102),
+('Thursday', 2, 1, 203, 103),
+('Thursday', 3, 2, 206, 106),
+('Thursday', 4, 3, 210, 104),
+('Thursday', 5, 4, 220, 112),
+('Thursday', 6, 5, 224, 114),
+-- Friday
+('Friday', 1, 1, 201, 101),
+('Friday', 2, 1, 202, 101),
+('Friday', 3, 2, 205, 105),
+('Friday', 4, 3, 209, 103),
+('Friday', 5, 4, 219, 111),
+('Friday', 6, 5, 223, 113),
+-- Saturday
+('Saturday', 1, 1, 202, 102),
+('Saturday', 2, 1, 203, 103),
+('Saturday', 3, 2, 206, 106),
+('Saturday', 4, 3, 210, 104),
+('Saturday', 5, 4, 220, 112),
+('Saturday', 6, 5, 224, 114);
 
 -- Insert Data into Academic Calendar Table
 INSERT INTO academic_calendar (date, class_id, work_description, course_id, faculty_id) VALUES

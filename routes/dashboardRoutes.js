@@ -141,54 +141,46 @@ router.get('/api/timetable', authenticate, async (req, res) => {
             return res.status(400).json({ error: "Faculty ID is missing" });
         }
 
+        const currentDay = new Date().toLocaleString('en-US', { weekday: 'long' }); // Get current day (e.g., "Monday")
+
         db.query(
-            `SELECT DISTINCT t.date, t.slot, t.class_id, t.course_id, c.course_name, cl.class_name
+            `SELECT DISTINCT t.day, t.slot, t.class_id, t.course_id, c.course_name, cl.class_name
              FROM timetable t
              JOIN courses c ON t.course_id = c.course_id 
              JOIN class_list cl ON t.class_id = cl.class_id
              WHERE t.faculty_id = ? 
-             AND t.date = CURDATE() 
-             ORDER BY t.date ASC, t.slot ASC`,
-            [faculty_id],
+             AND t.day = ? 
+             ORDER BY t.slot ASC`,
+            [faculty_id, currentDay],
             (error, results) => {
                 if (error) {
                     console.error('❌ Database query error:', error);
                     return res.status(500).json({ error: 'Failed to fetch timetable data' });
                 }
-        
+
                 if (!results || results.length === 0) {
                     return res.status(200).json({ timetable: [] });
                 }
-        
-                // Slot-to-time mapping
+
                 const slotTimings = {
                     1: { start_time: "09:00", end_time: "10:00" },
                     2: { start_time: "10:00", end_time: "11:00" },
-                    3: { start_time: "11:00", end_time: "12:00" },
-                    4: { start_time: "12:00", end_time: "01:00" },
-                    5: { start_time: "02:00", end_time: "03:00" },
-                    6: { start_time: "03:00", end_time: "04:00" },
-                    7: { start_time: "04:00", end_time: "05:00" }
+                    // ...existing slot timings...
                 };
-        
-                // Format the response properly
-                const formattedTimetable = results.map(function (item) {
-                    return {
-                        id: "class_" + item.course_id,
-                        date: new Date(item.date).toISOString().split('T')[0], // Convert to YYYY-MM-DD
-                        start_time: slotTimings[item.slot] ? slotTimings[item.slot].start_time : "Unknown",
-                        end_time: slotTimings[item.slot] ? slotTimings[item.slot].end_time : "Unknown",
-                        title: item.course_name,
-                        room_no: item.class_id,
-                        class_id: item.class_name // Fixed key name
-                    };
-                });
-        
-                // console.log("✅ Fixed Timetable:", formattedTimetable);
+
+                const formattedTimetable = results.map(item => ({
+                    id: "class_" + item.course_id,
+                    day: item.day,
+                    start_time: slotTimings[item.slot] ? slotTimings[item.slot].start_time : "Unknown", // Fixed
+                    end_time: slotTimings[item.slot] ? slotTimings[item.slot].end_time : "Unknown",     // Fixed
+                    title: item.course_name,
+                    room_no: item.class_id,
+                    class_id: item.class_name
+                }));
+
                 res.status(200).json({ timetable: formattedTimetable });
             }
         );
-        
     } catch (error) {
         console.error('❌ Unexpected server error:', error);
         res.status(500).json({ error: 'Internal Server Error. Please try again later.' });
@@ -228,7 +220,7 @@ router.get('/api/notifications', authenticate, async (req, res) => {
                         courses c ON a.course_id = c.course_id
                     WHERE 
                         c.faculty_id = ?
-                        AND DATE(a.deadline) >= CURDATE()
+                        
                 )
                 UNION
                 (
@@ -245,7 +237,7 @@ router.get('/api/notifications', authenticate, async (req, res) => {
                         courses c ON ac.course_id = c.course_id
                     WHERE 
                         ac.faculty_id = ?
-                        AND DATE(ac.date) >= CURDATE()
+                        
                 )
                 UNION
                 (
@@ -262,13 +254,12 @@ router.get('/api/notifications', authenticate, async (req, res) => {
                         courses c ON cd.course_id = c.course_id
                     WHERE 
                         c.faculty_id = ?
-                        AND DATE(cd.date) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
                 )
             ) AS combined_results
             GROUP BY 
                 id, title, time_stamp, type, courseCode, link
             ORDER BY 
-                time_stamp DESC
+                time_stamp DESC limit 10
         `;
 
         // Execute query with faculty_id passed 3 times for each part of the query
