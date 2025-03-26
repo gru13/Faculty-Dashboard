@@ -164,8 +164,13 @@ async function showAttendanceBoxes() {
         console.error("Error populating students grid:", error);
     }
 
+    // Remove any existing event listener to avoid duplicate submissions
+    const submitButton = document.querySelector(".submit-attendance");
+    const newSubmitButton = submitButton.cloneNode(true);
+    submitButton.parentNode.replaceChild(newSubmitButton, submitButton);
+
     // Add click handler for the submit button
-    document.querySelector(".submit-attendance").addEventListener("click", async () => {
+    newSubmitButton.addEventListener("click", async () => {
         await handleAttendanceSubmission(classId, courseCode);
     });
 }
@@ -621,49 +626,6 @@ async function loadAttendanceData(classId) {
     "courseId": "CS101"    // Course ID
 }
 */
-
-// ✅ Submit attendance handler
-document.querySelector(".submit-attendance").addEventListener("click", async function () {
-    const selectedHours = getSelectedHours();
-    const selectedClass = document.querySelector(".tab.active");
-    const selectedCourse = document.querySelector(".course-box.active");
-
-    // ✅ Validate required fields
-    if (!selectedClass || !selectedCourse) {
-        alert("Please select a course and class first.");
-        return;
-    }
-
-    if (selectedHours.length === 0) {
-        alert("Please select at least one hour.");
-        return;
-    }
-
-    // ✅ Get absent students list
-    const absentStudents = getAbsentStudents();
-
-    // ✅ Prepare attendance data
-    const attendanceData = {
-        date: getCurrentDate(),
-        hours: selectedHours,
-        absentStudents,
-        classId: selectedClass.dataset.classId,
-        courseId: selectedCourse.querySelector(".course-code").textContent,
-    };
-
-    try {
-        // ✅ Send attendance data to API
-        const response = await submitAttendance(attendanceData);
-        if (response.ok) {
-            alert("Attendance updated successfully.");
-        } else {
-            throw new Error("Failed to update attendance.");
-        }
-    } catch (error) {
-        console.error("Error updating attendance:", error);
-        alert("An error occurred while updating attendance.");
-    }
-});
 
 // ✅ Get selected hours
 function getSelectedHours() {
