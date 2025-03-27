@@ -576,22 +576,66 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
+            // Disable button to prevent multiple clicks
+            const button = document.getElementById('add-timetable-entry');
+            button.disabled = true;
+
             const response = await fetch('/admin/timetable', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ day, slot, courseId, facultyId, classId })
             });
+
             const result = await response.json();
             if (result.success) {
                 alert(result.message);
                 fetchTimetable();
             } else {
-                alert('Failed to add timetable entry.');
+                alert(result.message || 'Failed to add timetable entry.');
             }
         } catch (error) {
             console.error('Error adding timetable entry:', error);
+        } finally {
+            // Re-enable button
+            document.getElementById('add-timetable-entry').disabled = false;
         }
     });
+
+    async function fetchTimetable(classId) {
+        const timetableList = document.querySelector('.timetable-list');
+        timetableList.innerHTML = ''; // Clear existing timetable to prevent duplicates
+    
+        try {
+            const response = await fetch(`/classes/${classId}/timetable`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch timetable');
+            }
+    
+            const result = await response.json();
+            if (result.success) {
+                const uniqueEntries = new Set(); // Track unique entries to avoid duplicates
+                result.timetable.forEach(entry => {
+                    const key = `${entry.day}-${entry.slot}-${entry.course_id}-${entry.faculty_id}`;
+                    if (!uniqueEntries.has(key)) {
+                        uniqueEntries.add(key);
+                        const timetableItem = document.createElement('div');
+                        timetableItem.className = 'timetable-item';
+                        timetableItem.innerHTML = `
+                            <span>${entry.day}</span>
+                            <span>${entry.slot}</span>
+                            <span>${entry.course_name}</span>
+                            <span>${entry.faculty_name}</span>
+                        `;
+                        timetableList.appendChild(timetableItem);
+                    }
+                });
+            } else {
+                alert('Failed to load timetable.');
+            }
+        } catch (error) {
+            console.error('Error fetching timetable:', error);
+        }
+    }
 
     // Initial load
     populateDropdowns();

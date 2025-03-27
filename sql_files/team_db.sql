@@ -109,7 +109,8 @@ CREATE TABLE timetable (
     slot INT CHECK (slot BETWEEN 1 AND 7) NOT NULL,
     faculty_id INT NOT NULL,
     course_id INT NOT NULL,
-    class_id INT NOT NULL
+    class_id INT NOT NULL,
+    UNIQUE (day, slot, faculty_id, course_id, class_id) -- Ensure unique combination of all columns
 );
 
 -- Academic Calendar Table
@@ -133,8 +134,7 @@ CREATE TABLE completed_outcomes (
     completion_id INT AUTO_INCREMENT PRIMARY KEY,
     class_id INT NOT NULL,
     outcome_id INT NOT NULL,
-    completion_date DATE NOT NULL,
-    UNIQUE (class_id, outcome_id)
+    completion_date DATE NOT NULL
 );
 
 CREATE TABLE RecentUpdates (
@@ -445,6 +445,6 @@ VALUES
     (1, 'Profile Update', 'Updated name and department', NOW()),
     (1, 'Profile Picture Update', 'Uploaded a new profile picture', NOW() - INTERVAL 1 DAY),
     (2, 'Course Assignment', 'Assigned to Machine Learning course', NOW() - INTERVAL 2 DAY),
-    (3, 'Attendance Update', 'Marked attendance for AI22 class', NOW() - INTERVAL 3 DAY),
-    (1, 'Skill Addition', 'Added React to skills list', NOW() - INTERVAL 4 DAY),
+(3, 'Attendance Update', 'Marked attendance for AI22 class', NOW() - INTERVAL 3 DAY),
+(1, 'Skill Addition', 'Added React to skills list', NOW() - INTERVAL 4 DAY),
     (2, 'Profile Update', 'Updated mobile number', NOW() - INTERVAL 5 DAY);

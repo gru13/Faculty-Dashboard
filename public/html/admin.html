@@ -106,6 +106,7 @@
                     <div class="details-tabs">
                         <button class="tab-button active" data-tab="students">Students</button>
                         <button class="tab-button" data-tab="courses">Courses</button>
+                        <button class="tab-button" data-tab="timetable">Timetable</button> <!-- New Tab -->
                     </div>
                     <div class="tab-content" id="students">
                         <table id="students-table">
@@ -153,6 +154,26 @@
                                     </td>
                                 </tr>
                             </tfoot>
+                        </table>
+                    </div>
+                    <div class="tab-content" id="timetable" style="display: none;"> <!-- New Timetable Content -->
+                        <table id="timetable-table">
+                            <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Slot</th>
+                                    <th>Course</th>
+                                    <th>Faculty</th>
+                                    <!-- Removed Actions column -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Placeholder row for empty table -->
+                                <tr class="empty-row">
+                                    <td colspan="4" style="text-align: center;">Table is empty</td>
+                                </tr>
+                            </tbody>
+                            <!-- Removed tfoot for row addition -->
                         </table>
                     </div>
                 </div>

@@ -559,15 +559,23 @@ router.get('/timetable', async (req, res) => {
 // Add timetable entry
 router.post('/timetable', async (req, res) => {
     const { day, slot, courseId, facultyId, classId } = req.body;
+
+    if (!day || !slot || !courseId || !facultyId || !classId) {
+        console.error('Error: Missing required timetable fields.', req.body);
+        return res.status(400).json({ success: false, message: 'All fields (day, slot, courseId, facultyId, classId) are required.' });
+    }
+
     try {
+        console.log(`Adding timetable entry: Day=${day}, Slot=${slot}, CourseID=${courseId}, FacultyID=${facultyId}, ClassID=${classId}`);
         await db.promise().query(
             'INSERT INTO timetable (day, slot, course_id, faculty_id, class_id) VALUES (?, ?, ?, ?, ?)',
             [day, slot, courseId, facultyId, classId]
         );
+        console.log('Timetable entry added successfully.');
         res.json({ success: true, message: 'Timetable entry added successfully.' });
     } catch (error) {
         console.error('Error adding timetable entry:', error);
-        res.status(500).json({ success: false, message: 'Internal server error.' });
+        res.status(500).json({ success: false, message: 'Internal server error while adding timetable entry.' });
     }
 });
 
@@ -619,6 +627,101 @@ router.get('/classes/:courseId', async (req, res) => {
         res.json({ success: true, classes });
     } catch (error) {
         console.error('Error fetching classes for course:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+router.get('/classes/:classId/timetable', async (req, res) => {
+    const { classId } = req.params;
+    if (!classId) {
+        console.error('Error: Missing classId parameter.');
+        return res.status(400).json({ success: false, message: 'Class ID is required.' });
+    }
+
+    try {
+        console.log(`Fetching timetable for class ID: ${classId}`); // Debug log
+        const query = `
+            SELECT DISTINCT t.day, t.slot, t.course_id, t.faculty_id, c.course_name, f.name AS faculty_name
+            FROM timetable t
+            JOIN courses c ON t.course_id = c.course_id
+            JOIN Faculty f ON t.faculty_id = f.faculty_id
+            WHERE t.class_id = ?
+        `;
+        const [results] = await db.promise().query(query, [classId]);
+
+        if (results.length === 0) {
+            console.warn(`No timetable entries found for class ID: ${classId}`);
+            return res.status(404).json({ success: false, message: 'No timetable entries found for this class.' });
+        }
+
+        console.log(`Timetable fetched successfully for class ID: ${classId}`, results); // Log fetched data
+        res.status(200).json({ success: true, timetable: results });
+    } catch (error) {
+        console.error(`Error fetching timetable for class ID: ${classId}`, error);
+        res.status(500).json({ success: false, message: 'Internal server error while fetching timetable.' });
+    }
+});
+
+router.get('/admin/classes/:classId/timetable', async (req, res) => {
+    const { classId } = req.params;
+    try {
+        const query = `
+            SELECT t.day, t.slot, t.course_id, t.faculty_id, c.course_name, f.name AS faculty_name
+            FROM timetable t
+            JOIN courses c ON t.course_id = c.course_id
+            JOIN Faculty f ON t.faculty_id = f.faculty_id
+            WHERE t.class_id = ?
+        `;
+        const [results] = await db.promise().query(query, [classId]);
+        res.json({ success: true, timetable: results });
+    } catch (error) {
+        console.error('Error fetching timetable:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.', timetable: [] });
+    }
+});
+
+router.put('/admin/classes/:classId/timetable', async (req, res) => {
+    const { classId } = req.params;
+    const { day, slot, courseId, facultyId } = req.body;
+    try {
+        await db.promise().query(
+            'UPDATE timetable SET course_id = ?, faculty_id = ? WHERE day = ? AND slot = ? AND class_id = ?',
+            [courseId, facultyId, day, slot, classId]
+        );
+        res.json({ success: true, message: 'Timetable entry updated successfully.' });
+    } catch (error) {
+        console.error('Error updating timetable entry:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
+router.post('/admin/timetable', async (req, res) => {
+    const { day, slot, courseId, facultyId, classId } = req.body;
+
+    if (!day || !slot || !courseId || !facultyId || !classId) {
+        return res.status(400).json({ success: false, message: 'All fields are required.' });
+    }
+
+    try {
+        // Check if the entry already exists
+        const [existingEntry] = await db.promise().query(
+            'SELECT * FROM timetable WHERE day = ? AND slot = ? AND faculty_id = ? AND course_id = ? AND class_id = ?',
+            [day, slot, facultyId, courseId, classId]
+        );
+
+        if (existingEntry.length > 0) {
+            return res.status(409).json({ success: false, message: 'Duplicate entry detected.' });
+        }
+
+        // Insert the new timetable entry
+        await db.promise().query(
+            'INSERT INTO timetable (day, slot, course_id, faculty_id, class_id) VALUES (?, ?, ?, ?, ?)',
+            [day, slot, courseId, facultyId, classId]
+        );
+
+        res.json({ success: true, message: 'Timetable entry added successfully.' });
+    } catch (error) {
+        console.error('Error adding timetable entry:', error);
         res.status(500).json({ success: false, message: 'Internal server error.' });
     }
 });

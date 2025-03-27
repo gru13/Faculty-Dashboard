@@ -53,9 +53,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function attachClassTabListeners() {
         document.querySelectorAll('.class-tab:not(.add-class-tab)').forEach(tab => {
             tab.addEventListener('click', () => {
+                // Remove active state from all tabs
                 document.querySelectorAll('.class-tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
-                loadClassDetails(tab.dataset.classId);
+
+                // Load class details
+                const classId = tab.dataset.classId;
+                loadClassDetails(classId);
+
+                // Automatically fetch timetable if the "Timetable" tab is active
+                const activeTab = document.querySelector('.tab-button.active');
+                if (activeTab && activeTab.dataset.tab === 'timetable') {
+                    fetchTimetable(classId);
+                }
             });
         });
     }
@@ -322,13 +332,62 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function fetchTimetable(classId) {
+        try {
+            const response = await fetch(`/admin/classes/${classId}/timetable`);
+            const data = await response.json();
+            const timetableTable = document.querySelector('#timetable-table tbody');
+            if (data.success) {
+                if (data.timetable.length > 0) {
+                    timetableTable.innerHTML = data.timetable.map(entry => `
+                        <tr>
+                            <td>${entry.day}</td>
+                            <td>${entry.slot}</td>
+                            <td>${entry.course_name}</td>
+                            <td>${entry.faculty_name}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    timetableTable.innerHTML = `
+                        <tr>
+                            <td colspan="4" style="text-align: center;">No timetable available</td>
+                        </tr>
+                    `;
+                }
+            } else {
+                timetableTable.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center;">Time Table not updated</td>
+                    </tr>
+                `;
+            }
+        } catch (error) {
+            console.error('Error fetching timetable:', error);
+            const timetableTable = document.querySelector('#timetable-table tbody');
+            timetableTable.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align: center;">An error occurred while fetching the timetable</td>
+                </tr>
+            `;
+        }
+    }
+
     // Handle tab switching
     detailsTabs.forEach(tab => {
         tab.addEventListener('click', () => {
             detailsTabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
             tabContents.forEach(content => content.style.display = 'none');
-            document.getElementById(tab.dataset.tab).style.display = 'block';
+            const activeTab = document.getElementById(tab.dataset.tab);
+            activeTab.style.display = 'block';
+
+            // Fetch timetable when "Timetable" tab is selected
+            if (tab.dataset.tab === 'timetable') {
+                const activeClassTab = document.querySelector('.class-tab.active');
+                if (activeClassTab) {
+                    fetchTimetable(activeClassTab.dataset.classId);
+                }
+            }
         });
     });
 
