@@ -230,8 +230,9 @@ router.get("/course/:classId/total-classes", async (req, res) => {
 
         res.json({
             success: true,
-            total_classes: result[0]?.total_classes || 0 // Return 0 if no classes are found
+            total_classes: (result[0] && result[0].total_classes) ? result[0].total_classes : 0 // Return 0 if no classes are found
         });
+        
     } catch (error) {
         console.error("Error fetching total classes:", error);
         res.status(500).json({
