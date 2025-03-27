@@ -459,10 +459,6 @@ async function updateCourses() {
         });
 
         courseBox.innerHTML = `
-            <div class="circular-progress" style="background: 
-                radial-gradient(closest-side, white 79%, transparent 80% 100%),
-                conic-gradient(#5562da ${course.completionPercentage}%, #e0e7ff 0)">
-            </div>
             <div class="course-content">
                 <div class="course-icon" style="background: #ffe0e0;">
                     <span class="material-symbols-rounded">${getDepartmentIcon(course.department)}</span>
