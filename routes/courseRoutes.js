@@ -211,6 +211,36 @@ router.delete("/course/delete-assignment/:assignmentId", async (req, res) => {
     }
 });
 
+// 📌 API to fetch total classes for a given classId
+router.get("/course/:classId/total-classes", async (req, res) => {
+    const { classId } = req.params;
+    const { course_id } = req.query; // Ensure course_id is passed as a query parameter
+
+    if (!course_id) {
+        return res.status(400).json({ success: false, message: "Course ID is required." });
+    }
+
+    try {
+        const query = `
+            SELECT COUNT(DISTINCT date, slot) AS total_classes
+            FROM attendance
+            WHERE class_id = ? AND course_id = ?;
+        `;
+        const [result] = await db.promise().query(query, [classId, course_id]);
+
+        res.json({
+            success: true,
+            total_classes: result[0]?.total_classes || 0 // Return 0 if no classes are found
+        });
+    } catch (error) {
+        console.error("Error fetching total classes:", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error."
+        });
+    }
+});
+
 // 📌 Helper function to fetch course details (returns multiple rows)
 async function getCourseById(courseId) {
     try {
@@ -237,9 +267,11 @@ async function getStudentsByCourse(courseId) {
             SELECT s.roll_no, s.name, s.class_id 
             FROM students s
             JOIN courses c ON s.class_id = c.class_id
-            WHERE c.course_id = ?;
+            WHERE c.course_id = ? AND s.class_id IN (
+                SELECT class_id FROM courses WHERE course_id = ?
+            );
         `;
-        const [result] = await db.promise().query(query, [courseId]);
+        const [result] = await db.promise().query(query, [courseId, courseId]);
         return result;
     } catch (error) {
         console.error("Error fetching students:", error);

@@ -126,10 +126,10 @@ function switchClass(classId, data) {
     const classAssignments = data.assignments.filter(a => a.class_id === classId);
 
     // Pass the correct courseId to fetchCourseOutcomes
-    const courseId = activeClass ? activeClass.course_id : null;
+    const courseId = activeClass ? activeClass.course_id : null; // Fix: Use courseId from activeClass
     console.log(`Switching to classId: ${classId}, courseId: ${courseId}`); // Debugging log
 
-     fetchCourseOutcomes(data.course_id, classId)
+    fetchCourseOutcomes(courseId, classId) // Fix: Pass the correct courseId
         .then(outcomes => {
             updateOutcomesList(outcomes);
             // Update completion stats again after outcomes are loaded
@@ -147,7 +147,6 @@ function switchClass(classId, data) {
     updateDeadlinesList(classAssignments);
     updateCompletionStats(classId);
 }
-
 
 function updateStudentsList(students) {
     const studentsList = document.querySelector('.students-list');
@@ -413,22 +412,20 @@ function updateCompletionStats(classId) {
 // Add function to fetch total classes
 async function fetchTotalClasses(classId) {
     try {
-        const response = await fetch(`/api/class/${classId}/total-classes`);
-        const data = await response.json();
-        
-        /* Expected response format:
-        {
-            "success": true,
-            "total_classes": 30
+        const response = await fetch(`course/${classId}/total-classes`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch total classes: ${response.status} ${response.statusText}`);
         }
-        */
-        
+
+        const data = await response.json();
         const classesRow = document.querySelector('.loading-classes');
         if (classesRow && data.success) {
             classesRow.innerHTML = `
                 <span class="label">Total classes</span>
                 <span class="value">${data.total_classes}</span>
             `;
+        } else {
+            throw new Error('Invalid response format or missing data.');
         }
     } catch (error) {
         console.error('Error fetching total classes:', error);
