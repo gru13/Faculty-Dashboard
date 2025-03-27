@@ -30,8 +30,9 @@ ul {
 }
 
 .main {
-  max-width: 75rem;
+  max-width: 85rem; /* Increased max-width */
   padding: 3em 1.5em;
+  width: 100%;
 }
 
 main {
@@ -98,18 +99,43 @@ nav {
 
 .cards {
   position: relative;
+  width: 450px;
+  margin: 0 auto;
+}
+
+.main__cards {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
 }
 
 .cards__inner {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2.5em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5em;
+    width: 450px; /* Reduced width */
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.overlay.cards__inner {
+    width: 450px; /* Match the width */
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
 }
 
 .card {
   --flow-space: 0.5em;
   --hsl: var(--hue), var(--saturation), var(--lightness);
-  flex: 1 1 14rem;
+  flex: 1 1 100%; /* Take full width */
   padding: 1.5em 2em;
   display: grid;
   grid-template-rows: auto auto auto 1fr;
@@ -119,6 +145,12 @@ nav {
   background-color: #2c2c2c;
   border: 1px solid #eceff133;
   border-radius: 15px;
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
+  position: relative;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .card:nth-child(1) {
@@ -308,7 +340,7 @@ nav {
 }
 
 .overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
   pointer-events: none;
   user-select: none;
@@ -328,6 +360,10 @@ nav {
 }
 
 .overlay .card {
+  position: absolute;
+  left: var(--card-left);
+  top: var(--card-top);
+  width: 450px; /* Match original card width */
   background-color: hsla(var(--hsl), 0.15);
   border-color: hsla(var(--hsl), 1);
   box-shadow: 0 0 0 1px inset hsl(var(--hsl));
@@ -349,8 +385,8 @@ nav {
 :not(.overlay) > .card:hover {
   --lightness: 85%;
   background: hsla(var(--hsl), 0.1);
-  color :rgb(0, 0, 0)
-  
+  color: rgb(0, 0, 0);
+  transform: translateZ(0);
 }
 
 .cards__card:hover .field input {
