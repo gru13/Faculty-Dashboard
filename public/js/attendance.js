@@ -76,13 +76,19 @@ async function populateStudentsGrid(classId) {
         return;
     }
 
+    function shortenRollNumber(rollNo) {
+        const dept = rollNo.substring(0, 3);
+        const number = rollNo.slice(-3);
+        return `${dept}${number}`;
+    }
+
     grid.innerHTML =
         students.length > 0
             ? students
                   .map(
                       (student) => `
             <div class="student-tile" data-roll="${student.roll_no}" title="${student.name}">
-                ${student.roll_no}<!-- Display both roll number and name -->
+                ${shortenRollNumber(student.roll_no)}<!-- Display roll number -->
             </div>
         `
                   )
@@ -203,6 +209,7 @@ async function handleAttendanceSubmission(classId, courseCode) {
         const response = await submitAttendance(attendanceData);
         if (response.ok) {
             alert("Attendance updated successfully.");
+            window.location.reload();
         } else {
             throw new Error("Failed to update attendance.");
         }
