@@ -294,12 +294,33 @@ async function fetchRecentActivity(facultyId) {
                 recentBox.innerHTML = `
                     <h3>Recent Activity</h3>
                     <ul class="recent-activity-list">
-                        ${data.updates.map(update => `
-                            <li>
-                                <p>${update.action}: ${update.details}</p>
-                                <small>${new Date(update.timestamp).toLocaleString()}</small>
-                            </li>
-                        `).join('')}
+                        ${data.updates.map(update => {
+                            let activityClass = '';
+                            let icon = '';
+                            
+                            if (update.action.toLowerCase().includes('deleted')) {
+                                activityClass = 'activity-deleted';
+                                icon = 'delete';
+                            } else if (update.action.toLowerCase().includes('updated')) {
+                                activityClass = 'activity-updated';
+                                icon = 'update';
+                            } else if (update.action.toLowerCase().includes('created')) {
+                                activityClass = 'activity-created';
+                                icon = 'add_circle';
+                            }
+                            
+                            return `
+                                <li class="${activityClass}">
+                                    <div class="activity-icon">
+                                        <span class="material-symbols-rounded">${icon}</span>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p><strong>${update.action}</strong>: ${update.details}</p>
+                                        <small>${new Date(update.timestamp).toLocaleString()}</small>
+                                    </div>
+                                </li>
+                            `;
+                        }).join('')}
                     </ul>
                 `;
             } else {
