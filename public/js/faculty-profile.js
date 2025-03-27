@@ -288,6 +288,7 @@ async function fetchRecentActivity(facultyId) {
         const data = await response.json();
 
         if (data.success) {
+            console.log('Recent Activity:', data.updates);
             const recentBox = document.querySelector('.recent-box');
             if (data.updates.length > 0) {
                 recentBox.innerHTML = `

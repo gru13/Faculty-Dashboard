@@ -207,6 +207,9 @@ document.querySelector('.send-button').addEventListener('click', async () => {
     document.querySelector('.chat-input').classList.add('loading');
     
     try {
+        // Format timestamp to match SQL DATETIME format
+        const timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
         // Send message to backend with faculty_id
         console.log("Sending message to AIARA:", userMessage);
         console.log("Faculty ID:", userData.faculty_id);
@@ -218,11 +221,13 @@ document.querySelector('.send-button').addEventListener('click', async () => {
             body: JSON.stringify({
                 message: userMessage,
                 faculty_id: userData.faculty_id,
-                timestamp: new Date().toISOString()
+                timestamp: timestamp // Use formatted timestamp
             })
         });
 
         if (!response.ok) {
+            const errorDetails = await response.text(); // Capture server response
+            console.error('Server responded with an error:', errorDetails);
             throw new Error('Failed to send message');
         }
 
