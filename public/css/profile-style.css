@@ -40,16 +40,16 @@
             flex-direction: column;
             justify-content: space-between;
             position: relative;
-            z-index: 2;
-        }   
-        
+            z-index: 100;
+        }    
+
         .sidebar-section {
             display: flex;
             flex-direction: column;
             gap: 16px;
             align-items: center;
         }
-        
+
         .sidebar-icon {
             width: 48px;
             height: 48px;
@@ -84,13 +84,7 @@
             background: linear-gradient(#2c2c2c, #2c2c2c), 
                         linear-gradient(#2c2c2c 50%, rgba(44, 44, 44, 0.6) 80%, rgba(44, 44, 44, 0)),  
                         linear-gradient(90deg, 
-                            #FF6D1B, /* orange */
-                            #FFEE55, /* yellow */
-                            #5BFF89, /* green */
-                            #4D8AFF, /* blue */
-                            #6B5FFF, /* purple */
-                            #FF64F9, /* pink */
-                            #FF6565  /* red */
+                            #FF6D1B, #FFEE55, #5BFF89, #4D8AFF, #6B5FFF, #FF64F9, #FF6565
                         );
             background-origin: border-box;
             background-clip: padding-box, border-box, border-box;
@@ -131,7 +125,7 @@
             animation: animateIcon 2s infinite linear;
         }
         
-        /* Add tooltip styles */
+        /* Add tooltip styles with proper z-index */
         .sidebar-icon::after {
             content: attr(data-tooltip);
             position: absolute;
@@ -148,7 +142,7 @@
             visibility: hidden;
             transition: all 0.2s ease;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            z-index: 9999;
+            z-index: 1000;
         }
         
         .sidebar-icon::before {
@@ -162,7 +156,7 @@
             opacity: 0;
             visibility: hidden;
             transition: all 0.2s ease;
-            z-index: 9999;
+            z-index: 1000;
         }
         
         .sidebar-icon:hover::after,
@@ -180,8 +174,7 @@
         .sidebar-icon.logout::before {
             border-right-color: #dc2626;
         }
-        
-        /* Add animation keyframes */
+
         @keyframes animateIcon {
             0% { background-position: 0 }
             100% { background-position: 200% }
@@ -221,12 +214,85 @@
         }
 
         .recent-box {
-            grid-column: 2 / 3;
+            grid-column: 1 / 3;
             grid-row: 2 / 4;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            align-items: flex-start;
+            padding: 32px;
+            position: relative; /* Add this */
+        }
+
+        .recent-box h3 {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            color: #1a1a1a;
+            width: 100%;
+            position: sticky; /* Add this */
+            top: 0; /* Add this */
+            background: white; /* Add this */
+            /* padding: 16px 0; */
+            z-index: 2; /* Add this */
+        }
+
+        .recent-activity-list {
+            list-style: none;
+            width: 100%;
+            max-height: calc(100% - 70px); /* Add this - accounts for header height */
+            overflow-y: auto; /* Move from parent to here */
+            padding-top: 8px; /* Add this */
+        }
+
+        .recent-activity-list li {
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            background: #f8fafc;
+            transition: all 0.2s ease;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .recent-activity-list li:hover {
+            background: #f1f5f9;
+            /* transform: translateX(4px); */
+        }
+
+        .recent-activity-list p {
+            color: #1f2937;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .recent-activity-list p strong {
+            color: #4f46e5;
+            font-weight: 600;
+        }
+
+        .recent-activity-list small {
+            color: #6b7280;
+            font-size: 0.875rem;
+            display: block;
+        }
+
+        /* Update scrollbar to be on the list instead of the box */
+        .recent-activity-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .recent-activity-list::-webkit-scrollbar-track {
+            background: #f1f5f900;
+            border-radius: 4px;
+        }
+
+        .recent-activity-list::-webkit-scrollbar-thumb {
+            background: #cbd5e100;
+            border-radius: 4px;
+        }
+
+        .recent-activity-list::-webkit-scrollbar-thumb:hover {
+            background: #94a3b800;
         }
 
         /* Profile Section */
@@ -705,4 +771,113 @@
         .box.profile-box #img_msg.show {
             opacity: 1;
             display: block;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .course-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px;
+            transition: transform 0.2s ease;
+        }
+
+        .course-box:hover {
+            transform: translateY(-2px);
+        }
+
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .course-code {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #5562da;
+            transition: width 0.3s ease;
+        }
+
+        .timetable-list {
+            margin-top: 16px;
+        }
+
+        .timetable-item {
+            display: flex;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .calendar {
+            margin-top: 16px;
+        }
+
+        .calendar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        /* Add these new styles for activity icons and colors */
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .activity-icon .material-symbols-rounded {
+            font-size: 20px;
+            color: white;
+        }
+
+        /* Colors for different activities */
+        .activity-deleted .activity-icon {
+            background: #dc2626;
+        }
+
+        .activity-updated .activity-icon {
+            background: #2563eb;
+        }
+
+        .activity-created .activity-icon {
+            background: #059669;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-deleted strong {
+            color: #dc2626 !important;
+        }
+
+        .activity-updated strong {
+            color: #2563eb !important;
+        }
+
+        .activity-created strong {
+            color: #059669 !important;
         }
