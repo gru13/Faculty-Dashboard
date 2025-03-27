@@ -4,14 +4,32 @@ const path = require("path");
 const db = require("../config/db");
 
 // Mock AI response generator (replace with actual AI logic if available)
-function generateAIResponse(message) {
-    console.log("Received message:", message);
-    const responses = [
-        "I'm here to assist you with your academic queries.",
-        "Let me know how I can help you with your assignments.",
-        "Feel free to ask me anything about your courses or schedule."
-    ];
-    return responses[Math.floor(Math.random() * responses.length)];
+async function generateAIResponse(faculty_id, message) {
+    console.log("Sending request to AI:", { faculty_id, message });
+    
+    try {
+        const response = await fetch('http://localhost:5000/query', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                faculty_id: faculty_id,
+                request: message
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.result || "I'm sorry, I couldn't process that request.";
+        
+    } catch (error) {
+        console.error("Error calling AI service:", error);
+        return "Sorry, I'm having trouble connecting to my backend service.";
+    }
 }
 
 router.get('/aiara', (req, res) => {
@@ -42,7 +60,7 @@ router.post("/aiara/chat", async (req, res) => {
         );
 
         // Generate AI response
-        const aiResponse = generateAIResponse(message);
+        const aiResponse = await generateAIResponse(faculty_id, message);
 
         // Respond with AI message
         res.json({
