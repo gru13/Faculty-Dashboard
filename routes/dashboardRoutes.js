@@ -330,7 +330,8 @@ router.get('/api/user', (req, res) => {
             res.json({
                 user: {
                     name: name || "Unknown",
-                    preferredName: name || "User"
+                    preferredName: name || "User",
+                    faculty_id: faculty_id || "Unknown"
                 }
             });
         }

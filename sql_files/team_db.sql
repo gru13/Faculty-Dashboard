@@ -146,6 +146,14 @@ CREATE TABLE RecentUpdates (
     FOREIGN KEY (faculty_id) REFERENCES Faculty(faculty_id)
 );
 
+-- AIARA Logs Table
+CREATE TABLE aiara_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    faculty_id INT NOT NULL,
+    message TEXT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (faculty_id) REFERENCES Faculty(faculty_id)
+);
 
 -- Insert Data into Login Table
 INSERT INTO Login (email_id, password, role) VALUES
@@ -300,7 +308,12 @@ INSERT INTO assignments (assignment_id, course_id, class_id, title, details, dea
 (308, 202, 102, 'Algorithms Assignment 2', 'Graph algorithms', '2025-02-20 23:59:59', '<link>', 'algo_assignment2.pdf', 100),
 (309, 213, 110, 'ML Assignment 2', 'Clustering techniques', '2025-02-22 23:59:59', '<link>', 'ml_assignment2.pdf', 100),
 (310, 219, 112, 'Organic Chemistry Assignment 2', 'Study of alcohols', '2025-02-25 23:59:59', '<link>', 'orgchem_assignment2.pdf', 100),
-(311, 223, 114, 'Genetics Assignment 2', 'Gene editing techniques', '2025-02-28 23:59:59', '<link>', 'genetics_assignment2.pdf', 100);
+(311, 223, 114, 'Genetics Assignment 2', 'Gene editing techniques', '2025-02-28 23:59:59', '<link>', 'genetics_assignment2.pdf', 100),
+(312, 202, 101, 'Algorithms Assignment 3', 'Dynamic programming problems', '2025-03-01 23:59:59', '<link>', 'algo_assignment3.pdf', 100),
+(313, 205, 106, 'Linear Algebra Assignment 2', 'Eigenvalues and eigenvectors', '2025-03-05 23:59:59', '<link>', 'la_assignment2.pdf', 100),
+(314, 213, 109, 'ML Assignment 3', 'Neural networks basics', '2025-03-10 23:59:59', '<link>', 'ml_assignment3.pdf', 100),
+(315, 219, 112, 'Organic Chemistry Assignment 3', 'Study of esters', '2025-03-15 23:59:59', '<link>', 'orgchem_assignment3.pdf', 100),
+(316, 223, 113, 'Genetics Assignment 3', 'CRISPR technology', '2025-03-20 23:59:59', '<link>', 'genetics_assignment3.pdf', 100);
 
 -- Insert Data into Assignment Submissions Table
 INSERT INTO assignment_submissions (submission_id, course_id, class_id, assignment_id, roll_no, submission_date, file_link) VALUES
@@ -318,7 +331,14 @@ INSERT INTO assignment_submissions (submission_id, course_id, class_id, assignme
 (12, 202, 102, 308, 'CSE2021006', '2025-02-19 18:00:00', 'algo_submission3.pdf'),
 (13, 213, 110, 309, 'AI2021004', '2025-02-21 20:00:00', 'ml_submission2.pdf'),
 (14, 219, 112, 310, 'CHEM2021004', '2025-02-24 17:00:00', 'orgchem_submission2.pdf'),
-(15, 223, 114, 311, 'BIO2021004', '2025-02-27 16:30:00', 'genetics_submission3.pdf');
+(15, 223, 114, 311, 'BIO2021004', '2025-02-27 16:30:00', 'genetics_submission3.pdf'),
+(16, 202, 101, 312, 'CSE2021001', '2025-02-28 20:00:00', 'algo_submission4.pdf'),
+(17, 202, 101, 312, 'CSE2021002', '2025-02-28 21:00:00', 'algo_submission5.pdf'),
+(18, 205, 106, 313, 'MATH2021003', '2025-03-04 18:00:00', 'la_submission3.pdf'),
+(19, 205, 106, 313, 'MATH2021004', '2025-03-04 18:30:00', 'la_submission4.pdf'),
+(20, 213, 109, 314, 'AI2021001', '2025-03-09 19:00:00', 'ml_submission3.pdf'),
+(21, 219, 112, 315, 'CHEM2021002', '2025-03-14 17:00:00', 'orgchem_submission3.pdf'),
+(22, 223, 113, 316, 'BIO2021001', '2025-03-19 16:30:00', 'genetics_submission4.pdf');
 
 -- Insert Data into Grades Table
 INSERT INTO grades (submission_id, roll_no, class_id, course_id, assignment_id, grade) VALUES
@@ -336,7 +356,14 @@ INSERT INTO grades (submission_id, roll_no, class_id, course_id, assignment_id, 
 (12, 'CSE2021006', 102, 202, 308, 8.3),
 (13, 'AI2021004', 110, 213, 309, 8.8),
 (14, 'CHEM2021004', 112, 219, 310, 9.1),
-(15, 'BIO2021004', 114, 223, 311, 9.4);
+(15, 'BIO2021004', 114, 223, 311, 9.4),
+(16, 'CSE2021001', 101, 202, 312, 8.9),
+(17, 'CSE2021002', 101, 202, 312, 8.7),
+(18, 'MATH2021003', 106, 205, 313, 9.1),
+(19, 'MATH2021004', 106, 205, 313, 8.8),
+(20, 'AI2021001', 109, 213, 314, 9.0),
+(21, 'CHEM2021002', 112, 219, 315, 8.6),
+(22, 'BIO2021001', 113, 223, 316, 9.3);
 
 -- Insert Data into Course Deadlines Table
 INSERT INTO course_deadlines (course_id, date, deadline_name) VALUES

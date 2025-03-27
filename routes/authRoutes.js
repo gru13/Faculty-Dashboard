@@ -77,6 +77,7 @@ router.post("/login", async (req, res) => {
         }
 
         req.session.user = { ...user };
+        console.log("✅ Session user set:", req.session.user);
         res.json({ message: "Login successful", user: req.session.user });
     });
 });

@@ -38,6 +38,7 @@ const attendanceRoutes = require("./routes/attendanceRoutes"); // Corrected impo
 const assignmentRoutes = require("./routes/assignmentRoutes");
 const assignmentSubmissionRoutes = require("./routes/assignmentSubmissionRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const aiaraRoutes = require("./routes/aiaraRoutes");
 
 // ✅ Use Routes
 app.use("/", facultyRoutes);
@@ -50,6 +51,7 @@ app.use("/", attendanceRoutes); // Use the new attendance routes
 app.use("/", assignmentRoutes);
 app.use("/", assignmentSubmissionRoutes);
 app.use("/admin", adminRoutes);
+app.use("/", aiaraRoutes);
 
 // ✅ Start Server
 app.listen(PORT, () => {
