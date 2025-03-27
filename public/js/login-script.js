@@ -50,53 +50,78 @@ document.querySelector('.card__cta').addEventListener('click', function(event) {
   }
 });
 
+// Add form submit handler for Enter key
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    document.querySelector('.card__cta').click();
+});
 
-// Function to show messages
+// Add Enter key handler for password field
+document.getElementById('account-login-password').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        document.querySelector('.card__cta').click();
+    }
+});
 
+// Initialize overlay and card effects
 const cardsContainer = document.querySelector(".cards");
-const cardsContainerInner = document.querySelector(".cards__inner");
 const cards = Array.from(document.querySelectorAll(".card"));
 const overlay = document.querySelector(".overlay");
 
-const applyOverlayMask = (e) => {
-  const overlayEl = e.currentTarget;
-  const x = e.pageX - cardsContainer.offsetLeft;
-  const y = e.pageY - cardsContainer.offsetTop;
-
-  overlayEl.style = `--opacity: 1; --x: ${x}px; --y:${y}px;`;
-};
-
-const createOverlayCta = (overlayCard, ctaEl) => {
-  const overlayCta = document.createElement("div");
-  overlayCta.classList.add("cta");
-  overlayCta.textContent = ctaEl.textContent;
-  overlayCta.setAttribute("aria-hidden", true);
-  overlayCard.append(overlayCta);
-};
-
-const observer = new ResizeObserver((entries) => {
-  entries.forEach((entry) => {
-    const cardIndex = cards.indexOf(entry.target);
-    let width = entry.borderBoxSize[0].inlineSize;
-    let height = entry.borderBoxSize[0].blockSize;
-
-    if (cardIndex >= 0) {
-      overlay.children[cardIndex].style.width = `${width}px`;
-      overlay.children[cardIndex].style.height = `${height}px`;
+// Create overlay card clone
+const initOverlayCard = () => {
+    const card = cards[0]; // Get the sign in card
+    const overlayCard = document.createElement("div");
+    overlayCard.classList.add("card");
+    
+    // Clone the CTA button
+    const cta = card.querySelector(".cta");
+    if (cta) {
+        const overlayCta = document.createElement("div");
+        overlayCta.classList.add("cta");
+        overlayCta.textContent = cta.textContent;
+        overlayCta.setAttribute("aria-hidden", true);
+        overlayCard.append(overlayCta);
     }
-  });
+    
+    overlay.innerHTML = ''; // Clear existing content
+    overlay.append(overlayCard);
+};
+
+// Handle mouse movement
+const applyOverlayMask = (e) => {
+    const rect = cards[0].getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+    
+    const isOverCard = (
+        x >= rect.left &&
+        x <= rect.right &&
+        y >= rect.top &&
+        y <= rect.bottom
+    );
+    
+    document.documentElement.style.setProperty('--x', `${x}px`);
+    document.documentElement.style.setProperty('--y', `${y}px`);
+    document.documentElement.style.setProperty('--card-left', `${rect.left}px`);
+    document.documentElement.style.setProperty('--card-top', `${rect.top}px`);
+    overlay.style.setProperty('--opacity', isOverCard ? '1' : '0');
+};
+
+// Initialize effects
+initOverlayCard();
+cards[0].addEventListener("pointermove", applyOverlayMask);
+cards[0].addEventListener("mouseleave", () => {
+    overlay.style.setProperty('--opacity', '0');
 });
 
-const initOverlayCard = (cardEl) => {
-  const overlayCard = document.createElement("div");
-  overlayCard.classList.add("card");
-  createOverlayCta(overlayCard, cardEl.lastElementChild);
-  overlay.append(overlayCard);
-  observer.observe(cardEl);
-};
-
-cards.forEach(initOverlayCard);
-document.body.addEventListener("pointermove", applyOverlayMask);
+// Update overlay on window resize
+window.addEventListener('resize', () => {
+    const rect = cards[0].getBoundingClientRect();
+    document.documentElement.style.setProperty('--card-left', `${rect.left}px`);
+    document.documentElement.style.setProperty('--card-top', `${rect.top}px`);
+});
 
 const canvas = document.getElementById('particleCanvas');
 const ctx = canvas.getContext('2d');
