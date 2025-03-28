@@ -338,5 +338,5 @@ async function fetchRecentActivity(facultyId) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    fetchRecentUpdates(); // Fetch updates on page load
+    fetchRecentActivity(); // Fetch updates on page load
 });

@@ -436,12 +436,10 @@ async function updateTimetable() {
 async function updateCourses() {
     const coursesGrid = document.querySelector('.courses-grid');
     const courses = await fetchCourses();
-    
-    console.log("hello"+courses)
 
     // Clear existing courses
     coursesGrid.innerHTML = '';
-    
+
     if (courses.length === 0) {
         updateEmptyState();
         return;
@@ -452,7 +450,7 @@ async function updateCourses() {
         const courseBox = document.createElement('div');
         courseBox.className = 'course-box';
         courseBox.style.cursor = 'pointer'; // Add pointer cursor
-        
+
         // Add click handler for course navigation
         courseBox.addEventListener('click', () => {
             window.location.href = `/course?course_id=${course.courseCode}`;
@@ -474,7 +472,11 @@ async function updateCourses() {
 
         // Update progress percentage text
         const progress = courseBox.querySelector('.circular-progress');
-        progress.setAttribute('data-progress', `${course.completionPercentage}%`);
+        if (progress) { // Add null check
+            progress.setAttribute('data-progress', `${course.completionPercentage}%`);
+        }else{
+            console.log("progress not found");
+        }
 
         coursesGrid.appendChild(courseBox);
     });
