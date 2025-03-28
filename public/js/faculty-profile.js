@@ -297,14 +297,14 @@ async function fetchRecentActivity(facultyId) {
                         ${data.updates.map(update => {
                             let activityClass = '';
                             let icon = '';
-                            
-                            if (update.action.toLowerCase().includes('deleted')) {
+                            console.log('Update:', update);
+                            if (update.action.toLowerCase().includes('delete')) {
                                 activityClass = 'activity-deleted';
                                 icon = 'delete';
-                            } else if (update.action.toLowerCase().includes('updated')) {
+                            } else if (update.action.toLowerCase().includes('update')) {
                                 activityClass = 'activity-updated';
                                 icon = 'update';
-                            } else if (update.action.toLowerCase().includes('created')) {
+                            } else if (update.action.toLowerCase().includes('add')) {
                                 activityClass = 'activity-created';
                                 icon = 'add_circle';
                             }
@@ -337,6 +337,3 @@ async function fetchRecentActivity(facultyId) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    fetchRecentActivity(); // Fetch updates on page load
-});

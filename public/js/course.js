@@ -114,38 +114,34 @@ function switchClass(classId, data) {
     window.courseData = data;
 
     const activeClass = data.courses.find(course => course.class_id === classId);
-    
+    const courseId = activeClass ? activeClass.course_id : null;
+
     // Update course info header with active class
     if (activeClass) {
         document.querySelector('.course-meta .batch').textContent = activeClass.class_name;
     }
 
     const classStudents = data.students.filter(s => s.class_id === classId);
-    
-    // Filter assignments for this class
     const classAssignments = data.assignments.filter(a => a.class_id === classId);
 
-    // Pass the correct courseId to fetchCourseOutcomes
-    const courseId = activeClass ? activeClass.course_id : null; // Fix: Use courseId from activeClass
     console.log(`Switching to classId: ${classId}, courseId: ${courseId}`); // Debugging log
 
-    fetchCourseOutcomes(courseId, classId) // Fix: Pass the correct courseId
+    fetchCourseOutcomes(courseId, classId)
         .then(outcomes => {
             updateOutcomesList(outcomes);
-            // Update completion stats again after outcomes are loaded
-            updateCompletionStats(classId);
+            updateCompletionStats(classId, courseId); // Pass courseId correctly
         })
         .catch(error => {
             console.error('Error updating outcomes:', error);
             updateOutcomesList([]);
-            updateCompletionStats(classId);
+            updateCompletionStats(classId, courseId); // Pass courseId correctly
         });
-    
+
     // Update UI
     updateStudentsList(classStudents);
     updateAssignmentsList(classAssignments);
     updateDeadlinesList(classAssignments);
-    updateCompletionStats(classId);
+    updateCompletionStats(classId, courseId); // Pass courseId correctly
 }
 
 function updateStudentsList(students) {
@@ -362,29 +358,13 @@ function updateCompletionRatio() {
     }
 }
 
-function updateCompletionRatio() {
-    const totalOutcomes = document.querySelectorAll('.outcome-item').length;
-    const completedOutcomes = document.querySelectorAll('.outcome-item.completed').length;
-    
-    const completedSpan = document.querySelector('.completion-ratio .completed');
-    const totalSpan = document.querySelector('.completion-ratio .total');
-    
-    if (completedSpan && totalSpan) {
-        completedSpan.textContent = completedOutcomes;
-        totalSpan.textContent = totalOutcomes;
-    }
-}
-
-function updateCompletionStats(classId) {
-    // Calculate outcomes percentage
+function updateCompletionStats(classId, courseId) {
     const totalOutcomes = document.querySelectorAll('.outcome-item').length;
     const completedOutcomes = document.querySelectorAll('.outcome-item.completed').length;
     const completionPercentage = Math.round((completedOutcomes / totalOutcomes) * 100) || 0;
 
-    // Count assignments
     const assignmentsCount = document.querySelectorAll('.assignment-item').length;
 
-    // Update completion box
     const completionCircle = document.querySelector('.completion-circle path:last-child');
     const percentageDisplay = document.querySelector('.completion-percentage');
     if (completionCircle && percentageDisplay) {
@@ -392,7 +372,6 @@ function updateCompletionStats(classId) {
         percentageDisplay.textContent = `${completionPercentage}%`;
     }
 
-    // Update stats rows
     const completionDetails = document.querySelector('.completion-details');
     completionDetails.innerHTML = `
         <div class="stat-row">
@@ -405,14 +384,12 @@ function updateCompletionStats(classId) {
         </div>
     `;
 
-    // Fetch total classes from backend
-    fetchTotalClasses(classId);
+    fetchTotalClasses(classId, courseId); // Pass courseId correctly
 }
 
-// Add function to fetch total classes
-async function fetchTotalClasses(classId) {
+async function fetchTotalClasses(classId, courseId) {
     try {
-        const response = await fetch(`course/${classId}/total-classes`);
+        const response = await fetch(`/course/${classId}/total-classes?course_id=${courseId}`);
         if (!response.ok) {
             throw new Error(`Failed to fetch total classes: ${response.status} ${response.statusText}`);
         }
