@@ -6,6 +6,7 @@ import mysql.connector
 from dotenv import load_dotenv
 import os
 import decimal  # Import for handling Decimal values
+from datetime import datetime  # Import for handling datetime serialization
 
 # Initialize Flask
 app = Flask(__name__)
@@ -192,6 +193,16 @@ def convert_decimal_to_float(data):
         return float(data)
     return data
 
+# Helper function to convert datetime to string
+def convert_datetime_to_string(data):
+    if isinstance(data, list):
+        return [convert_datetime_to_string(item) for item in data]
+    elif isinstance(data, dict):
+        return {key: convert_datetime_to_string(value) for key, value in data.items()}
+    elif isinstance(data, datetime):
+        return data.isoformat()  # Convert datetime to ISO 8601 string
+    return data
+
 class SQLAgent:
     def __init__(self):
         self.conn = mysql.connector.connect(**db_config)
@@ -244,7 +255,7 @@ The queries should cover aspects such as:
   - The bottom 5 lowest scoring students,
   - Any additional relevant grade distribution information.
 (This is just an example for a grades summary; please consider the schema and the request to output appropriate queries.)
-
+Note: all grades and marks are maximum 10.
 Use the following MySQL database schema:
 {DB_SCHEMA}
 
@@ -287,7 +298,6 @@ You are given the following aggregated data, where each key describes what the d
 
 Use this data as your knowledge and answer the user request using that knowledge, user request:
 '{user_request}'
-
 """
         try:
             response = model.generate_content(gemini_prompt)
@@ -399,7 +409,7 @@ Output the appropriate category exactly as one of these words.
             print("Aggregated Data:\n", json.dumps(aggregated_data, indent=2))
             return self.summary_agent.generate_summary(user_request, aggregated_data)
         else:
-            return "Nonsense request. Please provide a valid query."
+            return "Please provide a valid query."
 
 
 @app.route('/query', methods=['POST'])
@@ -423,7 +433,8 @@ def handle_query():
     
         sql_agent.close_connection()
         print("Result:", result)
-        return jsonify({'result': result})
+        # Convert datetime objects in the result to strings
+        return jsonify({'result': convert_datetime_to_string(result)})
         
     except Exception as e:
         print(f"Error in handle_query: {str(e)}")

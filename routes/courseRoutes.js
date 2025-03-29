@@ -134,6 +134,7 @@ router.post("/course/add-assignment", upload, async (req, res) => {
     const file = req.file;
     const facultyId = req.session.user.faculty_id.toString();
     console.log(req.body);
+
     if (!courseId || !classId || !title || !details || !deadline || !maxMarks || !file || !facultyId) {
         return res.status(400).json({ success: false, message: "All fields are required." });
     }
@@ -153,6 +154,14 @@ router.post("/course/add-assignment", upload, async (req, res) => {
             "UPDATE assignments SET assignment_doc_url = ?, submission_link = ? WHERE assignment_id = ?",
             [assignmentDocUrl, submissionLink, assignmentId]
         );
+
+        // Insert the deadline into the course_deadlines table
+        const deadlineQuery = `
+            INSERT INTO course_deadlines (course_id, date, deadline_name)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE date = VALUES(date);
+        `;
+        await db.promise().query(deadlineQuery, [courseId, deadline, title]);
 
         // Log the action in RecentUpdates
         await db.promise().query(
@@ -238,6 +247,36 @@ router.get("/course/:classId/total-classes", async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Internal server error."
+        });
+    }
+});
+
+// 📌 API to fetch upcoming deadlines for a course
+router.get("/course/:courseId/:classId/upcoming-deadlines", async (req, res) => {
+    const { courseId, classId } = req.params;
+
+    if (!courseId || !classId) {
+        return res.status(400).json({ success: false, message: "Course ID and Class ID are required." });
+    }
+
+    try {
+        const query = `
+            SELECT title AS deadline_name, deadline AS date
+            FROM assignments
+            WHERE course_id = ? AND class_id = ? AND deadline >= NOW()
+            ORDER BY deadline ASC;
+        `;
+        const [deadlines] = await db.promise().query(query, [courseId, classId]);
+
+        res.json({
+            success: true,
+            deadlines,
+        });
+    } catch (error) {
+        console.error("Error fetching upcoming deadlines:", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error.",
         });
     }
 });

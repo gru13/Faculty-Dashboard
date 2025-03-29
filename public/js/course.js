@@ -142,6 +142,11 @@ function switchClass(classId, data) {
     updateAssignmentsList(classAssignments);
     updateDeadlinesList(classAssignments);
     updateCompletionStats(classId, courseId); // Pass courseId correctly
+
+    // Fetch and display deadlines specific to the class and course
+    if (courseId && classId) {
+        fetchAndDisplayDeadlines(courseId, classId);
+    }
 }
 
 function updateStudentsList(students) {
@@ -215,7 +220,7 @@ function updateDeadlinesList(assignments) {
     `).join('');
 }
 
-function setupAssignmentForm(courseId) {
+async function setupAssignmentForm(courseId) {
     const form = document.querySelector('.assignment-form');
     const fileInput = document.getElementById('pdf');
     const fileLabel = document.querySelector('.file-name');
@@ -223,14 +228,11 @@ function setupAssignmentForm(courseId) {
     fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
-            // Truncate long file names
             const fileName = file.name.length > 30 
                 ? file.name.substring(0, 27) + '...' 
                 : file.name;
             fileLabel.textContent = fileName;
-            fileLabel.title = file.name; // Show full name on hover
-            
-            // Add a visual indication that file is selected
+            fileLabel.title = file.name;
             fileLabel.parentElement.classList.add('has-file');
         } else {
             fileLabel.textContent = 'No file chosen';
@@ -246,7 +248,7 @@ function setupAssignmentForm(courseId) {
         const classId = activeTab.dataset.classId;
         const formData = new FormData();
         formData.append("courseId", courseId);
-        formData.append("classId", classId); // Add this
+        formData.append("classId", classId);
         formData.append("title", form.title.value);
         formData.append("details", form.details.value);
         formData.append("deadline", `${form.date.value}T${form.time.value}`);
@@ -262,6 +264,10 @@ function setupAssignmentForm(courseId) {
             const result = await response.json();
             if (result.success) {
                 alert("Assignment added successfully!");
+
+                // Fetch and update deadlines after assignment creation
+                fetchAndDisplayDeadlines(courseId);
+
                 location.reload();
             } else {
                 alert("Failed to add assignment.");
@@ -413,5 +419,37 @@ async function fetchTotalClasses(classId, courseId) {
                 <span class="value">--</span>
             `;
         }
+    }
+}
+
+async function fetchAndDisplayDeadlines(courseId, classId) {
+    try {
+        const response = await fetch(`/course/${courseId}/${classId}/upcoming-deadlines`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch deadlines: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log("Upcoming Deadlines:", data.deadlines); // Log the deadlines to the console
+
+        const deadlinesList = document.querySelector('.deadlines-list');
+
+        if (data.success && data.deadlines.length > 0) {
+            deadlinesList.innerHTML = data.deadlines.map(deadline => `
+                <div class="deadline-item">
+                    <span class="date">${new Date(deadline.date).toLocaleDateString('default', { month: 'short', day: 'numeric' })}</span>
+                    <div class="deadline-info">
+                        <h4>${deadline.deadline_name}</h4>
+                    </div>
+                    <span class="material-symbols-rounded">schedule</span>
+                </div>
+            `).join('');
+        } else {
+            deadlinesList.innerHTML = '<div class="empty-state">No upcoming deadlines</div>';
+        }
+    } catch (error) {
+        console.error("Error fetching deadlines:", error);
+        const deadlinesList = document.querySelector('.deadlines-list');
+        deadlinesList.innerHTML = '<div class="empty-state">Failed to load deadlines</div>';
     }
 }
